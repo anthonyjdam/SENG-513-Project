@@ -35,7 +35,7 @@ export const appRouter = t.router({
 //       });
 //     }),
     getHello: t.procedure.query( () => {
-        return [1, 2, 4, 5];
+        return [1, 2, 4, 5, 6];
     }),
 
 
