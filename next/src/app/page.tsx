@@ -9,11 +9,11 @@ import Array from "@/component/Array";
 
 export default function Home() {
 
-  const [queryClient] = useState(() => new QueryClient());
+	const [queryClient] = useState(() => new QueryClient());
 	const [trpcClient] = useState(() => {
 		return trpc.createClient({
 			links: [
-				httpBatchLink({
+				httpBatchLink({ // batchLink packages multiple simultaneous reqests together and responds with all the data back at once
 					url: "http://localhost:5000/trpc",
 				}),
 			],
