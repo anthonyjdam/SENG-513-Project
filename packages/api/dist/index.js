@@ -52,7 +52,7 @@ exports.appRouter = exports.t.router({
     //       });
     //     }),
     getHello: exports.t.procedure.query(() => {
-        return [1, 2, 4];
+        return [1, 2, 4, 5, 6];
     }),
     // TODO: Make procedures, ideally in another file for organization
 });
