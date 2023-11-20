@@ -31,6 +31,8 @@ const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const db_1 = require("./db");
+const User_1 = require("./db/User");
 const PORT = process.env.port || 5000;
 // created for each request
 const createContext = ({ req, res, }) => ({
@@ -52,19 +54,37 @@ exports.appRouter = exports.t.router({
     //       });
     //     }),
     getHello: exports.t.procedure.query(() => {
-        return [1, 2, 4];
+        return [1, 2, 4, 5, 6];
     }),
     // TODO: Make procedures, ideally in another file for organization
 });
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
-app.use('/trpc', trpcExpress.createExpressMiddleware({
+app.use("/trpc", trpcExpress.createExpressMiddleware({
     router: exports.appRouter,
     createContext,
 }));
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     res.send("Hello");
 });
 app.listen(PORT, () => {
     console.log("listening on port " + PORT);
 });
+try {
+    (0, db_1.connectDB)();
+    // Example: Creating a new user
+    const newUser = new User_1.UserModel({
+        username: "john_doe",
+        password: "secure_password",
+    });
+    newUser.save()
+        .then(savedUser => {
+        console.log('User saved successfully:', savedUser);
+    })
+        .catch(error => {
+        console.error('Error saving user:', error);
+    });
+}
+catch (err) {
+    console.log(err);
+}
