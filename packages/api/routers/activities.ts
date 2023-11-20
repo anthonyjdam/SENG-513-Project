@@ -1,19 +1,19 @@
-import { publicProcedure, router } from "../../api/trpc"
+import { publicProcedure, router } from "../server"
 
 export const activitiesRouter = router({
-    activities: publicProcedure.query(() => {
+    getActivities: publicProcedure.query(() => {
         return { activity: "volleyball"}
     }),
 
-    startTime: publicProcedure.query(() => {
+    getStartTime: publicProcedure.query(() => {
         return { time: "16:00"}
     }),
     
-    endTime: publicProcedure.query(() => {
+    getEndTime: publicProcedure.query(() => {
         return { time: "16:00"}
     }),
     
-    location: publicProcedure.query(() => {
+    getLocation: publicProcedure.query(() => {
         return { location: "red-gym"}
     }),
     

@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'; // error handler
-import { publicProcedure } from "./trpc"; // trpc instance
+import { publicProcedure } from "./server"; // trpc instance
 import { z } from 'zod'; // input validator
 
 export const validateUsername = publicProcedure

@@ -36,7 +36,7 @@ const PORT = process.env.port || 5000;
 const createContext = ({ req, res, }) => ({
 // TODO: CREATE context for each request where we provide the auth session and the db connection
 }); // no context
-exports.t = server_1.initTRPC.context().create();
+exports.t = server_1.initTRPC.context().create(); // create an instance of the tRPC server
 exports.router = exports.t.router;
 exports.appRouter = exports.t.router({
     //   getUser: t.procedure.input(z.string()).query((opts) => {
@@ -52,12 +52,13 @@ exports.appRouter = exports.t.router({
     //       });
     //     }),
     getHello: exports.t.procedure.query(() => {
-        return [1, 2, 4];
+        return [1, 2, 4, 5, 6];
     }),
     // TODO: Make procedures, ideally in another file for organization
 });
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
+// setting up tRPC on the server
 app.use('/trpc', trpcExpress.createExpressMiddleware({
     router: exports.appRouter,
     createContext,

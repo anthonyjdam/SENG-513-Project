@@ -1,6 +1,5 @@
-import { publicProcedure, router } from "../../api/trpc"
+import { publicProcedure, router } from "../server"
 import { validateUsername } from "../middleware";
-
 
 
 export const usersRouter = router({
@@ -9,6 +8,7 @@ export const usersRouter = router({
     }),
 
     createUsername: validateUsername.mutation(( input ) => {
+        console.log(input);
         return { username: input}
     }),
 

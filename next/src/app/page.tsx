@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { trpc } from "@/lib/trpc";
 import Array from "@/component/Array";
+import Test from "@/component/Test";
 
 
 export default function Home() {
@@ -63,7 +64,7 @@ export default function Home() {
 					</div>
 
 					<div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-						<Array />
+						<Array/>
 					</div>
 				</main>
 			</QueryClientProvider>
