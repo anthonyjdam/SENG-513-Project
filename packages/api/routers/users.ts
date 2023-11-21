@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../server"
+import { publicProcedure, router } from "../server";
 import { validateUsername } from "../middleware";
 
 

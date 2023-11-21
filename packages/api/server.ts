@@ -18,7 +18,7 @@ export const createContext = ({
   
   }); // no context
 
-type Context = inferAsyncReturnType<typeof createContext>; // infer the return type og the create context function
+type Context = inferAsyncReturnType<typeof createContext>; // infer the return type of the create context function
 const t = initTRPC.context<Context>().create(); // create an instance of the tRPC server
 export const router = t.router; // define router based on tRPC instance 
 export const publicProcedure = t.procedure; // export alias of t.procedure as publicProcedure

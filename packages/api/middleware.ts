@@ -17,3 +17,21 @@ export const validateUsername = publicProcedure
         // Allow procedure to continue execution
         return opts.next();
     });
+
+const ScrapeDataSchema = z.object({
+    activity: z.string(),
+    startTime: z.string(),
+    endTime: z.string(),
+    date: z.string(),
+    location: z.string(),
+});
+
+export const validateScrape = publicProcedure
+    .input(ScrapeDataSchema)
+    .use((opts) => {
+        //input validation
+        return opts.next();
+    })
+
+
+    
