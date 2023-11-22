@@ -19,7 +19,7 @@ type Context = inferAsyncReturnType<typeof createContext>;
 
 export const t = initTRPC.context<Context>().create();
 
-export const router = t.router;
+export const router = t.router;;
 
 export const appRouter = t.router({
 	//   getUser: t.procedure.input(z.string()).query((opts) => {
@@ -37,6 +37,24 @@ export const appRouter = t.router({
 	getHello: t.procedure.query(() => {
 		return [1, 2, 4, 5, 6];
 	}),
+
+	changeName: t.procedure
+		.input(z.object({ username: z.string() }))
+		.mutation(( { ctx, input } ) => {
+      console.log(input.username);
+    }),
+
+  createActivity: t.procedure
+    .input(z.object({
+      activity: z.string(),
+      startTime: z.string(),
+      endTime: z.string(),
+      date: z.string(),
+      location: z.string(),
+  }))
+    .mutation(({ ctx, input }) => {
+      console.log(`client says: ${input.startTime}`)
+    }),
 
 	// TODO: Make procedures, ideally in another file for organization
 });
