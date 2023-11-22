@@ -1,7 +1,16 @@
 import { trpc } from "@/lib/trpc";
-import { FC } from "react";
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { FC, useEffect, useState } from "react";
+import { AppRouter } from "../../../packages/api/routers/index";
 
-interface AppProps { }
+import React from 'react'
+
+// create TRPC client 
+const client = createTRPCProxyClient<AppRouter>({
+    links: [httpBatchLink({
+        url: "http://localhost:5000/trpc",
+    })]
+})
 
 const scrapedData = {
     activity: "volleyball",
@@ -11,14 +20,20 @@ const scrapedData = {
     location: "red-gym",
 }
 
+function Test() {
 
-const Test: FC<AppProps> = ({ }) => {
-    const response = trpc.createActivity.useMutation(scrapedData);
-    console.log(response.data);
+    useEffect(() => {
+        main();
+    }, [])
 
-    // const password = response.data?.password;
+    async function main() {
+        const result = await client.createActivity.mutate(scrapedData)
+        console.log("RESULTTTTT", result);
+    }
 
-    return <p className="text-white">{response.data}</p>;
-};
+    return (
+        <h1 className="text-6xl bg-red-600"></h1>
+    )
+}
 
 export default Test;
