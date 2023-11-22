@@ -4,13 +4,12 @@ import { FC } from "react";
 interface AppProps {}
 
 const Array: FC<AppProps> = ({}) => {
-	const response = trpc.getHello.useQuery();
+	const response = trpc.users.getUcid.useQuery();
 	const createActivity = trpc.createActivity.useMutation();
-	console.log(response.data);
-
+	
 	return (
 		<>
-			<p className="text-white">{response.data}</p>
+			<p className="text-white">{response.data?.ucid}</p>
 			<button
 				onClick={() => {
 					const scrapedData = {
@@ -21,7 +20,9 @@ const Array: FC<AppProps> = ({}) => {
 						location: "red-gym",
 					}
 
-					createActivity.mutate(scrapedData);
+					// createActivity.mutate(scrapedData);
+					
+					console.log(response.data?.ucid);
 				}}
 			>
 				Press me

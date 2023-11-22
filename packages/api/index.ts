@@ -10,52 +10,51 @@ const PORT = process.env.port || 5000;
 
 // created for each request
 const createContext = ({
-	req,
+  req,
 	res,
 }: trpcExpress.CreateExpressContextOptions) => ({
-	// TODO: CREATE context for each request where we provide the auth session and the db connection
+  // TODO: CREATE context for each request where we provide the auth session and the db connection
 }); // no context
 type Context = inferAsyncReturnType<typeof createContext>;
 
 export const t = initTRPC.context<Context>().create();
 
-export const router = t.router;;
+export const router = t.router;
+
+export const publicProcedure = t.procedure;
+
+import { validateScrape } from "./middleware";
+import { usersRouter } from "./users";
+
 
 export const appRouter = t.router({
-	//   getUser: t.procedure.input(z.string()).query((opts) => {
-	//     opts.input; // string
-	//     return { id: opts.input, name: 'Bilbo' };
-	//   }),
-	//   createUser: t.procedure
-	//     .input(z.object({ name: z.string().min(5) }))
-	//     .mutation(async (opts) => {
-	//       // use your ORM of choice
-	//       return await UserModel.create({
-	//         data: opts.input,
-	//       });
-	//     }),
-	getHello: t.procedure.query(() => {
+  //   getUser: t.procedure.input(z.string()).query((opts) => {
+    //     opts.input; // string
+    //     return { id: opts.input, name: 'Bilbo' };
+    //   }),
+    //   createUser: t.procedure
+    //     .input(z.object({ name: z.string().min(5) }))
+    //     .mutation(async (opts) => {
+      //       // use your ORM of choice
+      //       return await UserModel.create({
+        //         data: opts.input,
+        //       });
+        //     }),
+        getHello: publicProcedure.query(() => {
 		return [1, 2, 4, 5, 6];
 	}),
 
-	changeName: t.procedure
+	changeName: publicProcedure
 		.input(z.object({ username: z.string() }))
-		.mutation(( { ctx, input } ) => {
-      console.log(input.username);
-    }),
+		.mutation(({ ctx, input }) => {
+			console.log(input.username);
+		}),
 
-  createActivity: t.procedure
-    .input(z.object({
-      activity: z.string(),
-      startTime: z.string(),
-      endTime: z.string(),
-      date: z.string(),
-      location: z.string(),
-  }))
-    .mutation(({ ctx, input }) => {
-      console.log(`client says: ${input.startTime}`)
-    }),
+	createActivity: validateScrape.mutation(({ ctx, input }) => {
+		console.log(`client says: ${input.startTime}`);
+	}),
 
+  users: usersRouter
 	// TODO: Make procedures, ideally in another file for organization
 });
 
@@ -82,23 +81,23 @@ app.listen(PORT, () => {
 	console.log("listening on port " + PORT);
 });
 
-try {
-	connectDB();
+// try {
+// 	connectDB();
 
-	// Example: Creating a new user
-	const newUser = new UserModel({
-		username: "john_doe",
-		password: "secure_password",
-	});
+// 	// Example: Creating a new user
+// 	const newUser = new UserModel({
+// 		username: "john_doe",
+// 		password: "secure_password",
+// 	});
 
-  newUser.save()
-  .then(savedUser => {
-    console.log('User saved successfully:', savedUser);
-  })
-  .catch(error => {
-    console.error('Error saving user:', error);
-  });
-  
-} catch (err) {
-	console.log(err);
-}
+// 	newUser
+// 		.save()
+// 		.then((savedUser) => {
+// 			console.log("User saved successfully:", savedUser);
+// 		})
+// 		.catch((error) => {
+// 			console.error("Error saving user:", error);
+// 		});
+// } catch (err) {
+// 	console.log(err);
+// }

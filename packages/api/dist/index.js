@@ -26,14 +26,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appRouter = exports.router = exports.t = void 0;
+exports.appRouter = exports.publicProcedure = exports.router = exports.t = void 0;
 const zod_1 = require("zod");
 const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const db_1 = require("./db");
-const User_1 = require("./db/User");
 const PORT = process.env.port || 5000;
 // created for each request
 const createContext = ({ req, res, }) => ({
@@ -41,6 +39,9 @@ const createContext = ({ req, res, }) => ({
 }); // no context
 exports.t = server_1.initTRPC.context().create();
 exports.router = exports.t.router;
+exports.publicProcedure = exports.t.procedure;
+const middleware_1 = require("./middleware");
+const users_1 = require("./users");
 exports.appRouter = exports.t.router({
     //   getUser: t.procedure.input(z.string()).query((opts) => {
     //     opts.input; // string
@@ -54,28 +55,18 @@ exports.appRouter = exports.t.router({
     //         data: opts.input,
     //       });
     //     }),
-    getHello: exports.t.procedure.query(() => {
+    getHello: exports.publicProcedure.query(() => {
         return [1, 2, 4, 5, 6];
-<<<<<<< HEAD
-=======
     }),
-    changeName: exports.t.procedure
+    changeName: exports.publicProcedure
         .input(zod_1.z.object({ username: zod_1.z.string() }))
         .mutation(({ ctx, input }) => {
         console.log(input.username);
     }),
-    createActivity: exports.t.procedure
-        .input(zod_1.z.object({
-        activity: zod_1.z.string(),
-        startTime: zod_1.z.string(),
-        endTime: zod_1.z.string(),
-        date: zod_1.z.string(),
-        location: zod_1.z.string(),
-    }))
-        .mutation(({ ctx, input }) => {
+    createActivity: middleware_1.validateScrape.mutation(({ ctx, input }) => {
         console.log(`client says: ${input.startTime}`);
->>>>>>> a9abd969027cade06cf6b8f0d97c020f0c859b6b
     }),
+    users: users_1.usersRouter
     // TODO: Make procedures, ideally in another file for organization
 });
 const app = (0, express_1.default)();
@@ -90,21 +81,21 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log("listening on port " + PORT);
 });
-try {
-    (0, db_1.connectDB)();
-    // Example: Creating a new user
-    const newUser = new User_1.UserModel({
-        username: "john_doe",
-        password: "secure_password",
-    });
-    newUser.save()
-        .then(savedUser => {
-        console.log('User saved successfully:', savedUser);
-    })
-        .catch(error => {
-        console.error('Error saving user:', error);
-    });
-}
-catch (err) {
-    console.log(err);
-}
+// try {
+// 	connectDB();
+// 	// Example: Creating a new user
+// 	const newUser = new UserModel({
+// 		username: "john_doe",
+// 		password: "secure_password",
+// 	});
+// 	newUser
+// 		.save()
+// 		.then((savedUser) => {
+// 			console.log("User saved successfully:", savedUser);
+// 		})
+// 		.catch((error) => {
+// 			console.error("Error saving user:", error);
+// 		});
+// } catch (err) {
+// 	console.log(err);
+// }
