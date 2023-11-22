@@ -10,7 +10,8 @@ import Test from "@/component/Test";
 
 export default function Home() {
 
-	const [queryClient] = useState(() => new QueryClient());
+	// create TRPC client 
+	const [queryClient] = useState(() => new QueryClient()); 
 	const [trpcClient] = useState(() => {
 		return trpc.createClient({
 			links: [
@@ -22,7 +23,7 @@ export default function Home() {
 	});
 
 
-
+	// wrap app in trpc provider
 	return (
 		<trpc.Provider queryClient={queryClient} client={trpcClient}>
 			<QueryClientProvider client={queryClient}>

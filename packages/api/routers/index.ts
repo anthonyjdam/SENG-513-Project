@@ -2,6 +2,7 @@ import { publicProcedure, router } from "../server"
 import { activitiesRouter } from "./activities";
 import { usersRouter } from "./users";
 import { validateScrape } from "../middleware";
+import { resolve } from "path";
 
 export const appRouter = router({
   getHello: publicProcedure.query(() => {

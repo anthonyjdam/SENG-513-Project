@@ -1,9 +1,11 @@
 import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import express from "express";
+import mongoose from 'mongoose';
 import cors from "cors";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "./routers/index"
+require('dotenv').config();
 
 
 /*Initialize tRPC API*/
@@ -28,6 +30,7 @@ export const publicProcedure = t.procedure; // export alias of t.procedure as pu
 
 const PORT = process.env.port || 5000;
 const app = express();
+
 export type AppRouter = typeof appRouter;
 
 app.use(cors());
@@ -42,3 +45,13 @@ app.use(
 app.listen(PORT, () => {
   console.log("listening on port " + PORT);
 });
+
+/* Connect to mongoDB database */
+mongoose.connect(process.env.DATABASE_URL || "http://localhost:5000/trpc"); // default to localhost
+const db = mongoose.connection;
+
+db.on('error', (error) => console.error(error)); // log error when failing to connect to databse
+db.once('open', () => console.log("Connected to Databse"));
+db.on('disconnected', () => console.log('Disconnected from MongoDB.'));
+
+app.use(express.json());
