@@ -85,3 +85,7 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log("listening on port " + PORT);
 });
+const scrape_1 = require("./scrape");
+(0, scrape_1.scrapeSchedule)().then((returnVal) => {
+    console.log(returnVal);
+});
