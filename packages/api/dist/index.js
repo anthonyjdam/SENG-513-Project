@@ -132,20 +132,56 @@ try {
         }
     });
     createGymSchedule();
+    //   const createPersonalSchedule = async () => {
+    // 	try {
+    // 	  const newPersonalSchedule = new UserPersonalSchedModel({
+    // 		week: [
+    // 		  { day: 'Monday', startTime: '09:00 AM', endTime: '05:00 PM' },
+    // 		  { day: 'Wednesday', startTime: '10:00 AM', endTime: '06:00 PM' },
+    // 		],
+    // 	  });
+    // 	  const savedPersonalSchedule = await newPersonalSchedule.save();
+    // 	  console.log('Personal schedule created:', savedPersonalSchedule);
+    // 	  // Associate the personal schedule with a user 
+    // 	  const user = await UserModel.findOne({ username: "john_doe" });
+    // 	  if (user) {
+    // 		// Check if personalSchedules is defined
+    // 		if (user.personalSchedules) {
+    // 		  user.personalSchedules.push(savedPersonalSchedule._id);
+    // 		} else {
+    // 		  // If personalSchedules is undefined, initialize it as an array
+    // 		  user.personalSchedules = [savedPersonalSchedule._id];
+    // 		}
+    // 		await user.save();
+    // 		console.log('Personal schedule associated with user:', user);
+    // 	  } else {
+    // 		console.error('User not found.');
+    // 	  }
+    // 	} catch (error) {
+    // 	  console.error('Error creating personal schedule:', error);
+    // 	}
+    //   };
+    //   createPersonalSchedule();
     const createPersonalSchedule = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const newPersonalSchedule = new UserPersonalSchedule_1.UserPersonalSchedModel({
-                week: [
-                    { day: 'Monday', startTime: '09:00 AM', endTime: '05:00 PM' },
-                    { day: 'Wednesday', startTime: '10:00 AM', endTime: '06:00 PM' },
-                ],
+                date: new Date(),
+                startTime: '010:00 AM',
+                endTime: '10:00 AM',
             });
             const savedPersonalSchedule = yield newPersonalSchedule.save();
             console.log('Personal schedule created:', savedPersonalSchedule);
-            // Associate the personal schedule with a user (replace 'user_id' with the actual user ID)
+            // Associate the personal schedule with a user 
             const user = yield User_1.UserModel.findOne({ username: "john_doe" });
             if (user) {
-                user.personalSchedules.push(savedPersonalSchedule._id);
+                // Check if personalSchedules is defined
+                if (user.personalSchedules) {
+                    user.personalSchedules.push(savedPersonalSchedule._id);
+                }
+                else {
+                    // If personalSchedules is undefined, initialize it as an array
+                    user.personalSchedules = [savedPersonalSchedule._id];
+                }
                 yield user.save();
                 console.log('Personal schedule associated with user:', user);
             }

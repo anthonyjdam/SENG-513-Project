@@ -50,7 +50,7 @@ interface UserDocument extends Document {
   username: string;
   password: string;
   email: string;
-  personalSchedules: userPersonalSchedDocument[] | Types.ObjectId[];
+  personalSchedules?: userPersonalSchedDocument[] | Types.ObjectId[];
 }
 
 const UserModel = mongoose.model<UserDocument>('User', userModel);
