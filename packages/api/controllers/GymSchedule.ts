@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { GymScheduleModel} from '../models/GymSchedule'; // Adjust the path accordingly
+import { GymScheduleModel} from '../models/GymSchedule'; 
 import mongoose from 'mongoose';
 import { z } from 'zod';
 
@@ -37,3 +37,13 @@ export const createGymSchedule = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+export const getAllGymSchedules = async (req: Request, res: Response) => {
+    try {
+      const gymSchedules = await GymScheduleModel.find({});
+      res.status(200).json(gymSchedules);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };

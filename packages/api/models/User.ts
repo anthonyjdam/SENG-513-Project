@@ -55,7 +55,7 @@ interface UserDocument extends Document {
 
 const UserModel = mongoose.model<UserDocument>('User', userModel);
 
-export { UserModel };
+export { UserModel, UserDocument };
 
 
 
