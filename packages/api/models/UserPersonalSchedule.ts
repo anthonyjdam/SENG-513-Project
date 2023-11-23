@@ -40,3 +40,4 @@ interface userPersonalSchedDocument extends Document {
 const UserPersonalSchedModel = mongoose.model<userPersonalSchedDocument>('UserPersonalSchedule', userPersonalSchedModel);
 
 export { UserPersonalSchedModel, userPersonalSchedDocument };
+
