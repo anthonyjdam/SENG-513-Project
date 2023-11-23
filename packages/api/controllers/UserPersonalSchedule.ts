@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { UserPersonalSchedModel, userPersonalSchedDocument } from '../models/UserPersonalSchedule'; // Adjust the path accordingly
+import { UserPersonalSchedModel, userPersonalSchedDocument } from '../models/UserPersonalSchedule'; 
+import { UserModel } from '../models/User'; 
 import { z } from 'zod';
 
 // Zod schema for user personal schedule input validation
@@ -37,35 +38,24 @@ export const createUserPersonalSchedule = async (req: Request, res: Response) =>
     }
   }
 };
-// Get all user personal schedules
-export const getAllUserPersonalSchedules = async (req: Request, res: Response) => {
-  try {
-    const userPersonalSchedules = await UserPersonalSchedModel.find();
+// Get user personal schedules by username
+export const getAllUserPersonalSchedulesByUsername = async (req: Request, res: Response) => {
+    const { username } = req.params;
+  
+    const user = await UserModel.findOne({ username });
 
-    res.status(200).json(userPersonalSchedules);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
+    if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+}
 
-// Get a user personal schedule by ID
-export const getUserPersonalScheduleById = async (req: Request, res: Response) => {
-  const { personalSchedId } = req.params;
+    // Retrieve personalSchedules
+    const personalSchedules = user.personalSchedules;
 
-  try {
-    const userPersonalSched = await UserPersonalSchedModel.findById(personalSchedId);
+    res.status(200).json(personalSchedules);
+  };
 
-    if (!userPersonalSched) {
-      return res.status(404).json({ error: 'User personal schedule not found' });
-    }
 
-    res.status(200).json(userPersonalSched);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
+
 
 // Update a user personal schedule by ID
 export const updateUserPersonalScheduleById = async (req: Request, res: Response) => {
