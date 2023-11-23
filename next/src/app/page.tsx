@@ -7,6 +7,29 @@ import { trpc } from "@/lib/trpc";
 import Array from "@/component/Array";
 import Sidebar from "@/component/Sidebar";
 import RowTime from "@/component/RowTime";
+import DaysOfTheWeek from "@/component/DaysOfTheWeek";
+
+
+interface Date {
+	month: Date;
+	day: Date;
+}
+
+function handleGetDaysOfWeek () {
+	interface Date {
+		dayOfTheWeek: Date;
+		dayNumber: Date;
+	}; 
+	let dateArr: Date[];
+	let dayOfTheWeek;
+	let dayNumber;
+
+	const currentDate = new Date();
+
+	for(let i = 0; i < 7; i++) {
+		
+	}
+}
 
 
 export default function Home() {
@@ -29,7 +52,7 @@ export default function Home() {
 			<QueryClientProvider client={queryClient}>
 				<main className="flex flex-row min-h-screen">
 
-					<Sidebar />
+					{/* <Sidebar /> */}
 
 					<div className="flex flex-col w-full">
 
@@ -37,492 +60,41 @@ export default function Home() {
 							Top
 						</div>
 
-						<div className="bg-violet-400 w-full h-[75px]">
-							DaysOfTheWeek
-						</div>
-
-
 						<div className="flex flex-row h-full">
 
-							<div className='bg-red-400 w-[60px]'>
-								<div className='bg-amber-500 h-[50px] flex flex-row text-xs font-bold'>
-									7:00AM
+							<div className='bg-white text-zinc-500 w-[60px]'>
+								{/* <div className="bg-white flex flex-row w-[50px]"></div> */}
+								<div className="bg-white h-[75px] min-h-[75px]"></div>
+
+								<div className='h-[75px] flex flex-row items-start justify-center text-xs font-bold'>
+									7 AM
 								</div>
-								<div className='bg-amber-500 h-[50px] flex flex-row text-xs font-bold'>
-									8:00AM
+								<div className='h-[75px] flex flex-row items-start justify-center text-xs font-bold'>
+									8 AM
 								</div>
-								<div className='bg-amber-500 h-[50px] flex flex-row text-xs font-bold'>
-									9:00AM
+								<div className='h-[75px] flex flex-row items-start justify-center text-xs font-bold'>
+									9 AM
 								</div>
 
 							</div>
 
 							{/* <RowTime/> */}
 
-							<div className="w-full bg-green-400 grid grid-cols-7">
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
-								<div className="bg-gray-100 border border-gray-300 min-h-[75px] w-full grid grid-rows-4">
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-									<div className="bg-gray-100 border border-gray-300"></div>
-								</div>
+							<div className="w-full h-full flex flex-col">
+
+								<DaysOfTheWeek/>
+
+								<div className="w-full h-full bg-green-400 grid grid-cols-7">
+									<div className="h-[75px] max-h-[75px] w-full grid grid-rows-4 bg-zinc-50 border-t-2 border-b-2 border-neutral-200">
+										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
+										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
+										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
+										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
+									</div>
+								</div>
+
 							</div>
+
 						</div>
 
 					</div>
