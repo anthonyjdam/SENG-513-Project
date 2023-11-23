@@ -8,6 +8,7 @@ import Sidebar from "@/component/Sidebar";
 import RowTime from "@/component/RowTime";
 import DaysOfTheWeek from "@/component/DaysOfTheWeek";
 import CalendarCell from "@/component/CalendarCell";
+import TimesColumn from "@/component/TimesColumn";
 
 
 export default function Home() {
@@ -30,11 +31,16 @@ export default function Home() {
 	};
 
 	const [dateArr, setDateArr] = useState<MyDate[]>([]);
+	// const startTime = 6
+	// const endTime = 9
 
 	useEffect(() => {
 		handleGetDaysOfWeek();
 	}, [])
 
+	/**
+	 * creates the daysOfTheWeek component attributes
+	 */
 	function handleGetDaysOfWeek() {
 		const dayOfTheWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
 		const currentDate = new Date();
@@ -52,7 +58,7 @@ export default function Home() {
 			newDateArr.push({
 				//start on sunday
 				dayOfTheWeek: dayOfTheWeek[startDayIndex],
-				 // calculate the currentDayOfMonth by subtracting the offset that is the currentDayOfWeek
+				// calculate the currentDayOfMonth by subtracting the offset that is the currentDayOfWeek
 				dayNumber: ((currentDayOfMonth - offset) % 31), // mod with 31 to loop to start of month
 			});
 
@@ -63,6 +69,12 @@ export default function Home() {
 		setDateArr(newDateArr);
 	}
 
+	/**
+	 * creates the cells in the calendar
+	 * 
+	 * @param count: the number of cells to generate
+	 * @returns calendarCells: the cells as a component
+	 */
 	function generateCalendarCells(count: number) {
 		const calendarCells = [];
 
@@ -73,7 +85,36 @@ export default function Home() {
 		return calendarCells;
 	}
 
-	const calendarCells = generateCalendarCells(105);
+	const calendarCells = generateCalendarCells(7*16);
+
+
+	/**
+	 * TODO have time range param
+	 * 
+	 * @returns timeArr: the array of times
+	 */
+	function generateTimes() {
+		let timesArr = [];
+
+		for (let i = 6; i < 22; i++) {
+			let time;
+
+			if (i > 11) {
+				time = i % 12; // for times PM
+				time = time === 0 ? 12 : time; // fro 12 PM
+				time = time.toString() + " PM";
+			} else {
+				time = i; // for times AM
+				time = time === 0 ? 12 : time; // for 12 AM
+				time = time.toString() + " AM";
+			}
+
+			timesArr.push(time);
+		}
+
+		return timesArr;
+	}
+
 
 
 	return (
@@ -95,15 +136,11 @@ export default function Home() {
 								{/* <div className="bg-white flex flex-row w-[50px]"></div> */}
 								<div className="bg-white h-[75px] min-h-[75px]"></div>
 
-								<div className='h-[75px] flex flex-row items-start justify-center text-xs font-bold'>
-									7 AM
-								</div>
-								<div className='h-[75px] flex flex-row items-start justify-center text-xs font-bold'>
-									8 AM
-								</div>
-								<div className='h-[75px] flex flex-row items-start justify-center text-xs font-bold'>
-									9 AM
-								</div>
+								{generateTimes().map((time) => (
+									<TimesColumn
+										time={time}
+									/>
+								))}
 
 							</div>
 
@@ -124,7 +161,7 @@ export default function Home() {
 									</div>
 								</div>
 
-								<div className="w-full h-full bg-white grid grid-cols-7 grid-rows-15">
+								<div className="w-full h-full bg-white grid grid-cols-7">
 									{calendarCells}
 								</div>
 							</div>
