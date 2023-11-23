@@ -1,35 +1,13 @@
 "use client"
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { trpc } from "@/lib/trpc";
-import Array from "@/component/Array";
 import Sidebar from "@/component/Sidebar";
 import RowTime from "@/component/RowTime";
 import DaysOfTheWeek from "@/component/DaysOfTheWeek";
-
-
-interface Date {
-	month: Date;
-	day: Date;
-}
-
-function handleGetDaysOfWeek () {
-	interface Date {
-		dayOfTheWeek: Date;
-		dayNumber: Date;
-	}; 
-	let dateArr: Date[];
-	let dayOfTheWeek;
-	let dayNumber;
-
-	const currentDate = new Date();
-
-	for(let i = 0; i < 7; i++) {
-		
-	}
-}
+import CalendarCell from "@/component/CalendarCell";
 
 
 export default function Home() {
@@ -45,6 +23,57 @@ export default function Home() {
 		});
 	});
 
+
+	interface MyDate {
+		dayOfTheWeek: string;
+		dayNumber: number;
+	};
+
+	const [dateArr, setDateArr] = useState<MyDate[]>([]);
+
+	useEffect(() => {
+		handleGetDaysOfWeek();
+	}, [])
+
+	function handleGetDaysOfWeek() {
+		const dayOfTheWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
+		const currentDate = new Date();
+
+		let currentDayOfMonth = currentDate.getDate(); // get the current day of the month
+		let offset = currentDate.getDay(); // get the current day of week starting w/ sunday at 0
+		let startDayIndex = dayOfTheWeek.indexOf('SUN'); //index of sunday is the start of the week
+
+		const newDateArr: MyDate[] = [];
+		console.log(startDayIndex)
+
+		for (let i = 0; i < 7; i++) {
+			startDayIndex = startDayIndex % 7; // itterate through days of the week
+
+			newDateArr.push({
+				//start on sunday
+				dayOfTheWeek: dayOfTheWeek[startDayIndex],
+				 // calculate the currentDayOfMonth by subtracting the offset that is the currentDayOfWeek
+				dayNumber: ((currentDayOfMonth - offset) % 31), // mod with 31 to loop to start of month
+			});
+
+			startDayIndex++;
+			currentDayOfMonth++; // increment the current day to get the next day
+		}
+
+		setDateArr(newDateArr);
+	}
+
+	function generateCalendarCells(count: number) {
+		const calendarCells = [];
+
+		for (let index = 0; index < count; index++) {
+			//TODO: MAKE KEY MEANINGFUL SO YOU CAN ENTER EVENTS EASILY
+			calendarCells.push(<CalendarCell cellKey={index} />);
+		}
+		return calendarCells;
+	}
+
+	const calendarCells = generateCalendarCells(105);
 
 
 	return (
@@ -80,19 +109,24 @@ export default function Home() {
 
 							{/* <RowTime/> */}
 
+
+
 							<div className="w-full h-full flex flex-col">
 
-								<DaysOfTheWeek/>
-
-								<div className="w-full h-full bg-green-400 grid grid-cols-7">
-									<div className="h-[75px] max-h-[75px] w-full grid grid-rows-4 bg-zinc-50 border-t-2 border-b-2 border-neutral-200">
-										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
-										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
-										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
-										<div className="h-[25%] max-h-[25%] border-t border-neutral-200"></div>
+								<div className="w-full h-[75px] min-h-[75px]">
+									<div className="h-full grid grid-cols-7">
+										{dateArr.map((date) => (
+											<DaysOfTheWeek
+												dayOfTheWeek={date.dayOfTheWeek}
+												dayNumber={date.dayNumber}
+											/>
+										))}
 									</div>
 								</div>
 
+								<div className="w-full h-full bg-white grid grid-cols-7 grid-rows-15">
+									{calendarCells}
+								</div>
 							</div>
 
 						</div>
