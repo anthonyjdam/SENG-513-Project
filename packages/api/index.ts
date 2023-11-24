@@ -81,23 +81,23 @@ app.listen(PORT, () => {
 	console.log("listening on port " + PORT);
 });
 
-// try {
-// 	connectDB();
+try {
+	connectDB();
 
-// 	// Example: Creating a new user
-// 	const newUser = new UserModel({
-// 		username: "john_doe",
-// 		password: "secure_password",
-// 	});
+	// Example: Creating a new user
+	const newUser = new UserModel({
+		username: "antony",
+		password: "anth0ny",
+	});
 
-// 	newUser
-// 		.save()
-// 		.then((savedUser) => {
-// 			console.log("User saved successfully:", savedUser);
-// 		})
-// 		.catch((error) => {
-// 			console.error("Error saving user:", error);
-// 		});
-// } catch (err) {
-// 	console.log(err);
-// }
+	newUser
+		.save()
+		.then((savedUser: any) => {
+			console.log("User saved successfully:", savedUser);
+		})
+		.catch((error: any) => {
+			console.error("Error saving user:", error);
+		});
+} catch (err) {
+	console.log(err);
+}

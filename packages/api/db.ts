@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
+import "dotenv/config";
 
 export async function connectDB() {
-    return await mongoose.connect('mongodb+srv://opengym:opengym@cluster0.ez83orx.mongodb.net/?retryWrites=true&w=majority');
+	return await mongoose.connect(process.env.MONGO_URI || "https://localhost:8000");
 }
