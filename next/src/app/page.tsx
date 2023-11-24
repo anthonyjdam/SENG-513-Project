@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,9 +10,9 @@ import DaysOfTheWeek from "@/component/DaysOfTheWeek";
 import CalendarCell from "@/component/CalendarCell";
 import TimesColumn from "@/component/TimesColumn";
 
+import { Topbar } from "@/component/Topbar";
 
 export default function Home() {
-
 	const [queryClient] = useState(() => new QueryClient());
 	const [trpcClient] = useState(() => {
 		return trpc.createClient({
@@ -23,7 +23,6 @@ export default function Home() {
 			],
 		});
 	});
-
 
 	interface MyDate {
 		dayOfTheWeek: string;
@@ -85,7 +84,7 @@ export default function Home() {
 		return calendarCells;
 	}
 
-	const calendarCells = generateCalendarCells(7*16);
+	const calendarCells = generateCalendarCells(7 * 16);
 
 
 	/**
@@ -115,68 +114,70 @@ export default function Home() {
 		return timesArr;
 	}
 
-
-
 	return (
 		<trpc.Provider queryClient={queryClient} client={trpcClient}>
 			<QueryClientProvider client={queryClient}>
 				<main className="flex flex-row min-h-screen">
+					<div className="relative">
+						<Sidebar />
+					</div>
 
-					{/* <Sidebar /> */}
-
-					<div className="flex flex-col w-full">
-
-						<div className="bg-indigo-600 w-full h-[50px]">
-							Top
-						</div>
+					<div className="flex flex-grow flex-col">
+						<Topbar />
 
 						<div className="flex flex-row h-full">
 
-							<div className='bg-white text-zinc-500 w-[60px]'>
-								{/* <div className="bg-white flex flex-row w-[50px]"></div> */}
-								<div className="bg-white h-[75px] min-h-[75px]"></div>
 
-								{generateTimes().map((time) => (
-									<TimesColumn
-										time={time}
-									/>
-								))}
+							{/* <Sidebar /> */}
 
-							</div>
-
-							{/* <RowTime/> */}
+							<div className="flex flex-col w-full">
 
 
+								<div className="flex flex-row h-full">
 
-							<div className="w-full h-full flex flex-col">
+									<div className='bg-white text-zinc-500 w-[60px]'>
+										{/* <div className="bg-white flex flex-row w-[50px]"></div> */}
+										<div className="bg-white h-[75px] min-h-[75px]"></div>
 
-								<div className="w-full h-[75px] min-h-[75px]">
-									<div className="h-full grid grid-cols-7">
-										{dateArr.map((date) => (
-											<DaysOfTheWeek
-												dayOfTheWeek={date.dayOfTheWeek}
-												dayNumber={date.dayNumber}
+										{generateTimes().map((time) => (
+											<TimesColumn
+												time={time}
 											/>
 										))}
+
 									</div>
+
+									{/* <RowTime/> */}
+
+
+
+									<div className="w-full h-full flex flex-col">
+
+										<div className="w-full h-[75px] min-h-[75px]">
+											<div className="h-full grid grid-cols-7">
+												{dateArr.map((date) => (
+													<DaysOfTheWeek
+														dayOfTheWeek={date.dayOfTheWeek}
+														dayNumber={date.dayNumber}
+													/>
+												))}
+											</div>
+										</div>
+
+										<div className="w-full bg-white grid grid-cols-7">
+											{calendarCells}
+										</div>
+									</div>
+
 								</div>
 
-								<div className="w-full h-full bg-white grid grid-cols-7">
-									{calendarCells}
-								</div>
 							</div>
-
-						</div>
-
-					</div>
-
-
-
-
-
-					{/* <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+							{/* <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
 						<Array />
 					</div> */}
+
+						</div>
+					</div>
 				</main>
 			</QueryClientProvider>
 		</trpc.Provider>

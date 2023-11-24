@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appRouter = exports.router = exports.t = void 0;
+const zod_1 = require("zod");
 const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 const express_1 = __importDefault(require("express"));
@@ -54,17 +55,37 @@ exports.appRouter = exports.t.router({
     getHello: exports.t.procedure.query(() => {
         return [1, 2, 4, 5, 6];
     }),
+    changeName: exports.t.procedure
+        .input(zod_1.z.object({ username: zod_1.z.string() }))
+        .mutation(({ ctx, input }) => {
+        console.log(input.username);
+    }),
+    createActivity: exports.t.procedure
+        .input(zod_1.z.object({
+        activity: zod_1.z.string(),
+        startTime: zod_1.z.string(),
+        endTime: zod_1.z.string(),
+        date: zod_1.z.string(),
+        location: zod_1.z.string(),
+    }))
+        .mutation(({ ctx, input }) => {
+        console.log(`client says: ${input.startTime}`);
+    }),
     // TODO: Make procedures, ideally in another file for organization
 });
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
-app.use('/trpc', trpcExpress.createExpressMiddleware({
+app.use("/trpc", trpcExpress.createExpressMiddleware({
     router: exports.appRouter,
     createContext,
 }));
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     res.send("Hello");
 });
 app.listen(PORT, () => {
     console.log("listening on port " + PORT);
+});
+const scrape_1 = require("./scrape");
+(0, scrape_1.scrapeSchedule)().then((returnVal) => {
+    console.log(returnVal);
 });
