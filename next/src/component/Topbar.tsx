@@ -1,21 +1,17 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { UserButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+import Image from "next/image";
+import { SignInButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 export const Topbar = () => {
   const [count, setCount] = useState(0);
   const [view, setView] = useState("w");
+  const { isSignedIn } = useAuth();
+  const { user, isLoaded } = useUser();
+
+  console.log(user);
 
   return (
     <div className="flex justify-between mx-3 py-4">
@@ -65,42 +61,16 @@ export const Topbar = () => {
         </button>
       </div>
 
-      <div className="flex space-x-2">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">Login</Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Edit profile</SheetTitle>
-              <SheetDescription>
-                Make changes to your profile here. Click save when you are done.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input id="name" value="Pedro Duarte" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="username" className="text-right">
-                  Username
-                </Label>
-                <Input id="username" value="@peduarte" className="col-span-3" />
-              </div>
-            </div>
-            <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit">Save changes</Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
-        <p>settings</p>
-        <p>profile</p>
-      </div>
+      {isSignedIn ? (
+        <div className="flex space-x-2">
+          <Image src="/setting.svg" width={30} height={30} alt="" />
+          <UserButton afterSignOutUrl="/" />
+        </div>
+      ) : (
+        <button className="py-0.5 px-2 rounded-md text-white bg-red-500">
+          <SignInButton mode="modal" />
+        </button>
+      )}
     </div>
   );
 };
