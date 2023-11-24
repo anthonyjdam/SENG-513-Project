@@ -86,23 +86,23 @@
 
 
 
-import mongoose, { Document, Schema } from 'mongoose';
+// import mongoose, { Document, Schema } from 'mongoose';
 
-const userPersonalSchedModel = new Schema<userPersonalSchedDocument>({
-  date: { type: Date, required: true },
-  startTime: { type: String, required: true },
-  endTime: { type: String, required: true },
+// const userPersonalSchedModel = new Schema<userPersonalSchedDocument>({
+//   date: { type: Date, required: true },
+//   startTime: { type: String, required: true },
+//   endTime: { type: String, required: true },
   
-});
+// });
 
-// Schema for the user's personal schedule
-interface userPersonalSchedDocument extends Document {
-  date: Date;
-  startTime: string;
-  endTime: string;
-  }
+// // Schema for the user's personal schedule
+// interface userPersonalSchedDocument extends Document {
+//   date: Date;
+//   startTime: string;
+//   endTime: string;
+//   }
 
 
-const UserPersonalSchedModel = mongoose.model<userPersonalSchedDocument>('UserPersonalSched', userPersonalSchedModel);
+// const UserPersonalSchedModel = mongoose.model<userPersonalSchedDocument>('UserPersonalSched', userPersonalSchedModel);
 
- export { UserPersonalSchedModel, userPersonalSchedDocument };
+//  export { UserPersonalSchedModel, userPersonalSchedDocument };

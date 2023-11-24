@@ -36,23 +36,28 @@
 // export const UserModel = mongoose.model<UserDocument>('User', userModel);
 
 import mongoose, { Document, Schema, Types } from 'mongoose';
-import { UserPersonalSchedModel, userPersonalSchedDocument } from './UserPersonalSchedule';
+// import { UserPersonalSchedModel, userPersonalSchedDocument } from './UserPersonalSchedule';
 
 
-const userModel = new Schema<UserDocument>({
-  username: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-  email: { type: String },
-  personalSchedules: [{ type: Types.ObjectId, ref: 'UserPersonalSchedule' }],
-});
+
+interface ScheduleDetails {
+  day: string;
+  startTime: string;
+  endTime: string;
+}
 
 interface UserDocument extends Document {
   username: string;
-  password: string;
-  email: string;
-  personalSchedules?: userPersonalSchedDocument[] | Types.ObjectId[];
+  personalSchedules?: ScheduleDetails[];
 }
-
+const userModel = new Schema<UserDocument>({
+  username: { type: String, unique: true, required: true },
+  personalSchedules:[
+    {
+      day: { type: String, required: true },
+      startTime: { type: String, required: true },
+      endTime: { type: String, required: true },
+},]});
 const UserModel = mongoose.model<UserDocument>('User', userModel);
 
 export { UserModel, UserDocument };

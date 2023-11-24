@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 
 const gymScheduleModel = new Schema<GymScheduleDocument>({
-  date: { type: Date, required: true },
+  date: { type: String, required: true },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
   location: { type: String, required: true },
@@ -10,7 +10,7 @@ const gymScheduleModel = new Schema<GymScheduleDocument>({
 });
 
 interface GymScheduleDocument extends Document {
-    date: Date;
+    date: String;
     startTime: string;
     endTime: string;
     location: string;

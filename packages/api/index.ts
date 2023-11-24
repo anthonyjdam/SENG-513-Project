@@ -5,7 +5,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./db";
 import { UserModel } from "./models/User";
-import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
+// import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
 import { GymScheduleModel } from "./models/GymSchedule";
 
 const PORT = process.env.port || 5000;
@@ -110,11 +110,11 @@ try {
 	  const createGymSchedule = async () => {
 		try {
 		  const newGymSchedule = new GymScheduleModel({
-			date: new Date(),
-			startTime: '08:00 AM',
-			endTime: '10:00 AM',
-			location: 'Fitness Center',
-			activityName: 'Cardio',
+			date: 'wed, Nov 22',
+  			startTime: '06:00 AM',
+  			endTime: '07:15 AM',
+  			location: 'Gold Gym',
+  			activityName: 'Drop In Open Gym Time',
 		  });
 	  
 		  const savedGymSchedule = await newGymSchedule.save();
@@ -125,6 +125,44 @@ try {
 	  };
 	  
 	  createGymSchedule();
+
+
+
+
+	  const createPersonalSchedule = async () => {
+		try {
+		  // Find the user by username
+		  const user = await UserModel.findOne({ username: 'john_doe' });
+	  
+		  if (user) {
+			
+			if (!user.personalSchedules) {
+			  user.personalSchedules = [];
+			}
+	  
+			// Create a new personal schedule for the user (array)
+			const newPersonalSchedule = {
+			  day: 'Monday',
+			  startTime: '05:00 PM',
+			  endTime: '07:00 PM',
+			};
+	  
+			// Add the personal schedule to the user's array of personalSchedules
+			user.personalSchedules.push(newPersonalSchedule);
+	  
+			// Save the updated user
+			const savedUser = await user.save();
+			console.log('User with personal schedule:', savedUser);
+		  } else {
+			console.error('User not found.');
+		  }
+		} catch (error) {
+		  console.error('Error creating personal schedule:', error);
+		}
+	  };
+	  
+	  createPersonalSchedule();
+	  
 
 
 	//   const createPersonalSchedule = async () => {
@@ -166,40 +204,40 @@ try {
 
 
 
-	  const createPersonalSchedule = async () => {
-		try {
-		  const newPersonalSchedule = new UserPersonalSchedModel({
-			date: new Date(),
-			startTime: '010:00 AM',
-			endTime: '11:00 AM',
-		  });
+// 	  const createPersonalSchedule = async () => {
+// 		try {
+// 		  const newPersonalSchedule = new UserPersonalSchedModel({
+// 			date: new Date(),
+// 			startTime: '010:00 AM',
+// 			endTime: '11:00 AM',
+// 		  });
 	  
-		  const savedPersonalSchedule = await newPersonalSchedule.save();
-		  console.log('Personal schedule created:', savedPersonalSchedule);
+// 		  const savedPersonalSchedule = await newPersonalSchedule.save();
+// 		  console.log('Personal schedule created:', savedPersonalSchedule);
 	  
-		  // Associate the personal schedule with a user 
-		  const user = await UserModel.findOne({ username: "john_doe" });
+// 		  // Associate the personal schedule with a user 
+// 		  const user = await UserModel.findOne({ username: "john_doe" });
 
-		  if (user) {
-			// Check if personalSchedules is defined
-			if (user.personalSchedules) {
-			  user.personalSchedules.push(savedPersonalSchedule._id);
-			} else {
-			  // If personalSchedules is undefined, initialize it as an array
-			  user.personalSchedules = [savedPersonalSchedule._id];
-			}
+// 		  if (user) {
+// 			// Check if personalSchedules is defined
+// 			if (user.personalSchedules) {
+// 			  user.personalSchedules.push(savedPersonalSchedule._id);
+// 			} else {
+// 			  // If personalSchedules is undefined, initialize it as an array
+// 			  user.personalSchedules = [savedPersonalSchedule._id];
+// 			}
 		  
-			await user.save();
-			console.log('Personal schedule associated with user:', user);
-		  } else {
-			console.error('User not found.');
-		  }
-		} catch (error) {
-		  console.error('Error creating personal schedule:', error);
-		}
-	  };
+// 			await user.save();
+// 			console.log('Personal schedule associated with user:', user);
+// 		  } else {
+// 			console.error('User not found.');
+// 		  }
+// 		} catch (error) {
+// 		  console.error('Error creating personal schedule:', error);
+// 		}
+// 	  };
 	  
-	  createPersonalSchedule();
+// 	  createPersonalSchedule();
 
 	
 }
