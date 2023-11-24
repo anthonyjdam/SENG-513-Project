@@ -6,7 +6,7 @@ import Image from "next/image";
 function Sidebar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   return (
-    <aside className="overflow-y-auto bg-zinc-900 text-white">
+    <aside className="overflow-y-auto bg-zinc-900 text-white fixed">
       <Calendar
         mode="single"
         selected={date}
