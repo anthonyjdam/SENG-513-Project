@@ -82,13 +82,33 @@ export const Schedule = () => {
 						{times.map((time, index) => (
 							<div
 								key={`${day}-${time}`}
-								className={`h-5 w-full border-t ${index % 4 === 0 ? 'border-neutral-200' : 'border-neutral-100'}`}
+								className={`h-5 w-full border-t relative ${
+									index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
+								}`}
 							>
-								{time === "8:00 AM" ? (
-									<div className={`bg-rose-500/10 border-l-2 h-20 z-10 opacity-50 rounded-l-md border`}>
-										<p>volleyball</p>
-									</div>
-								) : null}
+								<div className="absolute w-full flex">
+									{time === "8:00 AM" && day.dayOfTheWeek === "MON" ? (
+										<div
+											className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+										>
+											<p className="break-all leading-4">volleyball</p>
+										</div>
+									) : null}
+									{time === "8:30 AM" && day.dayOfTheWeek === "MON" ? (
+										<div
+											className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+										>
+											<p className="break-all leading-4">volleyball</p>
+										</div>
+									) : null}
+									{time === "8:00 AM" && day.dayOfTheWeek === "MON" ? (
+										<div
+											className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+										>
+											<p className="break-all leading-4">volleyball</p>
+										</div>
+									) : null}
+								</div>
 							</div>
 						))}
 					</div>
