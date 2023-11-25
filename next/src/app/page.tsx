@@ -95,7 +95,7 @@ export default function Home() {
   function generateTimes() {
     let timesArr = [];
 
-    for (let i = 6; i < 22; i++) {
+    for (let i = 6; i < 24; i++) {
       let time;
 
       if (i > 11) {
@@ -139,8 +139,8 @@ export default function Home() {
                   {/* <RowTime/> */}
 
                   <div className="w-full h-full flex flex-col">
-                    <div className="w-full h-[75px] min-h-[75px]">
-                      <div className="h-full grid grid-cols-7">
+                    {/* <div className="w-full h-[75px] min-h-[75px]">
+                      <div className="w-full h-full flex">
                         {dateArr.map((date) => (
                           <DaysOfTheWeek
                             key={date.dayNumber}
@@ -149,7 +149,7 @@ export default function Home() {
                           />
                         ))}
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* 
                     <div className="w-full bg-white grid grid-cols-7">
