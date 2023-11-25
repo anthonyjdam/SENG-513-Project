@@ -11,6 +11,7 @@ import CalendarCell from "@/component/CalendarCell";
 import TimesColumn from "@/component/TimesColumn";
 
 import { Topbar } from "@/component/Topbar";
+import { Schedule } from "@/component/Schedule";
 
 export default function Home() {
   const [queryClient] = useState(() => new QueryClient());
@@ -131,7 +132,7 @@ export default function Home() {
                     <div className="bg-white h-[75px] min-h-[75px]"></div>
 
                     {generateTimes().map((time) => (
-                      <TimesColumn time={time} />
+                      <TimesColumn key={time} time={time} />
                     ))}
                   </div>
 
@@ -142,6 +143,7 @@ export default function Home() {
                       <div className="h-full grid grid-cols-7">
                         {dateArr.map((date) => (
                           <DaysOfTheWeek
+                            key={date.dayNumber}
                             dayOfTheWeek={date.dayOfTheWeek}
                             dayNumber={date.dayNumber}
                           />
@@ -149,9 +151,12 @@ export default function Home() {
                       </div>
                     </div>
 
+                    {/* 
                     <div className="w-full bg-white grid grid-cols-7">
                       {calendarCells}
                     </div>
+                    */}
+                    <Schedule />
                   </div>
                 </div>
               </div>
