@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appRouter = exports.router = exports.t = void 0;
+exports.appRouter = exports.router = exports.publicProcedure = exports.t = void 0;
 const zod_1 = require("zod");
 const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
@@ -38,6 +38,7 @@ const createContext = ({ req, res, }) => ({
 // TODO: CREATE context for each request where we provide the auth session and the db connection
 }); // no context
 exports.t = server_1.initTRPC.context().create();
+exports.publicProcedure = exports.t.procedure;
 exports.router = exports.t.router;
 exports.appRouter = exports.t.router({
     //   getUser: t.procedure.input(z.string()).query((opts) => {
@@ -84,8 +85,4 @@ app.get("/", (req, res) => {
 });
 app.listen(PORT, () => {
     console.log("listening on port " + PORT);
-});
-const scrape_1 = require("./scrape");
-(0, scrape_1.scrapeSchedule)().then((returnVal) => {
-    console.log(returnVal);
 });
