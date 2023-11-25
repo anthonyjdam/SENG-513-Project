@@ -9,9 +9,6 @@ export const Topbar = () => {
   const [count, setCount] = useState(0);
   const [view, setView] = useState("w");
   const { isSignedIn } = useAuth();
-  const { user, isLoaded } = useUser();
-
-  console.log(user);
 
   return (
     <div className="flex justify-between mx-3 py-4">
