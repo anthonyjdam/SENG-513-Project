@@ -18,7 +18,7 @@ function DaysOfTheWeek({ dayOfTheWeek, dayNumber }: DaysOfTheWeekProps) {
     return (
         <>
 
-            <div className="h-full bg-zinc-50 border-r border-neutral-200 p-2">
+            <div className="flex-grow h-full bg-zinc-50 border-r border-neutral-200 p-2">
                 <p className="text-zinc-500 text-xs font-semibold">
                     {dayOfTheWeek.toUpperCase()}
                 </p>
