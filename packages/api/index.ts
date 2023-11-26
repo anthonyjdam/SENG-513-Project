@@ -8,6 +8,7 @@ import { connectDB } from "./db";
 import { UserModel } from "./models/User";
 // import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
 import { GymScheduleModel } from "./models/GymSchedule";
+import { scrapeSchedule } from "./scrape";
 
 const PORT = process.env.port || 5000;
 
@@ -120,7 +121,7 @@ app.use(express.json());
 // } catch (err) {
 // 	console.log(err);
 //}
-
+/*
 try {
 	connectDB();
 	const createUser = async () => {
@@ -139,7 +140,6 @@ try {
 	};
 
 	createUser();
-
 
 	const createGymSchedule = async () => {
 		try {
@@ -198,7 +198,6 @@ try {
 	createPersonalSchedule();
 
 
-
 	//   const createPersonalSchedule = async () => {
 	// 	try {
 	// 	  const newPersonalSchedule = new UserPersonalSchedModel({
@@ -235,8 +234,19 @@ try {
 
 	//   createPersonalSchedule();
 
+	// 	  const createPersonalSchedule = async () => {
+	// 		try {
+	// 		  const newPersonalSchedule = new UserPersonalSchedModel({
+	// 			date: new Date(),
+	// 			startTime: '010:00 AM',
+	// 			endTime: '11:00 AM',
+	// 		  });
 
+	// 		  const savedPersonalSchedule = await newPersonalSchedule.save();
+	// 		  console.log('Personal schedule created:', savedPersonalSchedule);
 
+	// 		  // Associate the personal schedule with a user
+	// 		  const user = await UserModel.findOne({ username: "john_doe" });
 
 	// 	  const createPersonalSchedule = async () => {
 	// 		try {
@@ -272,9 +282,28 @@ try {
 	// 	  };
 
 	// 	  createPersonalSchedule();
-
-
-}
-catch (err) {
+} catch (err) {
 	console.log(err);
 }
+*/
+
+// import cron from 'node-cron';
+// cron.schedule("*/10 * * * *", () => {
+// 	console.log("running a task every 10 minutes");
+
+// 	scrapeSchedule().then(async (schedules) => {
+// 		try {
+// 			connectDB();
+// 			const result = await GymScheduleModel.deleteMany({});
+	
+	
+// 			for (let i = 0; i < schedules.length; i++) {
+// 				const newGymEvent = new GymScheduleModel(schedules[i]);
+// 				const savedGymSchedule = await newGymEvent.save();
+// 				console.log(savedGymSchedule);
+// 			}
+// 		} catch (error) {
+// 			console.error("Error creating gym schedule:", error);
+// 		}
+// 	});
+// });
