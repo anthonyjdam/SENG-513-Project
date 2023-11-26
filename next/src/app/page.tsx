@@ -12,6 +12,7 @@ import TimesColumn from "@/component/TimesColumn";
 
 import { Topbar } from "@/component/Topbar";
 import { Schedule } from "@/component/Schedule";
+import NewTest from "@/component/NewTest";
 
 export default function Home() {
   const [queryClient] = useState(() => new QueryClient());
@@ -160,9 +161,9 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              {/* <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-						<Array />
-					</div> */}
+              <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+                <NewTest />
+              </div>
             </div>
           </div>
         </main>
