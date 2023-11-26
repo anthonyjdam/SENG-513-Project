@@ -35,61 +35,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appRouter = exports.router = exports.t = void 0;
-const zod_1 = require("zod");
+exports.router = exports.publicProcedure = exports.t = void 0;
 const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const db_1 = require("./db");
 const User_1 = require("./models/User");
 // import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
 const GymSchedule_1 = require("./models/GymSchedule");
 const PORT = process.env.port || 5000;
-// created for each request
+/*Initialize tRPC API*/
 const createContext = ({ req, res, }) => ({
 // TODO: CREATE context for each request where we provide the auth session and the db connection
 }); // no context
-exports.t = server_1.initTRPC.context().create();
-exports.router = exports.t.router;
-exports.appRouter = exports.t.router({
-    //   getUser: t.procedure.input(z.string()).query((opts) => {
-    //     opts.input; // string
-    //     return { id: opts.input, name: 'Bilbo' };
-    //   }),
-    //   createUser: t.procedure
-    //     .input(z.object({ name: z.string().min(5) }))
-    //     .mutation(async (opts) => {
-    //       // use your ORM of choice
-    //       return await UserModel.create({
-    //         data: opts.input,
-    //       });
-    //     }),
-    getHello: exports.t.procedure.query(() => {
-        return [1, 2, 4, 5, 6];
-    }),
-    changeName: exports.t.procedure
-        .input(zod_1.z.object({ username: zod_1.z.string() }))
-        .mutation(({ ctx, input }) => {
-        console.log(input.username);
-    }),
-    createActivity: exports.t.procedure
-        .input(zod_1.z.object({
-        activity: zod_1.z.string(),
-        startTime: zod_1.z.string(),
-        endTime: zod_1.z.string(),
-        date: zod_1.z.string(),
-        location: zod_1.z.string(),
-    }))
-        .mutation(({ ctx, input }) => {
-        console.log(`client says: ${input.startTime}`);
-    }),
-    // TODO: Make procedures, ideally in another file for organization
-});
+exports.t = server_1.initTRPC.context().create(); // create an instance of the tRPC server
+exports.publicProcedure = exports.t.procedure; // export alias of t.procedure as publicProcedure
+exports.router = exports.t.router; // define router based on tRPC instance 
+//PUT PROCEDURE IMPORTS HERE
+// export const appRouter = t.router({
+// 	//   getUser: t.procedure.input(z.string()).query((opts) => {
+// 	//     opts.input; // string
+// 	//     return { id: opts.input, name: 'Bilbo' };
+// 	//   }),
+// 	//   createUser: t.procedure
+// 	//     .input(z.object({ name: z.string().min(5) }))
+// 	//     .mutation(async (opts) => {
+// 	//       // use your ORM of choice
+// 	//       return await UserModel.create({
+// 	//         data: opts.input,
+// 	//       });
+// 	//     }),
+// 	getHello: t.procedure.query(() => {
+// 		return [1, 2, 4, 5, 6];
+// 	}),
+// 	changeName: t.procedure
+// 		.input(z.object({ username: z.string() }))
+// 		.mutation(({ ctx, input }) => {
+// 			console.log(input.username);
+// 		}),
+// 	createActivity: t.procedure
+// 		.input(z.object({
+// 			activity: z.string(),
+// 			startTime: z.string(),
+// 			endTime: z.string(),
+// 			date: z.string(),
+// 			location: z.string(),
+// 		}))
+// 		.mutation(({ ctx, input }) => {
+// 			console.log(`client says: ${input.startTime}`)
+// 		}),
+// 	// TODO: Make procedures, ideally in another file for organization
+// });
+// Export type definition of API
+const app_1 = require("./routers/app");
+/*Initialize Express server*/
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use("/trpc", trpcExpress.createExpressMiddleware({
-    router: exports.appRouter,
+    router: app_1.appRouter,
     createContext,
 }));
 app.get("/", (req, res) => {
@@ -98,6 +103,13 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log("listening on port " + PORT);
 });
+/** Connect to mongoDB database */
+mongoose_1.default.connect(process.env.MONGO_URI || "http://localhost:5000/trpc"); // default to localhost
+const db = mongoose_1.default.connection;
+db.on('error', (error) => console.error(error)); // log error when failing to connect to databse
+db.once('open', () => console.log("Connected to Databse"));
+db.on('disconnected', () => console.log('Disconnected from MongoDB.'));
+app.use(express_1.default.json());
 // try {
 // 	connectDB();
 // 	// Example: Creating a new user
