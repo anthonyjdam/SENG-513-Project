@@ -7,6 +7,7 @@ import { connectDB } from "./db";
 import { UserModel } from "./models/User";
 // import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
 import { GymScheduleModel } from "./models/GymSchedule";
+import { scrapeSchedule } from "./scrape";
 
 const PORT = process.env.port || 5000;
 
@@ -42,21 +43,23 @@ export const appRouter = t.router({
 
 	changeName: t.procedure
 		.input(z.object({ username: z.string() }))
-		.mutation(( { ctx, input } ) => {
-      console.log(input.username);
-    }),
+		.mutation(({ ctx, input }) => {
+			console.log(input.username);
+		}),
 
-  createActivity: t.procedure
-    .input(z.object({
-      activity: z.string(),
-      startTime: z.string(),
-      endTime: z.string(),
-      date: z.string(),
-      location: z.string(),
-  }))
-    .mutation(({ ctx, input }) => {
-      console.log(`client says: ${input.startTime}`)
-    }),
+	createActivity: t.procedure
+		.input(
+			z.object({
+				activity: z.string(),
+				startTime: z.string(),
+				endTime: z.string(),
+				date: z.string(),
+				location: z.string(),
+			})
+		)
+		.mutation(({ ctx, input }) => {
+			console.log(`client says: ${input.startTime}`);
+		}),
 
 	// TODO: Make procedures, ideally in another file for organization
 });
@@ -100,7 +103,7 @@ app.listen(PORT, () => {
 //   .catch(error => {
 //     console.error('Error saving user:', error);
 //   });
-  
+
 // } catch (err) {
 // 	console.log(err);
 //}
@@ -109,79 +112,72 @@ try {
 	connectDB();
 	const createUser = async () => {
 		try {
-		  const newUser = new UserModel({
-			username: 'john_doe',
-			password: 'hashed_password',
-			email: 'john.doe@example.com',
-		  });
-	  
-		  const savedUser = await newUser.save();
-		  console.log('User created:', savedUser);
+			const newUser = new UserModel({
+				username: "john_doe",
+				password: "hashed_password",
+				email: "john.doe@example.com",
+			});
+
+			const savedUser = await newUser.save();
+			console.log("User created:", savedUser);
 		} catch (error) {
-		  console.error('Error creating user:', error);
+			console.error("Error creating user:", error);
 		}
-	  };
-	  
-	  createUser();
+	};
 
+	createUser();
 
-	  const createGymSchedule = async () => {
+	const createGymSchedule = async () => {
 		try {
-		  const newGymSchedule = new GymScheduleModel({
-			date: 'wed, Nov 22',
-  			startTime: '06:00 AM',
-  			endTime: '07:15 AM',
-  			location: 'Gold Gym',
-  			activityName: 'Drop In Open Gym Time',
-		  });
-	  
-		  const savedGymSchedule = await newGymSchedule.save();
-		  console.log('Gym schedule created:', savedGymSchedule);
+			const newGymSchedule = new GymScheduleModel({
+				date: "wed, Nov 22",
+				startTime: "06:00 AM",
+				endTime: "07:15 AM",
+				location: "Gold Gym",
+				activityName: "Drop In Open Gym Time",
+			});
+
+			const savedGymSchedule = await newGymSchedule.save();
+			console.log("Gym schedule created:", savedGymSchedule);
 		} catch (error) {
-		  console.error('Error creating gym schedule:', error);
+			console.error("Error creating gym schedule:", error);
 		}
-	  };
-	  
-	  createGymSchedule();
+	};
 
+	createGymSchedule();
 
-
-
-	  const createPersonalSchedule = async () => {
+	const createPersonalSchedule = async () => {
 		try {
-		  // Find the user by username
-		  const user = await UserModel.findOne({ username: 'john_doe' });
-	  
-		  if (user) {
-			
-			if (!user.personalSchedules) {
-			  user.personalSchedules = [];
+			// Find the user by username
+			const user = await UserModel.findOne({ username: "john_doe" });
+
+			if (user) {
+				if (!user.personalSchedules) {
+					user.personalSchedules = [];
+				}
+
+				// Create a new personal schedule for the user (array)
+				const newPersonalSchedule = {
+					day: "Monday",
+					startTime: "05:00 PM",
+					endTime: "07:00 PM",
+				};
+
+				// Add the personal schedule to the user's array of personalSchedules
+				user.personalSchedules.push(newPersonalSchedule);
+
+				// Save the updated user
+				const savedUser = await user.save();
+				console.log("User with personal schedule:", savedUser);
+			} else {
+				console.error("User not found.");
 			}
-	  
-			// Create a new personal schedule for the user (array)
-			const newPersonalSchedule = {
-			  day: 'Monday',
-			  startTime: '05:00 PM',
-			  endTime: '07:00 PM',
-			};
-	  
-			// Add the personal schedule to the user's array of personalSchedules
-			user.personalSchedules.push(newPersonalSchedule);
-	  
-			// Save the updated user
-			const savedUser = await user.save();
-			console.log('User with personal schedule:', savedUser);
-		  } else {
-			console.error('User not found.');
-		  }
 		} catch (error) {
-		  console.error('Error creating personal schedule:', error);
+			console.error("Error creating personal schedule:", error);
 		}
-	  };
-	  
-	  createPersonalSchedule();
-	  
+	};
 
+	createPersonalSchedule();
 
 	//   const createPersonalSchedule = async () => {
 	// 	try {
@@ -191,11 +187,11 @@ try {
 	// 		  { day: 'Wednesday', startTime: '10:00 AM', endTime: '06:00 PM' },
 	// 		],
 	// 	  });
-	  
+
 	// 	  const savedPersonalSchedule = await newPersonalSchedule.save();
 	// 	  console.log('Personal schedule created:', savedPersonalSchedule);
-	  
-	// 	  // Associate the personal schedule with a user 
+
+	// 	  // Associate the personal schedule with a user
 	// 	  const user = await UserModel.findOne({ username: "john_doe" });
 
 	// 	  if (user) {
@@ -206,7 +202,7 @@ try {
 	// 		  // If personalSchedules is undefined, initialize it as an array
 	// 		  user.personalSchedules = [savedPersonalSchedule._id];
 	// 		}
-		  
+
 	// 		await user.save();
 	// 		console.log('Personal schedule associated with user:', user);
 	// 	  } else {
@@ -216,49 +212,63 @@ try {
 	// 	  console.error('Error creating personal schedule:', error);
 	// 	}
 	//   };
-	  
+
 	//   createPersonalSchedule();
 
+	// 	  const createPersonalSchedule = async () => {
+	// 		try {
+	// 		  const newPersonalSchedule = new UserPersonalSchedModel({
+	// 			date: new Date(),
+	// 			startTime: '010:00 AM',
+	// 			endTime: '11:00 AM',
+	// 		  });
 
+	// 		  const savedPersonalSchedule = await newPersonalSchedule.save();
+	// 		  console.log('Personal schedule created:', savedPersonalSchedule);
 
+	// 		  // Associate the personal schedule with a user
+	// 		  const user = await UserModel.findOne({ username: "john_doe" });
 
-// 	  const createPersonalSchedule = async () => {
-// 		try {
-// 		  const newPersonalSchedule = new UserPersonalSchedModel({
-// 			date: new Date(),
-// 			startTime: '010:00 AM',
-// 			endTime: '11:00 AM',
-// 		  });
-	  
-// 		  const savedPersonalSchedule = await newPersonalSchedule.save();
-// 		  console.log('Personal schedule created:', savedPersonalSchedule);
-	  
-// 		  // Associate the personal schedule with a user 
-// 		  const user = await UserModel.findOne({ username: "john_doe" });
+	// 		  if (user) {
+	// 			// Check if personalSchedules is defined
+	// 			if (user.personalSchedules) {
+	// 			  user.personalSchedules.push(savedPersonalSchedule._id);
+	// 			} else {
+	// 			  // If personalSchedules is undefined, initialize it as an array
+	// 			  user.personalSchedules = [savedPersonalSchedule._id];
+	// 			}
 
-// 		  if (user) {
-// 			// Check if personalSchedules is defined
-// 			if (user.personalSchedules) {
-// 			  user.personalSchedules.push(savedPersonalSchedule._id);
-// 			} else {
-// 			  // If personalSchedules is undefined, initialize it as an array
-// 			  user.personalSchedules = [savedPersonalSchedule._id];
-// 			}
-		  
-// 			await user.save();
-// 			console.log('Personal schedule associated with user:', user);
-// 		  } else {
-// 			console.error('User not found.');
-// 		  }
-// 		} catch (error) {
-// 		  console.error('Error creating personal schedule:', error);
-// 		}
-// 	  };
-	  
-// 	  createPersonalSchedule();
+	// 			await user.save();
+	// 			console.log('Personal schedule associated with user:', user);
+	// 		  } else {
+	// 			console.error('User not found.');
+	// 		  }
+	// 		} catch (error) {
+	// 		  console.error('Error creating personal schedule:', error);
+	// 		}
+	// 	  };
 
-	
+	// 	  createPersonalSchedule();
+} catch (err) {
+	console.log(err);
 }
-catch (err) {
-	 	console.log(err);
-	}
+
+
+// import cron from 'node-cron';
+// cron.schedule("*/10 * * * *", () => {
+// 	console.log("running a task every 10 minutes");
+
+// 	scrapeSchedule().then(async (schedules) => {
+// 		try {
+// 			connectDB();
+
+// 			for (let i = 0; i < schedules.length; i++) {
+// 				const newGymEvent = new GymScheduleModel(schedules[i]);
+// 				const savedGymSchedule = await newGymEvent.save();
+// 				console.log(savedGymSchedule);
+// 			}
+// 		} catch (error) {
+// 			console.error("Error creating gym schedule:", error);
+// 		}
+// 	});
+// });
