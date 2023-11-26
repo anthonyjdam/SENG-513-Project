@@ -20,7 +20,7 @@ export default function Home() {
     return trpc.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:5000/trpc",
+          url: "http://localhost:5001/trpc",
         }),
       ],
     });
