@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
-import 'dotenv/config'
+import "dotenv/config";
 
 export async function connectDB() {
-    return await mongoose.connect(process.env.MONGO_URI || "https://localhost:8000");
+  console.log(process.env.MONGO_URI || "https://localhost:8000");
+  return await mongoose.connect(
+    process.env.MONGO_URI || "https://localhost:8000"
+  );
 }
