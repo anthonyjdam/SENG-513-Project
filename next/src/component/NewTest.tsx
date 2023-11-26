@@ -18,7 +18,6 @@ function NewTest() {
         location: "SomeLocation",
     };
 
-<<<<<<< HEAD
 	const schedules = trpc.schedule.getSchedules.useQuery()
 
 	return (
@@ -35,22 +34,6 @@ function NewTest() {
 			</button>
 		</div>
 	);
-=======
-    const createSched = trpc.schedule.createSchedule.useMutation();
-
-    return (
-        <div>
-            <button
-                onClick={() => {
-                    createSched.mutate(newSchedule)
-                    console.log(createSched.data);
-                }}
-            >
-                NEW TEST
-            </button>
-        </div>
-    );
->>>>>>> e85542a29a3aae5e590ef83ee6bb04614883b7f4
 }
 
 export default NewTest;

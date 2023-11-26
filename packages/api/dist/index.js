@@ -42,9 +42,9 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const db_1 = require("./db");
-const User_1 = require("./models/User");
 // import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
 const GymSchedule_1 = require("./models/GymSchedule");
+const scrape_1 = require("./scrape");
 const PORT = process.env.port || 5000;
 /*Initialize tRPC API*/
 const createContext = ({ req, res, }) => ({
@@ -127,69 +127,83 @@ app.use(express_1.default.json());
 // } catch (err) {
 // 	console.log(err);
 //}
+/*
 try {
-    (0, db_1.connectDB)();
-    const createUser = () => __awaiter(void 0, void 0, void 0, function* () {
+    connectDB();
+    const createUser = async () => {
         try {
-            const newUser = new User_1.UserModel({
+            const newUser = new UserModel({
                 username: 'john_doe',
                 password: 'hashed_password',
                 email: 'john.doe@example.com',
             });
-            const savedUser = yield newUser.save();
+
+            const savedUser = await newUser.save();
             console.log('User created:', savedUser);
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error creating user:', error);
         }
-    });
+    };
+
     createUser();
-    const createGymSchedule = () => __awaiter(void 0, void 0, void 0, function* () {
+
+    const createGymSchedule = async () => {
         try {
-            const newGymSchedule = new GymSchedule_1.GymScheduleModel({
+            const newGymSchedule = new GymScheduleModel({
                 date: 'wed, Nov 22',
                 startTime: '06:00 AM',
                 endTime: '07:15 AM',
                 location: 'Gold Gym',
                 activityName: 'Drop In Open Gym Time',
             });
-            const savedGymSchedule = yield newGymSchedule.save();
+
+            const savedGymSchedule = await newGymSchedule.save();
             console.log('Gym schedule created:', savedGymSchedule);
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error creating gym schedule:', error);
         }
-    });
+    };
+
     createGymSchedule();
-    const createPersonalSchedule = () => __awaiter(void 0, void 0, void 0, function* () {
+
+
+
+
+    const createPersonalSchedule = async () => {
         try {
             // Find the user by username
-            const user = yield User_1.UserModel.findOne({ username: 'john_doe' });
+            const user = await UserModel.findOne({ username: 'john_doe' });
+
             if (user) {
+
                 if (!user.personalSchedules) {
                     user.personalSchedules = [];
                 }
+
                 // Create a new personal schedule for the user (array)
                 const newPersonalSchedule = {
                     day: 'Monday',
                     startTime: '05:00 PM',
                     endTime: '07:00 PM',
                 };
+
                 // Add the personal schedule to the user's array of personalSchedules
                 user.personalSchedules.push(newPersonalSchedule);
+
                 // Save the updated user
-                const savedUser = yield user.save();
+                const savedUser = await user.save();
                 console.log('User with personal schedule:', savedUser);
-            }
-            else {
+            } else {
                 console.error('User not found.');
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error creating personal schedule:', error);
         }
-    });
+    };
+
     createPersonalSchedule();
+
+
     //   const createPersonalSchedule = async () => {
     // 	try {
     // 	  const newPersonalSchedule = new UserPersonalSchedModel({
@@ -198,10 +212,13 @@ try {
     // 		  { day: 'Wednesday', startTime: '10:00 AM', endTime: '06:00 PM' },
     // 		],
     // 	  });
+
     // 	  const savedPersonalSchedule = await newPersonalSchedule.save();
     // 	  console.log('Personal schedule created:', savedPersonalSchedule);
-    // 	  // Associate the personal schedule with a user 
+
+    // 	  // Associate the personal schedule with a user
     // 	  const user = await UserModel.findOne({ username: "john_doe" });
+
     // 	  if (user) {
     // 		// Check if personalSchedules is defined
     // 		if (user.personalSchedules) {
@@ -210,6 +227,7 @@ try {
     // 		  // If personalSchedules is undefined, initialize it as an array
     // 		  user.personalSchedules = [savedPersonalSchedule._id];
     // 		}
+
     // 		await user.save();
     // 		console.log('Personal schedule associated with user:', user);
     // 	  } else {
@@ -219,7 +237,9 @@ try {
     // 	  console.error('Error creating personal schedule:', error);
     // 	}
     //   };
+
     //   createPersonalSchedule();
+
     // 	  const createPersonalSchedule = async () => {
     // 		try {
     // 		  const newPersonalSchedule = new UserPersonalSchedModel({
@@ -227,10 +247,27 @@ try {
     // 			startTime: '010:00 AM',
     // 			endTime: '11:00 AM',
     // 		  });
+
     // 		  const savedPersonalSchedule = await newPersonalSchedule.save();
     // 		  console.log('Personal schedule created:', savedPersonalSchedule);
-    // 		  // Associate the personal schedule with a user 
+
+    // 		  // Associate the personal schedule with a user
     // 		  const user = await UserModel.findOne({ username: "john_doe" });
+
+    // 	  const createPersonalSchedule = async () => {
+    // 		try {
+    // 		  const newPersonalSchedule = new UserPersonalSchedModel({
+    // 			date: new Date(),
+    // 			startTime: '010:00 AM',
+    // 			endTime: '11:00 AM',
+    // 		  });
+
+    // 		  const savedPersonalSchedule = await newPersonalSchedule.save();
+    // 		  console.log('Personal schedule created:', savedPersonalSchedule);
+
+    // 		  // Associate the personal schedule with a user
+    // 		  const user = await UserModel.findOne({ username: "john_doe" });
+
     // 		  if (user) {
     // 			// Check if personalSchedules is defined
     // 			if (user.personalSchedules) {
@@ -239,6 +276,7 @@ try {
     // 			  // If personalSchedules is undefined, initialize it as an array
     // 			  user.personalSchedules = [savedPersonalSchedule._id];
     // 			}
+
     // 			await user.save();
     // 			console.log('Personal schedule associated with user:', user);
     // 		  } else {
@@ -248,8 +286,27 @@ try {
     // 		  console.error('Error creating personal schedule:', error);
     // 		}
     // 	  };
+
     // 	  createPersonalSchedule();
-}
-catch (err) {
+} catch (err) {
     console.log(err);
 }
+*/
+const node_cron_1 = __importDefault(require("node-cron"));
+node_cron_1.default.schedule("*/10 * * * *", () => {
+    console.log("running a task every 10 minutes");
+});
+(0, scrape_1.scrapeSchedule)().then((schedules) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        (0, db_1.connectDB)();
+        const result = yield GymSchedule_1.GymScheduleModel.deleteMany({});
+        for (let i = 0; i < schedules.length; i++) {
+            const newGymEvent = new GymSchedule_1.GymScheduleModel(schedules[i]);
+            const savedGymSchedule = yield newGymEvent.save();
+            console.log(savedGymSchedule);
+        }
+    }
+    catch (error) {
+        console.error("Error creating gym schedule:", error);
+    }
+}));
