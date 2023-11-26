@@ -8,9 +8,44 @@ const ActivitySchema = z.object({
 	endTime: z.string(),
 	date: z.string(),
 	location: z.string(),
+	duration: z.number(),
 });
 
 type Activity = z.infer<typeof ActivitySchema>;
+
+// Function to calculate duration in minutes
+const calculateDuration = (start: String, end: String) => {
+	// Split start and end times into hours, minutes, and AM/PM
+	const [startHour, startMinute, startPeriod] = start.split(/:| /);
+	const [endHour, endMinute, endPeriod] = end.split(/:| /);
+  
+	// Convert hours and minutes to numbers
+	const startHourNum = parseInt(startHour, 10);
+	const startMinuteNum = parseInt(startMinute, 10);
+	const endHourNum = parseInt(endHour, 10);
+	const endMinuteNum = parseInt(endMinute, 10);
+  
+	// Calculate total minutes for start and end times
+	let startTimeInMinutes = startHourNum * 60 + startMinuteNum;
+	let endTimeInMinutes = endHourNum * 60 + endMinuteNum;
+  
+	// Adjust time for PM period
+	if (startPeriod === 'PM' && startHourNum !== 12) {
+	  startTimeInMinutes += 12 * 60;
+	}
+	if (endPeriod === 'PM' && endHourNum !== 12) {
+	  endTimeInMinutes += 12 * 60;
+	}
+  
+	// Calculate duration in minutes
+	let duration = endTimeInMinutes - startTimeInMinutes;
+	if (duration < 0) {
+	  duration += 24 * 60; // If end time is before start time, add a day (24 hours) to the duration
+	}
+  
+	return duration;
+  };
+
 
 export const scrapeSchedule = async () => {
 	const { data: html } = await axios.get(
@@ -25,17 +60,23 @@ export const scrapeSchedule = async () => {
 		.children()
 		.each((i, elem) => {
 			if (i !== 0) {  // Skip the first row in the table, its the table headers
+
+				const start = $($(elem).children().get(1)).text()
+				const end = $($(elem).children().get(2)).text()
+
 				const activity: Activity = {
 					date: $($(elem).children().get(0)).text().trimEnd(),
-					startTime: $($(elem).children().get(1)).text(),
-					endTime: $($(elem).children().get(2)).text(),
+					startTime: start,
+					endTime: end,
 					location: $($(elem).children().get(3)).text(),
 					activityName: $($(elem).children().get(4)).text(),
+					duration: calculateDuration(start, end),
 				};
 
 				activities.push(activity);
 			}
 		});
+
     
     return activities;
 };
