@@ -35,8 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appRouter = exports.router = exports.publicProcedure = exports.t = void 0;
-const zod_1 = require("zod");
+exports.router = exports.publicProcedure = exports.t = void 0;
 const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 const express_1 = __importDefault(require("express"));
@@ -55,45 +54,47 @@ exports.t = server_1.initTRPC.context().create(); // create an instance of the t
 exports.publicProcedure = exports.t.procedure; // export alias of t.procedure as publicProcedure
 exports.router = exports.t.router; // define router based on tRPC instance 
 //PUT PROCEDURE IMPORTS HERE
-exports.appRouter = exports.t.router({
-    //   getUser: t.procedure.input(z.string()).query((opts) => {
-    //     opts.input; // string
-    //     return { id: opts.input, name: 'Bilbo' };
-    //   }),
-    //   createUser: t.procedure
-    //     .input(z.object({ name: z.string().min(5) }))
-    //     .mutation(async (opts) => {
-    //       // use your ORM of choice
-    //       return await UserModel.create({
-    //         data: opts.input,
-    //       });
-    //     }),
-    getHello: exports.t.procedure.query(() => {
-        return [1, 2, 4, 5, 6];
-    }),
-    changeName: exports.t.procedure
-        .input(zod_1.z.object({ username: zod_1.z.string() }))
-        .mutation(({ ctx, input }) => {
-        console.log(input.username);
-    }),
-    createActivity: exports.t.procedure
-        .input(zod_1.z.object({
-        activity: zod_1.z.string(),
-        startTime: zod_1.z.string(),
-        endTime: zod_1.z.string(),
-        date: zod_1.z.string(),
-        location: zod_1.z.string(),
-    }))
-        .mutation(({ ctx, input }) => {
-        console.log(`client says: ${input.startTime}`);
-    }),
-    // TODO: Make procedures, ideally in another file for organization
-});
+// export const appRouter = t.router({
+// 	//   getUser: t.procedure.input(z.string()).query((opts) => {
+// 	//     opts.input; // string
+// 	//     return { id: opts.input, name: 'Bilbo' };
+// 	//   }),
+// 	//   createUser: t.procedure
+// 	//     .input(z.object({ name: z.string().min(5) }))
+// 	//     .mutation(async (opts) => {
+// 	//       // use your ORM of choice
+// 	//       return await UserModel.create({
+// 	//         data: opts.input,
+// 	//       });
+// 	//     }),
+// 	getHello: t.procedure.query(() => {
+// 		return [1, 2, 4, 5, 6];
+// 	}),
+// 	changeName: t.procedure
+// 		.input(z.object({ username: z.string() }))
+// 		.mutation(({ ctx, input }) => {
+// 			console.log(input.username);
+// 		}),
+// 	createActivity: t.procedure
+// 		.input(z.object({
+// 			activity: z.string(),
+// 			startTime: z.string(),
+// 			endTime: z.string(),
+// 			date: z.string(),
+// 			location: z.string(),
+// 		}))
+// 		.mutation(({ ctx, input }) => {
+// 			console.log(`client says: ${input.startTime}`)
+// 		}),
+// 	// TODO: Make procedures, ideally in another file for organization
+// });
+// Export type definition of API
+const app_1 = require("./routers/app");
 /*Initialize Express server*/
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use("/trpc", trpcExpress.createExpressMiddleware({
-    router: exports.appRouter,
+    router: app_1.appRouter,
     createContext,
 }));
 app.get("/", (req, res) => {

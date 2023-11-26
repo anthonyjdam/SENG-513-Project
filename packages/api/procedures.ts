@@ -26,7 +26,7 @@ const ScrapeDataSchema = z.object({
     location: z.string(),
 });
 
-export const validateScrape = publicProcedure
+export const validateSchedule = publicProcedure
     .input(ScrapeDataSchema)
     .use((opts) => {
         //input validation
