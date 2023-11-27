@@ -34,12 +34,11 @@ export const ScrapeDataSchemaArray = z.array(
   z.object({
     _id: z.string(),
     __v: z.number(),
-    activity: z.string(),
+    activityName: z.string(),
     startTime: z.string(),
     endTime: z.string(),
     date: z.string(),
     location: z.string(),
-    duration: z.number(),
   })
 );
 
