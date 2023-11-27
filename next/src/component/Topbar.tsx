@@ -57,7 +57,7 @@ export const Topbar = ({
           <PopoverTrigger asChild>
             <button
               // variant="outline"
-              className="bg-red-500 hover:bg-zinc-300 text-white rounded-lg p-1 hover:text-zinc-600 transition-all duration-300"
+              className="bg-red-500 hover:bg-zinc-300 shadow-red-200 shadow-md hover:shadow-none text-white rounded-lg p-1 hover:text-zinc-600 transition-all duration-300"
             >
               <CalendarIcon />
             </button>
@@ -74,7 +74,7 @@ export const Topbar = ({
 
         <div className="flex space-x-2 items-center">
           <button
-            className="rounded-md bg-zinc-100 py-0.5 px-1 hover:bg-zinc-200 hover:text-white transition-all duration-300"
+            className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300"
             onClick={() => {
               handlePrevDay();
             }}
@@ -85,7 +85,7 @@ export const Topbar = ({
           </button>
 
           <button
-            className="rounded-md bg-zinc-100 py-0.5 px-1 hover:bg-zinc-200 hover:text-white transition-all duration-300"
+            className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300"
             onClick={() => {
               handleNextDay();
             }}
@@ -97,9 +97,9 @@ export const Topbar = ({
         </div>
       </div>
 
-      <div className="hidden md:flex space-x-0.5 text-zinc-700">
+      <div className="hidden md:flex space-x-0.5 text-zinc-600">
         <button
-          className={`py-0.5 px-2 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all duration-300 ${scheduleView === "d" ? "bg-red-500 text-white" : "bg-zinc-300"
+          className={`py-0.5 px-2 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all duration-300 ${scheduleView === "d" ? "bg-red-500 text-white shadow-red-200 shadow-md" : "bg-zinc-100"
             }`}
           onClick={() => {
             setScheduleView("d");
@@ -109,7 +109,7 @@ export const Topbar = ({
         </button>
 
         <button
-          className={`py-0.5 px-2 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all duration-300 ${scheduleView === "w" ? "bg-red-500 text-white" : "bg-zinc-300"
+          className={`py-0.5 px-2 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all duration-300 ${scheduleView === "w" ? "bg-red-500 text-white shadow-red-200 shadow-md" : "bg-zinc-100"
             }`}
           onClick={() => {
             setScheduleView("w");
@@ -125,7 +125,7 @@ export const Topbar = ({
           <UserButton afterSignOutUrl="/" />
         </div>
       ) : (
-        <button className="py-0.5 px-2 rounded-lg font-semibold text-white bg-red-500 hover:bg-zinc-200 hover:text-zinc-500 active:text-zinc-700">
+        <button className="py-0.5 px-2 rounded-lg font-semibold text-white bg-red-500 hover:bg-zinc-200 hover:text-zinc-500 active:text-zinc-700 shadow-red-200 shadow-md hover:shadow-none">
           <SignInButton mode="modal" />
         </button>
       )}
