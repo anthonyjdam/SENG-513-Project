@@ -38,12 +38,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = exports.publicProcedure = exports.t = void 0;
 const server_1 = require("@trpc/server");
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
-const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const db_1 = require("./db");
 const User_1 = require("./models/User");
 // import { UserPersonalSchedModel } from "./models/UserPersonalSchedule";
 const GymSchedule_1 = require("./models/GymSchedule");
+const ngrok_1 = __importDefault(require("ngrok"));
+const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const PORT = process.env.port || 5001;
 /*Initialize tRPC API*/
 const createContext = ({ req, res, }) => ({
@@ -92,6 +94,7 @@ const app_1 = require("./routers/app");
 /*Initialize Express server*/
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
+app.use(body_parser_1.default.json());
 app.use("/trpc", trpcExpress.createExpressMiddleware({
     router: app_1.appRouter,
     createContext,
@@ -99,8 +102,38 @@ app.use("/trpc", trpcExpress.createExpressMiddleware({
 app.get("/", (req, res) => {
     res.send("Hello");
 });
-app.listen(PORT, () => {
+//clerk webhook for events of account creation and such
+app.post("/clerk/webhook", (req, res) => {
+    // Extract the payload data from the request body
+    const payload = req.body;
+    // Process the payload data (You can add your logic here)
+    console.log("Received webhook payload: ", payload);
+    if (payload.type === "session.created") {
+        console.log("session id for the started session: " + payload.data.id);
+    }
+    // Respond to the webhook request with a success message
+    res.status(200).json({ message: "Webhook received successfully" });
+});
+const server = app.listen(PORT, () => {
     console.log("listening on port " + PORT);
+    // Start Ngrok and create a tunnel to your local server
+    /*
+    ngrok
+      .connect(5001)
+      .then((url) => {
+        console.log(`Ngrok tunnel is active at ${url}`);
+        // Update your webhook configurations or use this URL as needed
+      })
+      .catch((err) => {
+        console.error("Error starting Ngrok:", err);
+      });
+      */
+});
+process.on("SIGINT", () => {
+    server.close();
+    ngrok_1.default.disconnect();
+    console.log("Server and Ngrok tunnel closed");
+    process.exit(0);
 });
 /** Connect to mongoDB database */
 /*
