@@ -2,7 +2,7 @@ import { publicProcedure, router } from "../index";
 import { GymScheduleModel } from "../models/GymSchedule";
 import { validateSchedule, validateScheduleOutput } from "../procedures";
 import mongoose from "mongoose";
-import { ScrapeDataSchemaArray } from "../procedures";
+import { GetScheduleArraySchema as GetScheduleSchema } from "../procedures";
 import { z } from "zod"; // input validator
 
 export const scheduleRouter = router({
@@ -16,7 +16,7 @@ export const scheduleRouter = router({
 
   getSchedules: publicProcedure.query(async (opts) => {
     // getSchedules: validateScheduleOutput.query(async (opts) => {
-    type ScheduleArrayType = z.infer<typeof ScrapeDataSchemaArray>;
+    type ScheduleArrayType = z.infer<typeof GetScheduleSchema>;
     // const result = await GymScheduleModel.deleteMany({});
 
     const schedules: ScheduleArrayType = await GymScheduleModel.find();
