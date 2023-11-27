@@ -22,7 +22,7 @@ export const validateUsername = publicProcedure
     return opts.next();
   });
 
-const ScrapeDataSchema = z.object({
+const CreateScheduleSchema = z.object({
   activity: z.string(),
   startTime: z.string(),
   endTime: z.string(),
@@ -30,7 +30,7 @@ const ScrapeDataSchema = z.object({
   location: z.string(),
 });
 
-export const ScrapeDataSchemaArray = z.array(
+export const GetScheduleArraySchema = z.array(
   z.object({
     _id: z.string(),
     __v: z.number(),
@@ -43,14 +43,14 @@ export const ScrapeDataSchemaArray = z.array(
 );
 
 export const validateSchedule = publicProcedure
-  .input(ScrapeDataSchema)
+  .input(CreateScheduleSchema)
   .use((opts) => {
     //input validation
     return opts.next();
   });
 
 export const validateScheduleOutput = publicProcedure
-  .output(ScrapeDataSchemaArray)
+  .output(GetScheduleArraySchema)
   .use((opts) => {
     //input validation
     return opts.next();
