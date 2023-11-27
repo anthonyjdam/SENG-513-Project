@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
 import { ActivityButton } from "./ActivityButton";
 import Image from "next/image";
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { ToggleContext } from "@/app/page";
 
 const chooseActivityButtonColors = (activity: string) => {
   let background = "";
@@ -45,17 +46,22 @@ const chooseActivityButtonColors = (activity: string) => {
 
 export const ActivityButton = ({ activity }: { activity: string }) => {
   //will probably need to lift state or use context at some point to render updates but that will be a later problem
-  const [selected, setSelected] = useState(false);
+  const { activityToggles, setActivityToggles } = useContext(ToggleContext);
+  let toggle = activityToggles[activity];
+
   let { background, border, circle } = chooseActivityButtonColors(activity);
 
   return (
     <button
       type="button"
       className={`${
-        selected ? background : "bg-none"
+        toggle ? background : "bg-none"
       } ${border} border-2 rounded-md py-2`}
       onClick={() => {
-        selected ? setSelected(false) : setSelected(true);
+        setActivityToggles((prevState) => ({
+          ...prevState,
+          [activity]: !prevState[activity],
+        }));
       }}
     >
       <div className="flex flex-row items-center space-x-4 ml-4">

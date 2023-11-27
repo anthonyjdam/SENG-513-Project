@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
@@ -11,37 +11,61 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import HamburgerMenu from "./HamburgerMenu";
 
-export const Topbar = () => {
-  const [count, setCount] = useState(0);
-  const [view, setView] = useState("w");
+interface TopbarProps {
+  date: Date | undefined;
+  setDate: Dispatch<SetStateAction<Date | undefined>> | undefined;
+  scheduleView: string;
+  setScheduleView: Dispatch<SetStateAction<string>>;
+}
+
+export const Topbar = ({
+  date,
+  setDate,
+  scheduleView,
+  setScheduleView,
+}: TopbarProps) => {
   const { isSignedIn } = useAuth();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const handlePrevDay = () => {
+    if (date && setDate) {
+      const newDate = new Date(date);
+      scheduleView === "d"
+        ? newDate.setDate(newDate.getDate() - 1)
+        : newDate.setDate(newDate.getDate() - 7);
+      setDate(newDate);
+    }
+  };
+
+  const handleNextDay = () => {
+    if (date && setDate) {
+      const newDate = new Date(date);
+      scheduleView === "d"
+        ? newDate.setDate(newDate.getDate() + 1)
+        : newDate.setDate(newDate.getDate() + 7);
+      setDate(newDate);
+    }
+  };
 
   return (
     <div className="flex justify-between mx-3 py-4">
       <div className="flex gap-5">
         <HamburgerMenu />
 
-        <div className="flex space-x-0.5 items-center">
+        <div className="flex space-x-3 items-center">
           <button
             className="rounded-md bg-zinc-300 py-0.5 px-2 hover:bg-zinc-700 hover:text-white transition-all duration-300"
             onClick={() => {
-              setCount(count - 1);
+              handlePrevDay();
             }}
           >
             &lt;
           </button>
-          <p className="rounded-md bg-zinc-300 py-1 px-2 text-sm">
-            Month {count}
-          </p>
           <button
             className="rounded-md bg-zinc-300 py-0.5 px-2 hover:bg-zinc-700 hover:text-white transition-all duration-300"
             onClick={() => {
-              setCount(count + 1);
+              handleNextDay();
             }}
           >
             &gt;
@@ -70,10 +94,10 @@ export const Topbar = () => {
       <div className="hidden md:flex space-x-0.5 text-zinc-700">
         <button
           className={`py-0.5 px-2 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 ${
-            view === "d" ? "bg-red-500 text-white" : "bg-zinc-300"
+            scheduleView === "d" ? "bg-red-500 text-white" : "bg-zinc-300"
           }`}
           onClick={() => {
-            setView("d");
+            setScheduleView("d");
           }}
         >
           Day
@@ -81,10 +105,10 @@ export const Topbar = () => {
 
         <button
           className={`py-0.5 px-2 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 ${
-            view === "w" ? "bg-red-500 text-white" : "bg-zinc-300"
+            scheduleView === "w" ? "bg-red-500 text-white" : "bg-zinc-300"
           }`}
           onClick={() => {
-            setView("w");
+            setScheduleView("w");
           }}
         >
           Week
