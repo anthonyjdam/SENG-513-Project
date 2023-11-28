@@ -9,19 +9,20 @@ export const scheduleRouter = router({
   createSchedule: validateSchedule.mutation(async ({ ctx, input }) => {
     const schedule = new GymScheduleModel(input);
     await schedule.save();
-    console.log("HIT");
+    // console.log("HIT");
 
-    return { resString: "Success creating schedule" };
+    return { result: schedule };
   }),
 
   getSchedules: publicProcedure.query(async (opts) => {
-    // getSchedules: validateScheduleOutput.query(async (opts) => {
+    // DEMO: Change the ScrapeDataSchemaArray
     type ScheduleArrayType = z.infer<typeof ScrapeDataSchemaArray>;
-    // const result = await GymScheduleModel.deleteMany({});
-
+    
     const schedules: ScheduleArrayType = await GymScheduleModel.find();
-
-    console.log(schedules);
+    
     return schedules;
   }),
 });
+
+// getSchedules: validateScheduleOutput.query(async (opts) => {
+// const result = await GymScheduleModel.deleteMany({});
