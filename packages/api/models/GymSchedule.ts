@@ -7,6 +7,8 @@ const gymScheduleModel = new Schema<GymScheduleDocument>({
   endTime: { type: String, required: true },
   location: { type: String, required: true },
   activityName: { type: String, required: true },
+  duration: { type: String, required: true }
+  
 });
 
 interface GymScheduleDocument extends Document {
@@ -15,6 +17,7 @@ interface GymScheduleDocument extends Document {
     endTime: string;
     location: string;
     activityName: string;
+    duration: string;
   }
 
 const GymScheduleModel = mongoose.model<GymScheduleDocument>('GymSchedule', gymScheduleModel);

@@ -44,19 +44,23 @@ interface ScheduleDetails {
   day: string;
   startTime: string;
   endTime: string;
+  duration: string;
 }
 
 interface UserDocument extends Document {
+  userToken: string;
   username: string;
   personalSchedules?: ScheduleDetails[];
 }
 const userModel = new Schema<UserDocument>({
+  userToken: { type: String, unique: true, required: true },
   username: { type: String, unique: true, required: true },
   personalSchedules:[
     {
       day: { type: String, required: true },
       startTime: { type: String, required: true },
       endTime: { type: String, required: true },
+      duration: { type: String, required: true }
 },]});
 const UserModel = mongoose.model<UserDocument>('User', userModel);
 
