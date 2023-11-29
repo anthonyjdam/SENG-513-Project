@@ -1,6 +1,9 @@
 import { trpc } from "@/lib/trpc";
 import { Dispatch, SetStateAction } from "react";
 
+/**
+ * 
+ */
 function generateTimesArray(): string[] {
   const startHour: number = 6;
   const endHour: number = 23;
@@ -23,13 +26,12 @@ function generateTimesArray(): string[] {
   }
   return times;
 }
+
+// Interface for a date in the days of the week
 interface MyDate {
   dayOfTheWeek: string;
   dayNumber: number;
 }
-
-// const startTime = 6
-// const endTime = 9
 
 /**
  * creates the daysOfTheWeek component attributes
@@ -123,6 +125,8 @@ const DayView = ({ date }: { date: Date | undefined }) => {
 const WeekView = ({ date }: { date: Date | undefined }) => {
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
+  console.log("Times: ", times, "Days ", days);
+  
 
   return (
     <div className="md:flex">
