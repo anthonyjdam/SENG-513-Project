@@ -39,6 +39,7 @@ export const GetScheduleArraySchema = z.array(
     endTime: z.string(),
     date: z.string(),
     location: z.string(),
+    duration: z.string(),
   })
 );
 

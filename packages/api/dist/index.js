@@ -108,8 +108,20 @@ app.post("/clerk/webhook", (req, res) => {
     const payload = req.body;
     // Process the payload data (You can add your logic here)
     console.log("Received webhook payload: ", payload);
-    if (payload.type === "session.created") {
-        console.log("session id for the started session: " + payload.data.id);
+    switch (payload.type) {
+        case "session.created":
+            console.log("session id for the started session: " + payload.data.id);
+            console.log("user id for the started session: " + payload.data.user_id);
+            break;
+        case "session.ended":
+            //when a user logs out or closes the tab
+            break;
+        case "session.removed":
+            //when a session expires??? or something like that idk
+            break;
+        case "user.created":
+            //when a new user signs up for active living through clerk
+            break;
     }
     // Respond to the webhook request with a success message
     res.status(200).json({ message: "Webhook received successfully" });
