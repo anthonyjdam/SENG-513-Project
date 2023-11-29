@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { Dispatch, SetStateAction } from "react";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function generateTimesArray(): string[] {
   const startHour: number = 6;
@@ -185,18 +185,22 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  const prevDateRef = useRef(date);
+
   useEffect(() => {
-    if (scheduleView !== activeView) {
+    if (scheduleView !== activeView || date !== prevDateRef.current) {
       setIsTransitioning(true);
       // This timeout duration should match the CSS transition time
       const timer = setTimeout(() => {
         setIsTransitioning(false);
         setActiveView(scheduleView);
+        prevDateRef.current = date; // Update the ref to the new date
       }, 300);
 
       return () => clearTimeout(timer);
     }
-  }, [scheduleView, activeView]);
+  }, [date, scheduleView, activeView]); // prevDate is not a dependency anymore
+
 
 
   let viewComponent = null;
