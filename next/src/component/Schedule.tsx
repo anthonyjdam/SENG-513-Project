@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { useState, useEffect } from 'react';
 
 /**
- * 
+ * Creates an array of times corresponding to each cell in that daysOfTheWeek column
  */
 function generateTimesArray(): string[] {
   const startHour: number = 6;
@@ -28,6 +28,59 @@ function generateTimesArray(): string[] {
   return times;
 }
 
+type Schedule = {
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  _id: string;
+  __v: number;
+  activityName: string;
+  duration: string;
+};
+
+function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfTheWeek: string, currentStartTime: string) {
+
+  // console.log("Day of week", currentDayOfTheWeek, "Start time", currentStartTime);
+
+
+  let activityDate;
+  let activityStartTime;
+  let activityID;
+  let activityName;
+  let activityDuration;
+
+  if (schedulesList) {
+    // console.log(schedulesList);
+
+    for (let i = 0; i < schedulesList.length; i++) {
+
+      activityDate = schedulesList[i].date.toUpperCase();
+      activityStartTime = schedulesList[i].startTime;
+      activityID = schedulesList[i]._id;
+      activityName = schedulesList[i].activityName;
+      activityDuration = schedulesList[i].duration;
+
+      if (activityDate.includes(currentDayOfTheWeek) && activityStartTime.includes(currentStartTime)) {
+        const simplifiedActivityName = activityName.replace(/^Drop In\s*/, '').replace(/\s*Time$/, ''); // Remove "Drop In" from the beginning and "Time" from the end   
+        const scheduleHeight = 20 * parseInt(activityDuration, 10) / 15;// parse the duration as an int
+        console.log(scheduleHeight)
+        return (
+          <div
+            key={activityName + "-" + activityID}
+            className={`bg-blue-500/10 border-l-4 border-blue-500 rounded-l-md p-0.5 flex-1 z-10`}
+            style={{ height: scheduleHeight }}
+          >
+            <p className="text-xs break-all leading-4">{simplifiedActivityName}</p>
+          </div>
+        );
+      }
+    }
+  }
+
+  return null; //return nothing if there is no activity at that time of the day of the week 
+}
+
 // Interface for a date in the days of the week
 interface MyDate {
   dayOfTheWeek: string;
@@ -35,7 +88,7 @@ interface MyDate {
 }
 
 /**
- * creates the daysOfTheWeek component attributes
+ * Creates the daysOfTheWeek component attributes
  */
 const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   if (!date) {
@@ -43,7 +96,7 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     return [];
   }
 
-  const dayOfTheWeek = ["SUN", "MON", "TUES", "WED", "THUR", "FRI", "SAT"];
+  const dayOfTheWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const currentMonth = date.getMonth();
   const currentYear = date.getFullYear();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -122,14 +175,22 @@ const DayView = ({ date }: { date: Date | undefined }) => {
   );
 };
 
+
 const WeekView = ({ date }: { date: Date | undefined }) => {
+  // Make function call to server side procedure to get the schedules from the database
+  const schedules = trpc.schedule.getSchedules.useQuery();
+  const schedulesList = schedules.data;
+
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
-  console.log("Times: ", times, "Days ", days);
-  
+  // console.log("Times: ", times, "Days ", days);
+
+
 
   return (
     <div className="md:flex">
+
+      {/* For each day of the weeek */}
       {days.map((day) => (
         //this day card goes here!!!
         <div key={day.dayOfTheWeek} className="flex-grow">
@@ -142,6 +203,8 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
             </h1>
           </div>
           <div className="flex flex-col border-r border-neutral-200">
+
+            {/* For each time during that day of the week */}
             {times.map((time, index) => (
               <div
                 key={`${day}-${time}`}
@@ -149,6 +212,16 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
                   }`}
               >
                 <div className="absolute w-full flex">
+                  {mountCalendarEvent(schedulesList, day.dayOfTheWeek, time)}
+                  {/* {time === "8:00 AM" && day.dayOfTheWeek === "TUE" ? (
+                    <div
+                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+                    >
+                      <p className="break-all leading-4">volleyball</p>
+                    </div>
+                  ) : null} */}
+                </div>
+                {/* <div className="absolute w-full flex">
                   {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
                     <div
                       className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
@@ -170,7 +243,7 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
                       <p className="break-all leading-4">volleyball</p>
                     </div>
                   ) : null}
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
