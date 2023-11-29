@@ -47,48 +47,54 @@ const activityTheme = (simplifiedActivityName: string) => {
       return {
         bg: 'bg-purple-500/10',
         border: 'border-purple-400',
-        text: 'text-purple-500',
-        emoji: '🏸 '
+        text: 'text-purple-600',
+        emoji: '🏸 ',
+        dot: 'bg-purple-500'
       };
 
     case newActivityName.includes('basketball'):
       return {
         bg: 'bg-orange-500/10',
         border: 'border-orange-400',
-        text: 'text-orange-500',
-        emoji: '🏀 '
+        text: 'text-orange-600',
+        emoji: '🏀 ',
+        dot: 'bg-orange-500'
       };
 
     case newActivityName.includes('ball hockey'):
       return {
         bg: 'bg-yellow-500/10',
         border: 'border-yellow-400',
-        text: 'text-yellow-500',
-        emoji: '🏑 '
+        text: 'text-yellow-600',
+        emoji: '🏑 ',
+        dot: 'bg-yellow-500'
       };
 
     case newActivityName.includes('volleyball'):
       return {
         bg: 'bg-red-500/10',
         border: 'border-red-400',
-        text: 'text-red-500',
-        emoji: '🏐 '
+        text: 'text-red-600',
+        emoji: '🏐 ',
+        dot: 'bg-red-500'
       };
 
     case newActivityName.includes('soccer'):
       return {
         bg: 'bg-green-500/10',
         border: 'border-green-400',
-        text: 'text-green-500',
-        emoji: '⚽ '
+        text: 'text-green-600',
+        emoji: '⚽ ',
+        dot: 'bg-green-500'
       };
 
     default:
       return {
         bg: 'bg-blue-500/10',
         border: 'border-blue-400',
-        text: 'text-blue-500',
-        emoji: '🏃'
+        text: 'text-blue-600',
+        emoji: '🏃 ',
+        dot: 'bg-blue-500'
       };
   }
 };
@@ -101,6 +107,7 @@ function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfT
   let activityID;
   let activityName;
   let activityDuration;
+  let activityLocation;
 
   if (schedulesList) {
     // console.log(schedulesList);
@@ -112,6 +119,7 @@ function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfT
       activityEndTime = schedulesList[i].endTime;
       activityID = schedulesList[i]._id;
       activityName = schedulesList[i].activityName;
+      activityLocation = schedulesList[i].location;
       activityDuration = schedulesList[i].duration;
 
       if (activityDate.includes(currentDayOfTheWeek) && activityStartTime.includes(currentStartTime)) {
@@ -123,15 +131,17 @@ function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfT
         return (
           <div
             key={activityName + "-" + activityID}
-            className={`border-l-4 rounded-md p-0.5 flex-1 z-10 ${activityTheme(formattedActivityName).bg} ${activityTheme(formattedActivityName).border}`}
+            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${activityTheme(formattedActivityName).bg} ${activityTheme(formattedActivityName).border}`}
             style={{ height: scheduleHeight }}
           >
-            <p className={`text-xs ${activityTheme(formattedActivityName).text} font-medium break-all leading-4`}>
+            <div className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${activityTheme(formattedActivityName).dot}`}></div>
+            <p className={`font-medium break-all leading-4 text-xs ${activityTheme(formattedActivityName).text}`}>
               {
                 activityTheme(formattedActivityName).emoji
                 + formattedActivityName
                 + " • " + activityStartTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, '$1:$2$3')
                 + "-" + activityEndTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, '$1:$2$3')
+                + " • " + activityLocation
               }
             </p>
           </div>
