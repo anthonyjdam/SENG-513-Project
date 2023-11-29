@@ -39,13 +39,65 @@ type Schedule = {
   duration: string;
 };
 
+const activityTheme = (simplifiedActivityName: string) => {
+  const newActivityName = simplifiedActivityName.toLowerCase();
+
+  switch (true) {
+    case newActivityName.includes('badminton'):
+      return {
+        bg: 'bg-purple-500/10',
+        border: 'border-purple-400',
+        text: 'text-purple-500',
+        emoji: '🏸 '
+      };
+
+    case newActivityName.includes('basketball'):
+      return {
+        bg: 'bg-orange-500/10',
+        border: 'border-orange-400',
+        text: 'text-orange-500',
+        emoji: '🏀 '
+      };
+
+    case newActivityName.includes('ball hockey'):
+      return {
+        bg: 'bg-yellow-500/10',
+        border: 'border-yellow-400',
+        text: 'text-yellow-500',
+        emoji: '🏑 '
+      };
+
+    case newActivityName.includes('volleyball'):
+      return {
+        bg: 'bg-red-500/10',
+        border: 'border-red-400',
+        text: 'text-red-500',
+        emoji: '🏐 '
+      };
+
+    case newActivityName.includes('soccer'):
+      return {
+        bg: 'bg-green-500/10',
+        border: 'border-green-400',
+        text: 'text-green-500',
+        emoji: '⚽ '
+      };
+
+    default:
+      return {
+        bg: 'bg-blue-500/10',
+        border: 'border-blue-400',
+        text: 'text-blue-500',
+        emoji: '🏃'
+      };
+  }
+};
+
 function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfTheWeek: string, currentStartTime: string) {
-
   // console.log("Day of week", currentDayOfTheWeek, "Start time", currentStartTime);
-
-
   let activityDate;
   let activityStartTime;
+  let activityEndTime;
   let activityID;
   let activityName;
   let activityDuration;
@@ -57,21 +109,31 @@ function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfT
 
       activityDate = schedulesList[i].date.toUpperCase();
       activityStartTime = schedulesList[i].startTime;
+      activityEndTime = schedulesList[i].endTime;
       activityID = schedulesList[i]._id;
       activityName = schedulesList[i].activityName;
       activityDuration = schedulesList[i].duration;
 
       if (activityDate.includes(currentDayOfTheWeek) && activityStartTime.includes(currentStartTime)) {
-        const simplifiedActivityName = activityName.replace(/^Drop In\s*/, '').replace(/\s*Time$/, ''); // Remove "Drop In" from the beginning and "Time" from the end   
+        const formattedActivityName = activityName.replace(/^Drop In\s*/, '').replace(/\s*Time$/, ''); // Remove "Drop In" from the beginning and "Time" from the end   
+        // const formattedTime = activityStartTime.replace(/^0(\d+):(\d+) (\w{2})/, '$1:$2 $3');
         const scheduleHeight = 20 * parseInt(activityDuration, 10) / 15;// parse the duration as an int
         console.log(scheduleHeight)
+
         return (
           <div
             key={activityName + "-" + activityID}
-            className={`bg-blue-500/10 border-l-4 border-blue-500 rounded-l-md p-0.5 flex-1 z-10`}
+            className={`border-l-4 rounded-md p-0.5 flex-1 z-10 ${activityTheme(formattedActivityName).bg} ${activityTheme(formattedActivityName).border}`}
             style={{ height: scheduleHeight }}
           >
-            <p className="text-xs break-all leading-4">{simplifiedActivityName}</p>
+            <p className={`text-xs ${activityTheme(formattedActivityName).text} font-medium break-all leading-4`}>
+              {
+                activityTheme(formattedActivityName).emoji
+                + formattedActivityName
+                + " • " + activityStartTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, '$1:$2$3')
+                + "-" + activityEndTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, '$1:$2$3')
+              }
+            </p>
           </div>
         );
       }
@@ -133,6 +195,9 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
 };
 
 const DayView = ({ date }: { date: Date | undefined }) => {
+  // Make function call to server side procedure to get the schedules from the database
+  const schedules = trpc.schedule.getSchedules.useQuery();
+  const schedulesList = schedules.data;
   let times: string[] = generateTimesArray();
 
   return (
@@ -153,6 +218,16 @@ const DayView = ({ date }: { date: Date | undefined }) => {
               }`}
           >
             <div className="absolute w-full flex">
+              {mountCalendarEvent(schedulesList, date!.getDate().toString(), time)}
+              {/* {time === "8:00 AM" && day.dayOfTheWeek === "TUE" ? (
+                    <div
+                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+                    >
+                      <p className="break-all leading-4">volleyball</p>
+                    </div>
+                  ) : null} */}
+            </div>
+            {/* <div className="absolute w-full flex">
               {time === "8:00 AM" && "SUN" === "SUN" ? (
                 <div
                   className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
@@ -167,7 +242,7 @@ const DayView = ({ date }: { date: Date | undefined }) => {
                   <p className="break-all leading-4">volleyball</p>
                 </div>
               ) : null}
-            </div>
+            </div> */}
           </div>
         ))}
       </div>
