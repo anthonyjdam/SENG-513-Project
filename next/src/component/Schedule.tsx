@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { Dispatch, SetStateAction } from "react";
+import { useState, useEffect } from 'react';
 
 /**
  * 
@@ -95,9 +96,8 @@ const DayView = ({ date }: { date: Date | undefined }) => {
         {times.map((time, index) => (
           <div
             key={time}
-            className={`h-5 w-full border-t relative ${
-              index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
-            }`}
+            className={`h-5 w-full border-t relative ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
+              }`}
           >
             <div className="absolute w-full flex">
               {time === "8:00 AM" && "SUN" === "SUN" ? (
@@ -145,9 +145,8 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
             {times.map((time, index) => (
               <div
                 key={`${day}-${time}`}
-                className={`h-5 w-full border-t relative ${
-                  index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
-                }`}
+                className={`h-5 w-full border-t relative ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
+                  }`}
               >
                 <div className="absolute w-full flex">
                   {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
@@ -187,20 +186,36 @@ interface ScheduleProps {
 }
 
 export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
-  //const schedules = trpc.schedule.getSchedules.useQuery();
-  //const activities = schedules.data;
+  const [activeView, setActiveView] = useState(scheduleView);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  //console.log(schedules.data);
+  useEffect(() => {
+    if (scheduleView !== activeView) {
+      setIsTransitioning(true);
+      // This timeout duration should match the CSS transition time
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setActiveView(scheduleView);
+      }, 300);
 
-  //const filteredActivities = activities?.filter((activity) =>
-  //activity.activityName.toLowerCase().includes("basketball")
-  //);
+      return () => clearTimeout(timer);
+    }
+  }, [scheduleView, activeView]);
 
-  //console.log(filteredActivities);
 
-  return scheduleView === "d" ? (
-    <DayView date={date} />
-  ) : (
-    <WeekView date={date} />
+  let viewComponent = null;
+  const viewStatusClass = isTransitioning ? 'view-exit-active' : 'view-enter-active';
+
+  if (activeView === 'd') {
+    viewComponent = <DayView date={date} />;
+  } else {
+    viewComponent = <WeekView date={date} />;
+  }
+
+  return (
+    <div className={`view-transition ${viewStatusClass}`}>
+      {viewComponent}
+    </div>
   );
 };
+
