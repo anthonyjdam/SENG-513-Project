@@ -18,7 +18,8 @@ export const scheduleRouter = router({
     // getSchedules: validateScheduleOutput.query(async (opts) => {
     type ScheduleArrayType = z.infer<typeof GetScheduleSchema>;
     // const result = await GymScheduleModel.deleteMany({});
-
+    console.log("Getting schedules");
+    
     const schedules: ScheduleArrayType = await GymScheduleModel.find();
 
     console.log(schedules);
