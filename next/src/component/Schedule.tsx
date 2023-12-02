@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useState, useEffect } from 'react';
 
 /**
@@ -270,7 +270,69 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
   let times: string[] = generateTimesArray();
   // console.log("Times: ", times, "Days ", days);
 
+  const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
+  const [selectedItems, setSelectedItems] = useState<string[]>([]); // items that have been selected during the drag; of type array of strings
 
+  // remove selected items on ctrl + z
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'z') {
+        clearItemSelection();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [clearItemSelection]);
+
+  /**
+   * handles when the user presses the mouse down
+   */
+  function handleTouchStart(e: React.MouseEvent<HTMLDivElement>, dayOfTheWeek: string, time: string) {
+    e.preventDefault();
+    setDragging(true); //when they click set drag to true
+    handleItemSelection(dayOfTheWeek, time);
+  }
+
+  /**
+   * handles when the user moves the mouse over another element after initiating the start of a drag event
+   * @param e 
+   * @param dayOfTheWeek 
+   * @param time 
+   */
+  function handleTouchMove(e: React.MouseEvent<HTMLDivElement>, dayOfTheWeek: string, time: string) {
+    e.preventDefault();
+    if (dragging) {
+      handleItemSelection(dayOfTheWeek, time);
+    }
+  }
+
+  /**
+   * handles when the user finishes clicking on the screen
+   */
+  function handleTouchEnd() {
+    setDragging(false);
+  }
+
+  function handleItemSelection(DaysOfTheWeek: string, time: string) {
+    const currentItem = `${DaysOfTheWeek}-${time}`;
+    if (!selectedItems.includes(currentItem)) { // if the item currently being dragged over isnt in the list of selected items
+      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, currentItem]); //then add it to the list
+      console.log(selectedItems);
+
+    }
+    else { //if the item is already selected
+      setSelectedItems((prevSelectedItems) => prevSelectedItems.filter((item) => item !== currentItem)) //remove the item if it is already in the selectedItems list 
+    }
+
+  }
+
+  function clearItemSelection() {
+    setSelectedItems([]);
+  }
 
   return (
     <div className="md:flex">
@@ -292,9 +354,18 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
             {/* For each time during that day of the week */}
             {times.map((time, index) => (
               <div
-                key={`${day}-${time}`}
-                className={`h-5 w-full border-t relative ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
-                  }`}
+                key={`${day.dayOfTheWeek}-${day.dayNumber}-${time}`}
+                data-dayOfWeek={day.dayOfTheWeek}
+                data-dayNumber={day.dayNumber}
+                data-time={time}
+                className={`h-5 w-full border-t relative hover:bg-zinc-200
+                  ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"}
+                  ${selectedItems.includes(`${day.dayOfTheWeek}-${time}`) ? 'bg-red-500/75' : ''}
+                `}
+                /**Event handlers */
+                onMouseDown={(e) => handleTouchStart(e, day.dayOfTheWeek, time)}
+                onMouseEnter={(e) => handleTouchMove(e, day.dayOfTheWeek, time)}
+                onMouseUp={handleTouchEnd}
               >
                 <div className="absolute w-full flex">
                   {mountCalendarEvent(schedulesList, day.dayOfTheWeek, time)}
@@ -306,29 +377,6 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
                     </div>
                   ) : null} */}
                 </div>
-                {/* <div className="absolute w-full flex">
-                  {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
-                    <div
-                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null}
-                  {time === "8:30 AM" && day.dayOfTheWeek === "SUN" ? (
-                    <div
-                      className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null}
-                  {time === "8:00 AM" && day.dayOfTheWeek === "MON" ? (
-                    <div
-                      className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null}
-                </div> */}
               </div>
             ))}
           </div>
