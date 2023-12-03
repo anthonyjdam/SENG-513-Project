@@ -1,6 +1,7 @@
+import { ToggleContext } from "@/app/page";
 import { trpc } from "@/lib/trpc";
-import React, { Dispatch, SetStateAction } from "react";
-import { useState, useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useContext } from "react";
+import { useState, useEffect } from "react";
 
 /**
  * Creates an array of times corresponding to each cell in that daysOfTheWeek column
@@ -43,64 +44,78 @@ const activityTheme = (simplifiedActivityName: string) => {
   const newActivityName = simplifiedActivityName.toLowerCase();
 
   switch (true) {
-    case newActivityName.includes('badminton'):
+    case newActivityName.includes("badminton"):
       return {
-        bg: 'bg-purple-500/10',
-        border: 'border-purple-400',
-        text: 'text-purple-600',
-        emoji: '🏸 ',
-        dot: 'bg-purple-500'
+        bg: "bg-purple-500/10",
+        border: "border-purple-400",
+        text: "text-purple-600",
+        emoji: "🏸 ",
+        dot: "bg-purple-500",
       };
 
-    case newActivityName.includes('basketball'):
+    case newActivityName.includes("basketball"):
       return {
-        bg: 'bg-orange-500/10',
-        border: 'border-orange-400',
-        text: 'text-orange-600',
-        emoji: '🏀 ',
-        dot: 'bg-orange-500'
+        bg: "bg-orange-500/10",
+        border: "border-orange-400",
+        text: "text-orange-600",
+        emoji: "🏀 ",
+        dot: "bg-orange-500",
       };
 
-    case newActivityName.includes('ball hockey'):
+    case newActivityName.includes("ball hockey"):
       return {
-        bg: 'bg-yellow-500/10',
-        border: 'border-yellow-400',
-        text: 'text-yellow-600',
-        emoji: '🏑 ',
-        dot: 'bg-yellow-500'
+        bg: "bg-yellow-500/10",
+        border: "border-yellow-400",
+        text: "text-yellow-600",
+        emoji: "🏑 ",
+        dot: "bg-yellow-500",
       };
 
-    case newActivityName.includes('volleyball'):
+    case newActivityName.includes("volleyball"):
       return {
-        bg: 'bg-red-500/10',
-        border: 'border-red-400',
-        text: 'text-red-600',
-        emoji: '🏐 ',
-        dot: 'bg-red-500'
+        bg: "bg-red-500/10",
+        border: "border-red-400",
+        text: "text-red-600",
+        emoji: "🏐 ",
+        dot: "bg-red-500",
       };
 
-    case newActivityName.includes('soccer'):
+    case newActivityName.includes("soccer"):
       return {
-        bg: 'bg-green-500/10',
-        border: 'border-green-400',
-        text: 'text-green-600',
-        emoji: '⚽ ',
-        dot: 'bg-green-500'
+        bg: "bg-green-500/10",
+        border: "border-green-400",
+        text: "text-green-600",
+        emoji: "⚽ ",
+        dot: "bg-green-500",
       };
 
     default:
       return {
-        bg: 'bg-blue-500/10',
-        border: 'border-blue-400',
-        text: 'text-blue-600',
-        emoji: '🏃 ',
-        dot: 'bg-blue-500'
+        bg: "bg-blue-500/10",
+        border: "border-blue-400",
+        text: "text-blue-600",
+        emoji: "🏃 ",
+        dot: "bg-blue-500",
       };
   }
 };
 
-function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfTheWeek: string, currentStartTime: string) {
-  // console.log("Day of week", currentDayOfTheWeek, "Start time", currentStartTime);
+function mountCalendarEvent(
+  schedulesList:
+    | {
+        date: string;
+        startTime: string;
+        endTime: string;
+        location: string;
+        _id: string;
+        __v: number;
+        activityName: string;
+        duration: string;
+      }[]
+    | undefined,
+  currentDayOfTheWeek: string,
+  currentStartTime: string
+) {
   let activityDate;
   let activityStartTime;
   let activityEndTime;
@@ -109,40 +124,63 @@ function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfT
   let activityDuration;
   let activityLocation;
 
-  if (schedulesList) {
-    // console.log(schedulesList);
+  let filteredList = schedulesList?.filter((activity) => {
+    let [dayOfWeek, month, day] = activity.date.split(" ");
+    return day === currentDayOfTheWeek;
+  });
 
-    for (let i = 0; i < schedulesList.length; i++) {
+  if (filteredList) {
+    for (let i = 0; i < filteredList.length; i++) {
+      activityDate = filteredList[i].date.toUpperCase();
+      activityStartTime = filteredList[i].startTime;
+      activityEndTime = filteredList[i].endTime;
+      activityID = filteredList[i]._id;
+      activityName = filteredList[i].activityName;
+      activityLocation = filteredList[i].location;
+      activityDuration = filteredList[i].duration;
 
-      activityDate = schedulesList[i].date.toUpperCase();
-      activityStartTime = schedulesList[i].startTime;
-      activityEndTime = schedulesList[i].endTime;
-      activityID = schedulesList[i]._id;
-      activityName = schedulesList[i].activityName;
-      activityLocation = schedulesList[i].location;
-      activityDuration = schedulesList[i].duration;
-
-      if (activityDate.includes(currentDayOfTheWeek) && activityStartTime.includes(currentStartTime)) {
-        const formattedActivityName = activityName.replace(/^Drop In\s*/, '').replace(/\s*Time$/, ''); // Remove "Drop In" from the beginning and "Time" from the end   
+      if (
+        activityDate.includes(currentDayOfTheWeek) &&
+        activityStartTime.includes(currentStartTime)
+      ) {
+        const formattedActivityName = activityName
+          .replace(/^Drop In\s*/, "")
+          .replace(/\s*Time$/, ""); // Remove "Drop In" from the beginning and "Time" from the end
         // const formattedTime = activityStartTime.replace(/^0(\d+):(\d+) (\w{2})/, '$1:$2 $3');
-        const scheduleHeight = 20 * parseInt(activityDuration, 10) / 15;// parse the duration as an int
-        console.log(scheduleHeight)
+        const scheduleHeight = (20 * parseInt(activityDuration, 10)) / 15; // parse the duration as an int
 
         return (
           <div
             key={activityName + "-" + activityID}
-            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${activityTheme(formattedActivityName).bg} ${activityTheme(formattedActivityName).border}`}
+            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${
+              activityTheme(formattedActivityName).bg
+            } ${activityTheme(formattedActivityName).border}`}
             style={{ height: scheduleHeight }}
           >
-            <div className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${activityTheme(formattedActivityName).dot}`}></div>
-            <p className={`font-medium break-all leading-4 text-xs ${activityTheme(formattedActivityName).text}`}>
-              {
-                activityTheme(formattedActivityName).emoji
-                + formattedActivityName
-                + " • " + activityStartTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, '$1:$2$3')
-                + "-" + activityEndTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, '$1:$2$3')
-                + " • " + activityLocation
-              }
+            <div
+              className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${
+                activityTheme(formattedActivityName).dot
+              }`}
+            ></div>
+            <p
+              className={`font-medium break-all leading-4 text-xs ${
+                activityTheme(formattedActivityName).text
+              }`}
+            >
+              {activityTheme(formattedActivityName).emoji +
+                formattedActivityName +
+                " • " +
+                activityStartTime.replace(
+                  /^0?(\d+):(\d+)\s*(AM|PM)/i,
+                  "$1:$2$3"
+                ) +
+                "-" +
+                activityEndTime.replace(
+                  /^0?(\d+):(\d+)\s*(AM|PM)/i,
+                  "$1:$2$3"
+                ) +
+                " • " +
+                activityLocation}
             </p>
           </div>
         );
@@ -150,7 +188,7 @@ function mountCalendarEvent(schedulesList: Schedule[] | undefined, currentDayOfT
     }
   }
 
-  return null; //return nothing if there is no activity at that time of the day of the week 
+  return null; //return nothing if there is no activity at that time of the day of the week
 }
 
 // Interface for a date in the days of the week
@@ -204,10 +242,24 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   return newDateArr;
 };
 
-const DayView = ({ date }: { date: Date | undefined }) => {
+interface DayWeekViewProps {
+  date: Date | undefined;
+  schedulesList:
+    | {
+        date: string;
+        startTime: string;
+        endTime: string;
+        location: string;
+        _id: string;
+        __v: number;
+        activityName: string;
+        duration: string;
+      }[]
+    | undefined;
+}
+
+const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
-  const schedules = trpc.schedule.getSchedules.useQuery();
-  const schedulesList = schedules.data;
   let times: string[] = generateTimesArray();
 
   return (
@@ -224,35 +276,17 @@ const DayView = ({ date }: { date: Date | undefined }) => {
         {times.map((time, index) => (
           <div
             key={time}
-            className={`h-5 w-full border-t relative ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
-              }`}
+            className={`h-5 w-full border-t relative ${
+              index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
+            }`}
           >
             <div className="absolute w-full flex">
-              {mountCalendarEvent(schedulesList, date!.getDate().toString(), time)}
-              {/* {time === "8:00 AM" && day.dayOfTheWeek === "TUE" ? (
-                    <div
-                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null} */}
+              {mountCalendarEvent(
+                schedulesList,
+                date!.getDate().toString(),
+                time
+              )}
             </div>
-            {/* <div className="absolute w-full flex">
-              {time === "8:00 AM" && "SUN" === "SUN" ? (
-                <div
-                  className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                >
-                  <p className="break-all leading-4">volleyball</p>
-                </div>
-              ) : null}
-              {time === "8:30 AM" && "SUN" === "SUN" ? (
-                <div
-                  className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                >
-                  <p className="break-all leading-4">volleyball</p>
-                </div>
-              ) : null}
-            </div> */}
           </div>
         ))}
       </div>
@@ -260,12 +294,7 @@ const DayView = ({ date }: { date: Date | undefined }) => {
   );
 };
 
-
-const WeekView = ({ date }: { date: Date | undefined }) => {
-  // Make function call to server side procedure to get the schedules from the database
-  const schedules = trpc.schedule.getSchedules.useQuery();
-  const schedulesList = schedules.data;
-
+const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
   // console.log("Times: ", times, "Days ", days);
@@ -276,22 +305,26 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
   // remove selected items on ctrl + z
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'z') {
+      if (e.ctrlKey && e.key === "z") {
         clearItemSelection();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [clearItemSelection]);
 
   /**
    * handles when the user presses the mouse down
    */
-  function handleTouchStart(e: React.MouseEvent<HTMLDivElement>, dayOfTheWeek: string, time: string) {
+  function handleTouchStart(
+    e: React.MouseEvent<HTMLDivElement>,
+    dayOfTheWeek: string,
+    time: string
+  ) {
     e.preventDefault();
     setDragging(true); //when they click set drag to true
     handleItemSelection(dayOfTheWeek, time);
@@ -299,11 +332,15 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
 
   /**
    * handles when the user moves the mouse over another element after initiating the start of a drag event
-   * @param e 
-   * @param dayOfTheWeek 
-   * @param time 
+   * @param e
+   * @param dayOfTheWeek
+   * @param time
    */
-  function handleTouchMove(e: React.MouseEvent<HTMLDivElement>, dayOfTheWeek: string, time: string) {
+  function handleTouchMove(
+    e: React.MouseEvent<HTMLDivElement>,
+    dayOfTheWeek: string,
+    time: string
+  ) {
     e.preventDefault();
     if (dragging) {
       handleItemSelection(dayOfTheWeek, time);
@@ -319,15 +356,18 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
 
   function handleItemSelection(DaysOfTheWeek: string, time: string) {
     const currentItem = `${DaysOfTheWeek}-${time}`;
-    if (!selectedItems.includes(currentItem)) { // if the item currently being dragged over isnt in the list of selected items
-      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, currentItem]); //then add it to the list
-      console.log(selectedItems);
-
+    if (!selectedItems.includes(currentItem)) {
+      // if the item currently being dragged over isnt in the list of selected items
+      setSelectedItems((prevSelectedItems) => [
+        ...prevSelectedItems,
+        currentItem,
+      ]); //then add it to the list
+    } else {
+      //if the item is already selected
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter((item) => item !== currentItem)
+      ); //remove the item if it is already in the selectedItems list
     }
-    else { //if the item is already selected
-      setSelectedItems((prevSelectedItems) => prevSelectedItems.filter((item) => item !== currentItem)) //remove the item if it is already in the selectedItems list 
-    }
-
   }
 
   function clearItemSelection() {
@@ -336,7 +376,6 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
 
   return (
     <div className="md:flex">
-
       {/* For each day of the weeek */}
       {days.map((day) => (
         //this day card goes here!!!
@@ -350,7 +389,6 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
             </h1>
           </div>
           <div className="flex flex-col border-r border-neutral-200">
-
             {/* For each time during that day of the week */}
             {times.map((time, index) => (
               <div
@@ -359,8 +397,16 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
                 data-dayNumber={day.dayNumber}
                 data-time={time}
                 className={`h-5 w-full border-t relative hover:bg-zinc-200
-                  ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"}
-                  ${selectedItems.includes(`${day.dayOfTheWeek}-${time}`) ? 'bg-red-500/75' : ''}
+                  ${
+                    index % 4 === 0
+                      ? "border-neutral-200"
+                      : "border-neutral-100"
+                  }
+                  ${
+                    selectedItems.includes(`${day.dayOfTheWeek}-${time}`)
+                      ? "bg-red-500/75"
+                      : ""
+                  }
                 `}
                 /**Event handlers */
                 onMouseDown={(e) => handleTouchStart(e, day.dayOfTheWeek, time)}
@@ -368,14 +414,11 @@ const WeekView = ({ date }: { date: Date | undefined }) => {
                 onMouseUp={handleTouchEnd}
               >
                 <div className="absolute w-full flex">
-                  {mountCalendarEvent(schedulesList, day.dayOfTheWeek, time)}
-                  {/* {time === "8:00 AM" && day.dayOfTheWeek === "TUE" ? (
-                    <div
-                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null} */}
+                  {mountCalendarEvent(
+                    schedulesList,
+                    day.dayNumber.toString(),
+                    time
+                  )}
                 </div>
               </div>
             ))}
@@ -394,8 +437,13 @@ interface ScheduleProps {
 export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const { activityToggles } = useContext(ToggleContext);
+
+  const schedules = trpc.schedule.getSchedules.useQuery();
+  const [schedulesList, setSchedulesList] = useState(schedules.data);
 
   useEffect(() => {
+    // Effect to handle view transition and schedule updates
     if (scheduleView !== activeView) {
       setIsTransitioning(true);
       // This timeout duration should match the CSS transition time
@@ -406,22 +454,48 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
 
       return () => clearTimeout(timer);
     }
-  }, [scheduleView, activeView]);
 
+    if (schedules.data) {
+      let filteredSchedule = schedules.data.filter((activity) => {
+        return activityToggles[
+          activity.activityName.replace("Drop In ", "").replace(" Time", "")
+        ];
+      });
+
+      // Check if the filtered schedule has changed before updating state
+      if (!arraysEqual(filteredSchedule, schedulesList)) {
+        setSchedulesList(filteredSchedule);
+      }
+    }
+  }, [
+    scheduleView,
+    activeView,
+    schedules.data,
+    activityToggles,
+    schedulesList,
+  ]);
+
+  // Function to compare arrays for equality
+  function arraysEqual(arr1: string | any[], arr2: string | any[] | undefined) {
+    if (arr1.length !== arr2?.length) return false;
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i]) return false;
+    }
+    return true;
+  }
 
   let viewComponent = null;
-  const viewStatusClass = isTransitioning ? 'view-exit-active' : 'view-enter-active';
+  const viewStatusClass = isTransitioning
+    ? "view-exit-active"
+    : "view-enter-active";
 
-  if (activeView === 'd') {
-    viewComponent = <DayView date={date} />;
+  if (activeView === "d") {
+    viewComponent = <DayView date={date} schedulesList={schedulesList} />;
   } else {
-    viewComponent = <WeekView date={date} />;
+    viewComponent = <WeekView date={date} schedulesList={schedulesList} />;
   }
 
   return (
-    <div className={`view-transition ${viewStatusClass}`}>
-      {viewComponent}
-    </div>
+    <div className={`view-transition ${viewStatusClass}`}>{viewComponent}</div>
   );
 };
-

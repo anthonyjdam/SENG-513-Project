@@ -221,6 +221,7 @@ try {
                     day: "Monday",
                     startTime: "05:00 PM",
                     endTime: "07:00 PM",
+                    duration: "75",
                 };
                 // Add the personal schedule to the user's array of personalSchedules
                 user.personalSchedules.push(newPersonalSchedule);
