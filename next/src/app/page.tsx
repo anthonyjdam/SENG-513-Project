@@ -10,7 +10,14 @@ import { Schedule } from "@/component/Schedule";
 import { createContext } from "react";
 
 export const ToggleContext = createContext({
-  activityToggles: {},
+  activityToggles: {
+    Badminton: false,
+    Basketball: false,
+    "Ball Hockey": false,
+    Volleyball: false,
+    Soccer: false,
+    "Open Gym": true,
+  },
   setActivityToggles: () => {},
 });
 
