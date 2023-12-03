@@ -7,55 +7,62 @@ const chooseActivityButtonColors = (activity: string) => {
   let circle = "";
   let hoverBackground = "";
   let emoji = "";
+  let selectedBackground = "";
 
   switch (activity) {
     case "Badminton":
-      background = "bg-purple-900";
+      hoverBackground = "hover:bg-purple-900";
       border = "border-purple-500";
       circle = "bg-purple-500";
-      hoverBackground = "hover:bg-purple-500/25";
+      background = "bg-purple-500/10";
+      selectedBackground = "bg-purple-500/75"
       emoji = "🏸";
       break;
     case "Basketball":
-      background = "bg-yellow-900";
-      border = "border-yellow-500";
-      circle = "bg-yellow-500";
-      hoverBackground = "hover:bg-yellow-500/25";
+      hoverBackground = "hover:bg-orange-900";
+      border = "border-orange-500";
+      circle = "bg-orange-500";
+      background = "bg-orange-500/10";
+      selectedBackground = "bg-orange-500/75"
       emoji = "🏀";
       break;
     case "Ball Hockey":
-      background = "bg-green-900";
-      border = "border-green-500";
-      circle = "bg-green-500";
-      hoverBackground = "hover:bg-green-500/25";
+      hoverBackground = "hover:bg-yellow-900";
+      border = "border-yellow-500";
+      circle = "bg-yellow-500";
+      background = "bg-yellow-500/10";
+      selectedBackground = "bg-yellow-500/75"
       emoji = "🏑";
       break;
     case "Volleyball":
-      background = "bg-red-900";
+      hoverBackground = "hover:bg-red-900";
       border = "border-red-500";
       circle = "bg-red-500";
-      hoverBackground = "hover:bg-red-500/25";
+      background = "bg-red-500/10";
+      selectedBackground = "bg-red-500/75"
       emoji = "🏐";
       break;
     case "Soccer":
-      background = "bg-orange-900";
-      border = "border-orange-500";
-      circle = "bg-orange-500";
-      hoverBackground = "hover:bg-orange-500/25";
+      hoverBackground = "hover:bg-green-900";
+      border = "border-green-500";
+      circle = "bg-green-500";
+      background = "bg-green-500/10";
+      selectedBackground = "bg-green-500/75"
       emoji = "⚽";
       break;
     case "Open Gym":
-      background = "bg-blue-900";
+      hoverBackground = "hover:bg-blue-900";
       border = "border-blue-500";
       circle = "bg-blue-500";
-      hoverBackground = "hover:bg-blue-500/25";
-      emoji = "🏃‍♂️";
+      background = "bg-blue-500/10";
+      selectedBackground = "bg-blue-500/75"
+      emoji = "🏃";
       break;
     default:
       break;
   }
 
-  return { background, border, circle, hoverBackground, emoji };
+  return { background, border, circle, hoverBackground, selectedBackground, emoji };
 };
 
 export const ActivityButton = ({ activity }: { activity: string }) => {
@@ -63,9 +70,9 @@ export const ActivityButton = ({ activity }: { activity: string }) => {
   const { activityToggles, setActivityToggles } = useContext(ToggleContext);
   const isSelected = activityToggles[activity];
 
-  let { background, border, circle, hoverBackground, emoji } = chooseActivityButtonColors(activity);
+  let { background, border, circle, hoverBackground, selectedBackground, emoji } = chooseActivityButtonColors(activity);
 
-  const buttonClasses = `${border} border-2 rounded-md py-2 transition-colors duration-150 relative overflow-hidden ${isSelected ? background : `bg-none ${hoverBackground}`
+  const buttonClasses = `${background} rounded-lg py-2 transition-colors duration-150 relative overflow-hidden ${isSelected ? selectedBackground : `bg-none ${hoverBackground}`
     } emoji-hover-animate`;
 
 
