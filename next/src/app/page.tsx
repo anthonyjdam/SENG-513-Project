@@ -83,7 +83,10 @@ export default function Home() {
         >
           <main className="flex flex-row min-h-screen">
             <div className="relative">
-              <Sidebar />
+              <Sidebar 
+                date={date}
+                setDate={setDate}
+              />
             </div>
 
             <div className="flex flex-grow flex-col">
