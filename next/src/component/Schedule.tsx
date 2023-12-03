@@ -1,7 +1,8 @@
 import { ToggleContext } from "@/app/page";
 import { trpc } from "@/lib/trpc";
+
+import { useState, useEffect, useRef } from 'react';
 import React, { Dispatch, SetStateAction, useContext } from "react";
-import { useState, useEffect } from "react";
 
 /**
  * Creates an array of times corresponding to each cell in that daysOfTheWeek column
@@ -442,14 +443,17 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   const schedules = trpc.schedule.getSchedules.useQuery();
   const [schedulesList, setSchedulesList] = useState(schedules.data);
 
+  const prevDateRef = useRef(date);
+
   useEffect(() => {
-    // Effect to handle view transition and schedule updates
-    if (scheduleView !== activeView) {
+    if (scheduleView !== activeView || date !== prevDateRef.current) {
+
       setIsTransitioning(true);
       // This timeout duration should match the CSS transition time
       const timer = setTimeout(() => {
         setIsTransitioning(false);
         setActiveView(scheduleView);
+        prevDateRef.current = date; // Update the ref to the new date
       }, 300);
 
       return () => clearTimeout(timer);
@@ -470,6 +474,7 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   }, [
     scheduleView,
     activeView,
+      date,
     schedules.data,
     activityToggles,
     schedulesList,
