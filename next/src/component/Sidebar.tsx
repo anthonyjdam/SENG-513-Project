@@ -6,9 +6,11 @@ import { ToggleContext } from "@/app/page"; // Adjust the path accordingly
 interface SidebarProps {
   date: Date | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  isDragDisabled: boolean
+  setIsDragDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Sidebar({ date, setDate }: SidebarProps) {
+function Sidebar({ date, setDate, isDragDisabled, setIsDragDisabled }: SidebarProps) {
 
   const [selectTimeStyle, setSelectTimeStyle] = useState('bg-zinc-800 w-full rounded-lg');
   const [showAdditionalButtons, setShowAdditionalButtons] = useState(false);
@@ -34,6 +36,7 @@ function Sidebar({ date, setDate }: SidebarProps) {
 
 
   function handleSelectTime() {
+    setIsDragDisabled(false);
     resetAllTogglesToFalse();
     setSelectTimeText("");
     setShowAdditionalButtons(true);
@@ -41,6 +44,7 @@ function Sidebar({ date, setDate }: SidebarProps) {
   };
 
   function handleCancelSelectTime() {
+    setIsDragDisabled(true);
     setSelectTimeText('Select Time');
     setShowAdditionalButtons(!showAdditionalButtons);
     setSelectTimeStyle('bg-zinc-800 rounded-lg');
@@ -76,7 +80,7 @@ function Sidebar({ date, setDate }: SidebarProps) {
                 <path fill-rule="evenodd" d="M10 1a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 1zM5.05 3.05a.75.75 0 011.06 0l1.062 1.06A.75.75 0 116.11 5.173L5.05 4.11a.75.75 0 010-1.06zm9.9 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM3 8a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 013 8zm11 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0114 8zm-6.828 2.828a.75.75 0 010 1.061L6.11 12.95a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm3.594-3.317a.75.75 0 00-1.37.364l-.492 6.861a.75.75 0 001.204.65l1.043-.799.985 3.678a.75.75 0 001.45-.388l-.978-3.646 1.292.204a.75.75 0 00.74-1.16l-3.874-5.764z" clip-rule="evenodd" />
               </svg>
               {showAdditionalButtons && (
-                <span className="absolute inset-0 bg-gradient-to-br from-red-500 via-indigo-200 to-red-100 transition-opacity rounded-lg rounded-r-none"></span>
+                <span className="absolute inset-0 bg-gradient-to-br from-red-400 to-indigo-200 transition-opacity rounded-lg rounded-r-none"></span>
               )}
               <div className="ml-4 text-sm z-10">
                 {selectTimeText}
