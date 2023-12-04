@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ActivityButton } from "./ActivityButton";
 import Image from "next/image";
+import { ToggleContext } from "@/app/page"; // Adjust the path accordingly
 
 interface SidebarProps {
   date: Date | undefined;
@@ -12,11 +13,28 @@ function Sidebar({ date, setDate }: SidebarProps) {
   const [selectTimeStyle, setSelectTimeStyle] = useState('bg-zinc-800 w-full rounded-lg');
   const [showAdditionalButtons, setShowAdditionalButtons] = useState(false);
   const [selectTimeText, setSelectTimeText] = useState("Select Time");
-
   const monthName = date ? date.toLocaleString('en-US', { month: 'long' }) : '';
+  const { activityToggles, setActivityToggles } = useContext(ToggleContext);
+
+  const resetAllTogglesToFalse = () => {
+    setActivityToggles(prevState => {
+      // Create a new object with all toggles set to false
+      const updatedToggles = {
+        Badminton: false,
+        Basketball: false,
+        "Ball Hockey": false,
+        Volleyball: false,
+        Soccer: false,
+        "Open Gym": false,
+      };
+      // Return the updated object to set the state
+      return updatedToggles;
+    });
+  };
 
 
   function handleSelectTime() {
+    resetAllTogglesToFalse();
     setSelectTimeText("");
     setShowAdditionalButtons(true);
     setSelectTimeStyle('bg-zinc-800 rounded-lg rounded-r-none');
