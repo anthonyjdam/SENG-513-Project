@@ -9,7 +9,21 @@ import { Topbar } from "@/component/Topbar";
 import { Schedule } from "@/component/Schedule";
 import { createContext } from "react";
 
-export const ToggleContext = createContext({
+interface ActivityToggles {
+  Badminton: boolean;
+  Basketball: boolean;
+  "Ball Hockey": boolean;
+  Volleyball: boolean;
+  Soccer: boolean;
+  "Open Gym": boolean;
+}
+
+interface ToggleContextProps {
+  activityToggles: ActivityToggles;
+  setActivityToggles: React.Dispatch<React.SetStateAction<ActivityToggles>>;
+}
+
+export const ToggleContext = createContext<ToggleContextProps>({
   activityToggles: {
     Badminton: false,
     Basketball: false,
@@ -18,8 +32,9 @@ export const ToggleContext = createContext({
     Soccer: false,
     "Open Gym": true,
   },
-  setActivityToggles: () => {},
+  setActivityToggles: () => { },
 });
+
 
 export default function Home() {
   const [queryClient] = useState(() => new QueryClient());
@@ -45,9 +60,20 @@ export default function Home() {
     "Open Gym": true,
   });
 
+  const [dragging, setDragging] = useState(false);
+  const [isDragDisabled, setIsDragDisabled] = useState(true);
+
+  const handleStartDragging = () => {
+    setDragging(true);
+  };
+
+  const handleStopDragging = () => {
+    setDragging(false);
+  };
+
   /**
    * TODO have time range param
-   *
+  *
    * @returns timeArr: the array of times
    */
   function generateTimes() {
@@ -83,9 +109,11 @@ export default function Home() {
         >
           <main className="flex flex-row min-h-screen">
             <div className="relative">
-              <Sidebar 
+              <Sidebar
                 date={date}
                 setDate={setDate}
+                isDragDisabled={isDragDisabled}
+                setIsDragDisabled={setIsDragDisabled}
               />
             </div>
 
@@ -109,7 +137,15 @@ export default function Home() {
                     </div>
 
                     <div className="w-full h-full flex flex-col">
-                      <Schedule date={date} scheduleView={scheduleView} />
+                      <Schedule
+                        date={date}
+                        scheduleView={scheduleView}
+                        dragging={dragging}
+                        setDragging={setDragging}
+                        isDragDisabled={isDragDisabled}
+                        setIsDragDisabled={setIsDragDisabled}
+                      // onStopDragging={handleStopDragging}
+                      />
                     </div>
                   </div>
                 </div>

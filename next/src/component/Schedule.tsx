@@ -240,7 +240,7 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   return newDateArr;
 };
 
-interface DayWeekViewProps {
+interface DayViewProps {
   date: Date | undefined;
   schedulesList:
   | {
@@ -256,7 +256,7 @@ interface DayWeekViewProps {
   | undefined;
 }
 
-const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
+const DayView = ({ date, schedulesList }: DayViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
   let times: string[] = generateTimesArray();
 
@@ -291,12 +291,33 @@ const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
   );
 };
 
-const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
+
+interface WeekViewProps {
+  date: Date | undefined;
+  schedulesList:
+  | {
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    _id: string;
+    __v: number;
+    activityName: string;
+    duration: string;
+  }[]
+  | undefined;
+  dragging: boolean;
+  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  isDragDisabled: boolean;
+  setIsDragDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, setIsDragDisabled }: WeekViewProps) => {
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
   // console.log("Times: ", times, "Days ", days);
 
-  const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
+  // const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // items that have been selected during the drag; of type array of strings
 
   // remove selected items on ctrl + z
@@ -317,11 +338,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
   /**
    * handles when the user presses the mouse down
    */
-  function handleTouchStart(
-    e: React.MouseEvent<HTMLDivElement>,
-    dayOfTheWeek: string,
-    time: string
-  ) {
+  function handleClickStart(e: React.MouseEvent<HTMLDivElement>, dayOfTheWeek: string, time: string) {
     e.preventDefault();
     setDragging(true); //when they click set drag to true
     handleItemSelection(dayOfTheWeek, time);
@@ -333,7 +350,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
    * @param dayOfTheWeek
    * @param time
    */
-  function handleTouchMove(
+  function handleClickMove(
     e: React.MouseEvent<HTMLDivElement>,
     dayOfTheWeek: string,
     time: string
@@ -347,7 +364,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
   /**
    * handles when the user finishes clicking on the screen
    */
-  function handleTouchEnd() {
+  function handleClickEnd() {
     setDragging(false);
   }
 
@@ -393,7 +410,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
                 data-dayOfWeek={day.dayOfTheWeek}
                 data-dayNumber={day.dayNumber}
                 data-time={time}
-                className={`h-5 w-full border-t relative hover:bg-zinc-200
+                className={`h-5 w-full border-t relative ${isDragDisabled ? "" : "hover:bg-zinc-200"}
                   ${index % 4 === 0
                     ? "border-neutral-200"
                     : "border-neutral-100"
@@ -404,9 +421,9 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
                   }
                 `}
                 /**Event handlers */
-                onMouseDown={(e) => handleTouchStart(e, day.dayOfTheWeek, time)}
-                onMouseEnter={(e) => handleTouchMove(e, day.dayOfTheWeek, time)}
-                onMouseUp={handleTouchEnd}
+                onMouseDown={!isDragDisabled ? (e) => handleClickStart(e, day.dayOfTheWeek, time) : undefined}
+                onMouseEnter={!isDragDisabled ? (e) => handleClickMove(e, day.dayOfTheWeek, time) : undefined}
+                onMouseUp={!isDragDisabled ? handleClickEnd : undefined}
               >
                 <div className="absolute w-full flex">
                   {mountCalendarEvent(
@@ -427,9 +444,13 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
 interface ScheduleProps {
   date: Date | undefined;
   scheduleView: string;
+  dragging: boolean;
+  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  isDragDisabled: boolean
+  setIsDragDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
+export const Schedule = ({ date, scheduleView, dragging, setDragging, isDragDisabled, setIsDragDisabled }: ScheduleProps) => {
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { activityToggles } = useContext(ToggleContext);
@@ -490,7 +511,7 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   if (activeView === "d") {
     viewComponent = <DayView date={date} schedulesList={schedulesList} />;
   } else {
-    viewComponent = <WeekView date={date} schedulesList={schedulesList} />;
+    viewComponent = <WeekView date={date} schedulesList={schedulesList} dragging={dragging} setDragging={setDragging} isDragDisabled={isDragDisabled} setIsDragDisabled={setIsDragDisabled} />;
   }
 
   return (
