@@ -1,7 +1,7 @@
 import { ToggleContext } from "@/app/page";
 import { trpc } from "@/lib/trpc";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import React, { Dispatch, SetStateAction, useContext } from "react";
 
 /**
@@ -101,30 +101,55 @@ const activityTheme = (simplifiedActivityName: string) => {
   }
 };
 
-function mountCalendarEvent(
-  schedulesList:
-    | {
-        date: string;
-        startTime: string;
-        endTime: string;
-        location: string;
-        _id: string;
-        __v: number;
-        activityName: string;
-        duration: string;
-      }[]
-    | undefined,
-  currentDayOfTheWeek: string,
-  currentStartTime: string
-) {
-  let activityDate;
-  let activityStartTime;
-  let activityEndTime;
-  let activityID;
-  let activityName;
-  let activityDuration;
-  let activityLocation;
 
+type eventData = {
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  _id: string;
+  __v: number;
+  activityName: string;
+  duration: string;
+};
+
+
+const EventModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  eventDataList: eventData;
+}> = ({ isOpen, onClose, eventDataList }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      {/* Modal content */}
+      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="mt-3 text-center">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Event Details</h3>
+          <div className="mt-2">
+            <p className="text-sm text-gray-500">Location: {eventDataList.location}</p>
+            <p className="text-sm text-gray-500">Time: {eventDataList.startTime} - {eventDataList.endTime}</p>
+          </div>
+          <button onClick={onClose} className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+function mountCalendarEvent(
+  schedulesList: eventData[] | undefined,
+  currentDayOfTheWeek: string,
+  currentStartTime: string,
+  onEventClick: (eventData: eventData) => void // Callback function for handling event clicks
+) {
+  let activityDate, activityStartTime, activityEndTime, activityID, activityName, activityDuration, activityLocation;
+
+  let eventElements = [];
   let filteredList = schedulesList?.filter((activity) => {
     let [dayOfWeek, month, day] = activity.date.split(" ");
     return day === currentDayOfTheWeek;
@@ -140,47 +165,22 @@ function mountCalendarEvent(
       activityLocation = filteredList[i].location;
       activityDuration = filteredList[i].duration;
 
-      if (
-        activityDate.includes(currentDayOfTheWeek) &&
-        activityStartTime.includes(currentStartTime)
-      ) {
-        const formattedActivityName = activityName
-          .replace(/^Drop In\s*/, "")
-          .replace(/\s*Time$/, ""); // Remove "Drop In" from the beginning and "Time" from the end
-        // const formattedTime = activityStartTime.replace(/^0(\d+):(\d+) (\w{2})/, '$1:$2 $3');
-        const scheduleHeight = (20 * parseInt(activityDuration, 10)) / 15; // parse the duration as an int
+      if (activityDate.includes(currentDayOfTheWeek) && activityStartTime.includes(currentStartTime)) {
+        const formattedActivityName = activityName.replace(/^Drop In\s*/, "").replace(/\s*Time$/, "");
+        const scheduleHeight = (20 * parseInt(activityDuration, 10)) / 15;
 
-        return (
+        eventElements.push(
           <div
-            key={activityName + "-" + activityID}
-            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${
-              activityTheme(formattedActivityName).bg
-            } ${activityTheme(formattedActivityName).border}`}
+            key={activityID}
+            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${activityTheme(formattedActivityName).bg} ${activityTheme(formattedActivityName).border}`}
             style={{ height: scheduleHeight }}
+            onClick={() => onEventClick(filteredList[i])}
           >
-            <div
-              className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${
-                activityTheme(formattedActivityName).dot
-              }`}
-            ></div>
-            <p
-              className={`font-medium break-all leading-4 text-xs ${
-                activityTheme(formattedActivityName).text
-              }`}
-            >
-              {activityTheme(formattedActivityName).emoji +
-                formattedActivityName +
-                " • " +
-                activityStartTime.replace(
-                  /^0?(\d+):(\d+)\s*(AM|PM)/i,
-                  "$1:$2$3"
-                ) +
-                "-" +
-                activityEndTime.replace(
-                  /^0?(\d+):(\d+)\s*(AM|PM)/i,
-                  "$1:$2$3"
-                ) +
-                " • " +
+            <div className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${activityTheme(formattedActivityName).dot}`}></div>
+            <p className={`font-medium break-all leading-4 text-xs ${activityTheme(formattedActivityName).text}`}>
+              {activityTheme(formattedActivityName).emoji + formattedActivityName + " • " +
+                activityStartTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, "$1:$2$3") + "-" +
+                activityEndTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, "$1:$2$3") + " • " +
                 activityLocation}
             </p>
           </div>
@@ -189,8 +189,9 @@ function mountCalendarEvent(
     }
   }
 
-  return null; //return nothing if there is no activity at that time of the day of the week
+  return eventElements;
 }
+
 
 // Interface for a date in the days of the week
 interface MyDate {
@@ -246,22 +247,36 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
 interface DayWeekViewProps {
   date: Date | undefined;
   schedulesList:
-    | {
-        date: string;
-        startTime: string;
-        endTime: string;
-        location: string;
-        _id: string;
-        __v: number;
-        activityName: string;
-        duration: string;
-      }[]
-    | undefined;
+  | {
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    _id: string;
+    __v: number;
+    activityName: string;
+    duration: string;
+  }[]
+  | undefined;
 }
 
 const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
   let times: string[] = generateTimesArray();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentEventData, setCurrentEventData] = useState<eventData | null>(null);
+
+  // Handler for when an event is clicked
+  const onEventClick = (eventDataList: eventData) => {
+    setCurrentEventData(eventDataList);
+    setModalOpen(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setModalOpen(false);
+    setCurrentEventData(null);
+  };
 
   return (
     <div className="flex-grow">
@@ -277,20 +292,27 @@ const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
         {times.map((time, index) => (
           <div
             key={time}
-            className={`h-5 w-full border-t relative ${
-              index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
-            }`}
+            className={`h-5 w-full border-t relative ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
+              }`}
           >
             <div className="absolute w-full flex">
               {mountCalendarEvent(
                 schedulesList,
                 date!.getDate().toString(),
-                time
+                time,
+                onEventClick
               )}
             </div>
           </div>
         ))}
       </div>
+      {isModalOpen && currentEventData && (
+        <EventModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          eventDataList={currentEventData}
+        />
+      )}
     </div>
   );
 };
@@ -375,6 +397,21 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
     setSelectedItems([]);
   }
 
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentEventData, setCurrentEventData] = useState<eventData | null>(null);
+
+  // Handler for when an event is clicked
+  const onEventClick = (eventDataList: eventData) => {
+    setCurrentEventData(eventDataList);
+    setModalOpen(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setModalOpen(false);
+    setCurrentEventData(null);
+  };
+
   return (
     <div className="md:flex">
       {/* For each day of the weeek */}
@@ -398,15 +435,13 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
                 data-dayNumber={day.dayNumber}
                 data-time={time}
                 className={`h-5 w-full border-t relative hover:bg-zinc-200
-                  ${
-                    index % 4 === 0
-                      ? "border-neutral-200"
-                      : "border-neutral-100"
+                  ${index % 4 === 0
+                    ? "border-neutral-200"
+                    : "border-neutral-100"
                   }
-                  ${
-                    selectedItems.includes(`${day.dayOfTheWeek}-${time}`)
-                      ? "bg-red-500/75"
-                      : ""
+                  ${selectedItems.includes(`${day.dayOfTheWeek}-${time}`)
+                    ? "bg-red-500/75"
+                    : ""
                   }
                 `}
                 /**Event handlers */
@@ -418,7 +453,8 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
                   {mountCalendarEvent(
                     schedulesList,
                     day.dayNumber.toString(),
-                    time
+                    time,
+                    onEventClick
                   )}
                 </div>
               </div>
@@ -447,7 +483,6 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
 
   useEffect(() => {
     if (scheduleView !== activeView || date !== prevDateRef.current) {
-
       setIsTransitioning(true);
       // This timeout duration should match the CSS transition time
       const timer = setTimeout(() => {
@@ -474,7 +509,7 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   }, [
     scheduleView,
     activeView,
-      date,
+    date,
     schedules.data,
     activityToggles,
     schedulesList,
