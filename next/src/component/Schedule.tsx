@@ -1,7 +1,7 @@
 import { ToggleContext } from "@/app/page";
 import { trpc } from "@/lib/trpc";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import React, { Dispatch, SetStateAction, useContext } from "react";
 
 /**
@@ -104,15 +104,15 @@ const activityTheme = (simplifiedActivityName: string) => {
 function mountCalendarEvent(
   schedulesList:
     | {
-        date: string;
-        startTime: string;
-        endTime: string;
-        location: string;
-        _id: string;
-        __v: number;
-        activityName: string;
-        duration: string;
-      }[]
+      date: string;
+      startTime: string;
+      endTime: string;
+      location: string;
+      _id: string;
+      __v: number;
+      activityName: string;
+      duration: string;
+    }[]
     | undefined,
   currentDayOfTheWeek: string,
   currentStartTime: string
@@ -153,20 +153,17 @@ function mountCalendarEvent(
         return (
           <div
             key={activityName + "-" + activityID}
-            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${
-              activityTheme(formattedActivityName).bg
-            } ${activityTheme(formattedActivityName).border}`}
+            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${activityTheme(formattedActivityName).bg
+              } ${activityTheme(formattedActivityName).border}`}
             style={{ height: scheduleHeight }}
           >
             <div
-              className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${
-                activityTheme(formattedActivityName).dot
-              }`}
+              className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${activityTheme(formattedActivityName).dot
+                }`}
             ></div>
             <p
-              className={`font-medium break-all leading-4 text-xs ${
-                activityTheme(formattedActivityName).text
-              }`}
+              className={`font-medium break-all leading-4 text-xs ${activityTheme(formattedActivityName).text
+                }`}
             >
               {activityTheme(formattedActivityName).emoji +
                 formattedActivityName +
@@ -243,23 +240,23 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   return newDateArr;
 };
 
-interface DayWeekViewProps {
+interface DayViewProps {
   date: Date | undefined;
   schedulesList:
-    | {
-        date: string;
-        startTime: string;
-        endTime: string;
-        location: string;
-        _id: string;
-        __v: number;
-        activityName: string;
-        duration: string;
-      }[]
-    | undefined;
+  | {
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    _id: string;
+    __v: number;
+    activityName: string;
+    duration: string;
+  }[]
+  | undefined;
 }
 
-const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
+const DayView = ({ date, schedulesList }: DayViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
   let times: string[] = generateTimesArray();
 
@@ -277,9 +274,8 @@ const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
         {times.map((time, index) => (
           <div
             key={time}
-            className={`h-5 w-full border-t relative ${
-              index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
-            }`}
+            className={`h-5 w-full border-t relative ${index % 4 === 0 ? "border-neutral-200" : "border-neutral-100"
+              }`}
           >
             <div className="absolute w-full flex">
               {mountCalendarEvent(
@@ -295,12 +291,33 @@ const DayView = ({ date, schedulesList }: DayWeekViewProps) => {
   );
 };
 
-const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
+
+interface WeekViewProps {
+  date: Date | undefined;
+  schedulesList:
+  | {
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    _id: string;
+    __v: number;
+    activityName: string;
+    duration: string;
+  }[]
+  | undefined;
+  dragging: boolean;
+  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  isDragDisabled: boolean;
+  setIsDragDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, setIsDragDisabled }: WeekViewProps) => {
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
   // console.log("Times: ", times, "Days ", days);
 
-  const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
+  // const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // items that have been selected during the drag; of type array of strings
 
   // remove selected items on ctrl + z
@@ -321,11 +338,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
   /**
    * handles when the user presses the mouse down
    */
-  function handleTouchStart(
-    e: React.MouseEvent<HTMLDivElement>,
-    dayOfTheWeek: string,
-    time: string
-  ) {
+  function handleClickStart(e: React.MouseEvent<HTMLDivElement>, dayOfTheWeek: string, time: string) {
     e.preventDefault();
     setDragging(true); //when they click set drag to true
     handleItemSelection(dayOfTheWeek, time);
@@ -337,7 +350,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
    * @param dayOfTheWeek
    * @param time
    */
-  function handleTouchMove(
+  function handleClickMove(
     e: React.MouseEvent<HTMLDivElement>,
     dayOfTheWeek: string,
     time: string
@@ -351,7 +364,7 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
   /**
    * handles when the user finishes clicking on the screen
    */
-  function handleTouchEnd() {
+  function handleClickEnd() {
     setDragging(false);
   }
 
@@ -397,22 +410,20 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
                 data-dayOfWeek={day.dayOfTheWeek}
                 data-dayNumber={day.dayNumber}
                 data-time={time}
-                className={`h-5 w-full border-t relative hover:bg-zinc-200
-                  ${
-                    index % 4 === 0
-                      ? "border-neutral-200"
-                      : "border-neutral-100"
+                className={`h-5 w-full border-t relative ${isDragDisabled ? "" : "hover:bg-zinc-200"}
+                  ${index % 4 === 0
+                    ? "border-neutral-200"
+                    : "border-neutral-100"
                   }
-                  ${
-                    selectedItems.includes(`${day.dayOfTheWeek}-${time}`)
-                      ? "bg-red-500/75"
-                      : ""
+                  ${selectedItems.includes(`${day.dayOfTheWeek}-${time}`)
+                    ? "bg-red-500/75"
+                    : ""
                   }
                 `}
                 /**Event handlers */
-                onMouseDown={(e) => handleTouchStart(e, day.dayOfTheWeek, time)}
-                onMouseEnter={(e) => handleTouchMove(e, day.dayOfTheWeek, time)}
-                onMouseUp={handleTouchEnd}
+                onMouseDown={!isDragDisabled ? (e) => handleClickStart(e, day.dayOfTheWeek, time) : undefined}
+                onMouseEnter={!isDragDisabled ? (e) => handleClickMove(e, day.dayOfTheWeek, time) : undefined}
+                onMouseUp={!isDragDisabled ? handleClickEnd : undefined}
               >
                 <div className="absolute w-full flex">
                   {mountCalendarEvent(
@@ -433,9 +444,13 @@ const WeekView = ({ date, schedulesList }: DayWeekViewProps) => {
 interface ScheduleProps {
   date: Date | undefined;
   scheduleView: string;
+  dragging: boolean;
+  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  isDragDisabled: boolean
+  setIsDragDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
+export const Schedule = ({ date, scheduleView, dragging, setDragging, isDragDisabled, setIsDragDisabled }: ScheduleProps) => {
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { activityToggles } = useContext(ToggleContext);
@@ -447,7 +462,6 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
 
   useEffect(() => {
     if (scheduleView !== activeView || date !== prevDateRef.current) {
-
       setIsTransitioning(true);
       // This timeout duration should match the CSS transition time
       const timer = setTimeout(() => {
@@ -474,7 +488,7 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   }, [
     scheduleView,
     activeView,
-      date,
+    date,
     schedules.data,
     activityToggles,
     schedulesList,
@@ -497,7 +511,7 @@ export const Schedule = ({ date, scheduleView }: ScheduleProps) => {
   if (activeView === "d") {
     viewComponent = <DayView date={date} schedulesList={schedulesList} />;
   } else {
-    viewComponent = <WeekView date={date} schedulesList={schedulesList} />;
+    viewComponent = <WeekView date={date} schedulesList={schedulesList} dragging={dragging} setDragging={setDragging} isDragDisabled={isDragDisabled} setIsDragDisabled={setIsDragDisabled} />;
   }
 
   return (
