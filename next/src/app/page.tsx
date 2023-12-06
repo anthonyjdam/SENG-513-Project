@@ -32,9 +32,8 @@ export const ToggleContext = createContext<ToggleContextProps>({
     Soccer: false,
     "Open Gym": true,
   },
-  setActivityToggles: () => { },
+  setActivityToggles: () => {},
 });
-
 
 export default function Home() {
   const [queryClient] = useState(() => new QueryClient());
@@ -73,7 +72,7 @@ export default function Home() {
 
   /**
    * TODO have time range param
-  *
+   *
    * @returns timeArr: the array of times
    */
   function generateTimes() {
@@ -144,7 +143,7 @@ export default function Home() {
                         setDragging={setDragging}
                         isDragDisabled={isDragDisabled}
                         setIsDragDisabled={setIsDragDisabled}
-                      // onStopDragging={handleStopDragging}
+                        // onStopDragging={handleStopDragging}
                       />
                     </div>
                   </div>

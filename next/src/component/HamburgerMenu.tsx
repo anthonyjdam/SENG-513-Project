@@ -16,7 +16,7 @@ export default function Nav() {
     <div className="relative flex justify-end md:hidden">
       <button
         onClick={handleClick}
-        className="z-20 flex flex-col items-center justify-center"
+        className="z-40 flex flex-col items-center justify-center"
       >
         <span
           className={`block h-1 w-6 rounded-sm bg-red-500 
@@ -39,7 +39,7 @@ export default function Nav() {
       </button>
 
       {isOpen && (
-        <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center flex-col justify-center bg-zinc-900 bg-opacity-75">
+        <div className="fixed left-0 top-0 flex h-screen w-screen items-center flex-col justify-center bg-zinc-900 z-30">
           <div className="flex space-x-2">
             <Image
               src="/active-living-logo.png"
