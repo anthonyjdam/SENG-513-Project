@@ -49,3 +49,13 @@ MONGO_URI = "mongodb+srv://opengym:W3m6nJqL7Sv72$q@cluster0.ez83orx.mongodb.net/
 1. In a terminal, `cd` into the `packages/api` directory and run `npm run dev`
 2. In another terminal, `cd` into the `next` directory and run `npm run dev`
 3. Open http://localhost:3000 in your browser to see the app.
+
+
+# Authors
+
+- Hilton Luu
+- Liam Sarjeant
+- Al Mahmud Dipto
+- Tenzin Dorjee
+- Connor Swartz
+- Anthony Dam
