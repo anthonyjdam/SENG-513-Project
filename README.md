@@ -21,6 +21,11 @@ The system for viewing the open gym schedule can be cumbersome. With that being 
 
 ## Technical Video
 
+<a href="https://www.youtube.com/watch?v=lT6PK-FDs_Y" target="_blank">
+  <img src="http://img.youtube.com/vi/lT6PK-FDs_Y/0.jpg" 
+  alt="UCalgary Active Living Open-Gym Schedule Re-design" width="240" height="180" border="10" />
+</a>
+
 # Installation
 
 ### Step 1: Clone the repository
