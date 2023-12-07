@@ -1,6 +1,13 @@
 # SENG-513-Project
 # UCalgary Active Living Open-Gym Schedule Re-design
 
+# Table of Contents
+
+- [Description](#Description)
+- [Product Video](#Product-Video)
+- [Technical Video](#Technical-Video)
+- [Installation](#Installation)
+
 ## Description
 
 The system for viewing the open-gym schedule can be cumbersome. With that being said, we propose the solution of an open gym schedule redesign. We created a more user-friendly and aesthetically pleasing interface that shows information that is personalized to each user. Some of the main features include different views for days/weeks, and filtering activities by sport. Revamping the open gym schedule viewer will improve the experience of the students that continue to use it.
