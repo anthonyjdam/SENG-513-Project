@@ -10,7 +10,7 @@
 
 ## Description
 
-The system for viewing the open-gym schedule can be cumbersome. With that being said, we propose the solution of an open gym schedule redesign. We created a more user-friendly and aesthetically pleasing interface that shows information that is personalized to each user. Some of the main features include different views for days/weeks, and filtering activities by sport. Revamping the open gym schedule viewer will improve the experience of the students that continue to use it.
+The system for viewing the open gym schedule can be cumbersome. With that being said, we propose the solution of an open gym schedule redesign. We created a more user-friendly and aesthetically pleasing interface that shows information that is personalized to each user. Some of the main features include different views for days/weeks and filtering activities by sport. Revamping the open gym schedule viewer will improve the experience of the students who continue to use it.
 
 ## Product Video
 
@@ -57,5 +57,4 @@ MONGO_URI = "mongodb+srv://opengym:W3m6nJqL7Sv72$q@cluster0.ez83orx.mongodb.net/
 - Liam Sarjeant
 - Al Mahmud Dipto
 - Tenzin Dorjee
-- Connor Swartz
 - Anthony Dam
