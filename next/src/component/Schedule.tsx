@@ -170,8 +170,8 @@ function mountCalendarEvent(
           <div
             key={activityName + "-" + activityID}
             className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75
-              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit
-              active:z-20 active:-translate-x-1 active:scale-105 active:absolute
+              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-sm
+              active:z-20 active:-translate-x-1 active:scale-105 active:absolute active:min-w-fit active:backdrop-blur-md active:shadow-sm
               ${activityTheme(formattedActivityName).bg} 
               ${activityTheme(formattedActivityName).border}
               `}
@@ -187,25 +187,22 @@ function mountCalendarEvent(
               `}
             ></div>
             <div
-              className={`font-medium h-full w-full break-all leading-4 text-xs rounded-md hover:backdrop-blur-sm 
-                hover:whitespace-nowrap hover:relative
-                active:whitespace-nowrap active:relative
-                active:${activityTheme(formattedActivityName).hover}
-                hover:${activityTheme(formattedActivityName).hover}
+              className={`font-medium h-full w-full break-all leading-4 text-xs rounded-md
+                hover:whitespace-nowrap hover:relative hover:min-w-fit
+                active:whitespace-nowrap active:relative active:min-w-fit
                 ${activityTheme(formattedActivityName).text}
               `}
             >
               <p>
-                {activityTheme(formattedActivityName).emoji +
-                  formattedActivityName + (
-                    activityLocation === 'Red Gym'
-                      ? ' ♦ '
-                      : activityLocation === 'Gold Gym'
-                        ? ' ★ '
-                        : ' • '
-                  ) 
-                  + activityLocation
+                {activityTheme(formattedActivityName).emoji + formattedActivityName}
+                {
+                  activityLocation === 'Red Gym'
+                    ? <a className="text-red-400"> ♦ </a>
+                    : activityLocation === 'Gold Gym'
+                      ? <a className="text-yellow-400"> ★ </a>
+                      : ' • '
                 }
+                {activityLocation}
               </p>
               <p>
                 {(isHovered
