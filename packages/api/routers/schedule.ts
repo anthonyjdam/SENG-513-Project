@@ -9,8 +9,6 @@ export const scheduleRouter = router({
   createSchedule: validateSchedule.mutation(async ({ ctx, input }) => {
     const schedule = new GymScheduleModel(input);
     await schedule.save();
-    console.log("HIT");
-
     return { resString: "Success creating schedule" };
   }),
 
