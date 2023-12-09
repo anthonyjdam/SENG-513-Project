@@ -197,8 +197,14 @@ function mountCalendarEvent(
             >
               <p>
                 {activityTheme(formattedActivityName).emoji +
-                  formattedActivityName +
-                  " • " + activityLocation
+                  formattedActivityName + (
+                    activityLocation === 'Red Gym'
+                      ? ' ♦ '
+                      : activityLocation === 'Gold Gym'
+                        ? ' ★ '
+                        : ' • '
+                  ) 
+                  + activityLocation
                 }
               </p>
               <p>
