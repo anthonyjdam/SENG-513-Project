@@ -48,6 +48,7 @@ const activityTheme = (simplifiedActivityName: string) => {
     case newActivityName.includes("badminton"):
       return {
         bg: "bg-purple-500/10",
+        hover: "bg-purple-300/75",
         border: "border-purple-400",
         text: "text-purple-600",
         emoji: "🏸 ",
@@ -57,6 +58,7 @@ const activityTheme = (simplifiedActivityName: string) => {
     case newActivityName.includes("basketball"):
       return {
         bg: "bg-orange-500/10",
+        hover: "bg-orange-300/75",
         border: "border-orange-400",
         text: "text-orange-600",
         emoji: "🏀 ",
@@ -66,6 +68,7 @@ const activityTheme = (simplifiedActivityName: string) => {
     case newActivityName.includes("ball hockey"):
       return {
         bg: "bg-yellow-500/10",
+        hover: "bg-yellow-300/75",
         border: "border-yellow-400",
         text: "text-yellow-600",
         emoji: "🏑 ",
@@ -75,6 +78,7 @@ const activityTheme = (simplifiedActivityName: string) => {
     case newActivityName.includes("volleyball"):
       return {
         bg: "bg-red-500/10",
+        hover: "bg-red-300/75",
         border: "border-red-400",
         text: "text-red-600",
         emoji: "🏐 ",
@@ -84,6 +88,7 @@ const activityTheme = (simplifiedActivityName: string) => {
     case newActivityName.includes("soccer"):
       return {
         bg: "bg-green-500/10",
+        hover: "bg-green-300/75",
         border: "border-green-400",
         text: "text-green-600",
         emoji: "⚽ ",
@@ -93,6 +98,7 @@ const activityTheme = (simplifiedActivityName: string) => {
     default:
       return {
         bg: "bg-blue-500/10",
+        hover: "bg-blue-300/75",
         border: "border-blue-400",
         text: "text-blue-600",
         emoji: "🏃 ",
@@ -102,18 +108,16 @@ const activityTheme = (simplifiedActivityName: string) => {
 };
 
 function mountCalendarEvent(
-  schedulesList:
-    | {
-      date: string;
-      startTime: string;
-      endTime: string;
-      location: string;
-      _id: string;
-      __v: number;
-      activityName: string;
-      duration: string;
-    }[]
-    | undefined,
+  schedulesList: {
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    _id: string;
+    __v: number;
+    activityName: string;
+    duration: string;
+  }[] | undefined,
   currentDayOfTheWeek: string,
   currentStartTime: string
 ) {
@@ -130,6 +134,9 @@ function mountCalendarEvent(
     return day === currentDayOfTheWeek;
   });
 
+  const [isHovered, setIsHovered] = useState(false);
+  let renderedEvents = []; // stores the events in this array if they have a start time for this mapping
+
   if (filteredList) {
     for (let i = 0; i < filteredList.length; i++) {
       activityDate = filteredList[i].date.toUpperCase();
@@ -140,54 +147,79 @@ function mountCalendarEvent(
       activityLocation = filteredList[i].location;
       activityDuration = filteredList[i].duration;
 
+      // removes the leading zero from the times
+      const formatActivityStartTime = activityStartTime.replace(/^0/, "");
+      const formatCurrentStartTime = currentStartTime.replace(/^0/, "");
+
+      // conditionally render if the database data "start time" is the same as the current start time for the mapping
       if (
         activityDate.includes(currentDayOfTheWeek) &&
-        activityStartTime.includes(currentStartTime)
+        formatActivityStartTime === formatCurrentStartTime
       ) {
+
+        // console.log("Adding ", activityName, " | Location: ", activityLocation, " | Date and Time: ", activityDate, " ", activityStartTime, "Database Time ", currentStartTime);
+
         const formattedActivityName = activityName
           .replace(/^Drop In\s*/, "")
           .replace(/\s*Time$/, ""); // Remove "Drop In" from the beginning and "Time" from the end
         // const formattedTime = activityStartTime.replace(/^0(\d+):(\d+) (\w{2})/, '$1:$2 $3');
-        const scheduleHeight = (20 * parseInt(activityDuration, 10)) / 15; // parse the duration as an int
+        const scheduleHeight =
+          (20 * parseInt(activityDuration, 10)) / 15; // parse the duration as an int
 
-        return (
+        renderedEvents.push(
           <div
             key={activityName + "-" + activityID}
-            className={`border-l-4 rounded-md p-1 pt-2 flex-1 z-10 ${activityTheme(formattedActivityName).bg
-              } ${activityTheme(formattedActivityName).border}`}
+            className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75
+              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute
+              active:z-20 active:-translate-x-1 active:scale-105 active:absolute
+              ${activityTheme(formattedActivityName).bg} 
+              ${activityTheme(formattedActivityName).border}
+              `}
             style={{ height: scheduleHeight }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => setIsHovered(false)}
           >
             <div
-              className={`absolute -z-10 w-4 h-4 p-1 rounded-full ${activityTheme(formattedActivityName).dot
-                }`}
+              className={`absolute -z-10 w-4 h-4 p-1 rounded-full hover:hidden
+                ${activityTheme(formattedActivityName).dot}
+              `}
             ></div>
-            <p
-              className={`font-medium break-all leading-4 text-xs ${activityTheme(formattedActivityName).text
-                }`}
+            <div
+              className={`font-medium h-full w-full break-all leading-4 text-xs rounded-md hover:backdrop-blur-sm 
+                hover:whitespace-nowrap hover:relative
+                active:whitespace-nowrap active:relative
+                active:${activityTheme(formattedActivityName).hover}
+                hover:${activityTheme(formattedActivityName).hover}
+                ${activityTheme(formattedActivityName).text}
+              `}
             >
-              {activityTheme(formattedActivityName).emoji +
-                formattedActivityName +
-                " • " +
-                activityStartTime.replace(
-                  /^0?(\d+):(\d+)\s*(AM|PM)/i,
-                  "$1:$2$3"
-                ) +
-                "-" +
-                activityEndTime.replace(
-                  /^0?(\d+):(\d+)\s*(AM|PM)/i,
-                  "$1:$2$3"
-                ) +
-                " • " +
-                activityLocation}
-            </p>
+              <p>
+                {activityTheme(formattedActivityName).emoji +
+                  formattedActivityName +
+                  " • " + activityLocation
+                }
+              </p>
+              <p>
+                {(isHovered
+                  ? `Time: ${activityStartTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, "$1:$2$3")}
+                    -${activityEndTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, "$1:$2$3"
+                  )}`
+                  : '')
+                }
+              </p>
+
+            </div>
           </div>
         );
       }
     }
   }
 
-  return null; //return nothing if there is no activity at that time of the day of the week
+  return renderedEvents.length > 0 ? renderedEvents : null; // return the array of events is the length of renderedEvents is > 0; else nothing
 }
+
 
 // Interface for a date in the days of the week
 interface MyDate {
@@ -315,6 +347,7 @@ interface WeekViewProps {
 const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, setIsDragDisabled }: WeekViewProps) => {
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
+
   // console.log("Times: ", times, "Days ", days);
 
   // const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
@@ -382,6 +415,8 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
         prevSelectedItems.filter((item) => item !== currentItem)
       ); //remove the item if it is already in the selectedItems list
     }
+    console.log(selectedItems);
+
   }
 
   function clearItemSelection() {
@@ -407,8 +442,8 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
             {times.map((time, index) => (
               <div
                 key={`${day.dayOfTheWeek}-${day.dayNumber}-${time}`}
-                data-dayOfWeek={day.dayOfTheWeek}
-                data-dayNumber={day.dayNumber}
+                data-day-of-week={day.dayOfTheWeek}
+                data-day-number={day.dayNumber}
                 data-time={time}
                 className={`h-5 w-full border-t relative ${isDragDisabled ? "" : "hover:bg-zinc-200"}
                   ${index % 4 === 0
@@ -431,6 +466,20 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
                     day.dayNumber.toString(),
                     time
                   )}
+                  {/* {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
+                    <div
+                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+                    >
+                      <p className="break-all leading-4">volleyball</p>
+                    </div>
+                  ) : null}
+                  {time === "8:30 AM" && day.dayOfTheWeek === "SUN" ? (
+                    <div
+                      className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+                    >
+                      <p className="break-all leading-4">volleyball</p>
+                    </div>
+                  ) : null} */}
                 </div>
               </div>
             ))}

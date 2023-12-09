@@ -318,10 +318,10 @@ catch (err) {
 // 	scrapeSchedule().then(async (schedules) => {
 // 		try {
 // 			connectDB();
-// 			const result = await GymScheduleModel.deleteMany({});
+// 			const result = await GymScheduleModel.deleteMany({}); // delete the current activities in the database
 // 			for (let i = 0; i < schedules.length; i++) {
 // 				const newGymEvent = new GymScheduleModel(schedules[i]);
-// 				const savedGymSchedule = await newGymEvent.save();
+// 				const savedGymSchedule = await newGymEvent.save(); // save the GymSchedule Document to the database
 // 				console.log(savedGymSchedule);
 // 			}
 // 		} catch (error) {
