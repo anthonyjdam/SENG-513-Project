@@ -170,7 +170,7 @@ function mountCalendarEvent(
           <div
             key={activityName + "-" + activityID}
             className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75
-              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-sm
+              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-sm 
               active:z-20 active:-translate-x-1 active:scale-105 active:absolute active:min-w-fit active:backdrop-blur-md active:shadow-sm
               ${activityTheme(formattedActivityName).bg} 
               ${activityTheme(formattedActivityName).border}
@@ -350,6 +350,7 @@ interface WeekViewProps {
 const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, setIsDragDisabled }: WeekViewProps) => {
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
+  let todaysDay = new Date();
 
   // console.log("Times: ", times, "Days ", days);
 
@@ -436,8 +437,19 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
             <p className="text-zinc-500 text-xs font-semibold">
               {day.dayOfTheWeek.toUpperCase()}
             </p>
-            <h1 className="text-gray-900 text-xl font-semibold">
-              {day.dayNumber}
+            <h1 className="text-gray-900 text-xl font-semibold relative">
+              {todaysDay.getDate() === day.dayNumber ? (
+                <>
+                  <p className="z-10 absolute text-white">
+                    {day.dayNumber}
+                  </p>
+                  <div className="absolute w-7 h-7 bg-red-500 shadow-red-300/75 shadow-md rounded-full -left-0.5"></div>
+                </>
+              ) : (
+                <p className="">
+                  {day.dayNumber}
+                </p>
+              )}
             </h1>
           </div>
           <div className="flex flex-col border-r border-neutral-200">
@@ -454,7 +466,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
                     : "border-neutral-100"
                   }
                   ${selectedItems.includes(`${day.dayOfTheWeek}-${time}`)
-                    ? "bg-red-500/75"
+                    ? "transition duration-300 hover:duration-0 bg-red-600 opacity-50"
                     : ""
                   }
                 `}
@@ -487,9 +499,9 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
               </div>
             ))}
           </div>
-        </div>
+        </div >
       ))}
-    </div>
+    </div >
   );
 };
 
