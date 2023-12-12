@@ -56,14 +56,17 @@ export const scrapeSchedule = async () => {
 
 	let activities: Activity[] = [];
 
+	// Targets an html element on the open gym website that encapsulates the children elements that are rows
 	$("#ctl00_MainContent_ASPxGridViewDetails_DXMainTable > tbody")
 		.children()
 		.each((i, elem) => {
 			if (i !== 0) {  // Skip the first row in the table, its the table headers
 
+				// Targets the corresponding start and end time columns in the table
 				const start = $($(elem).children().get(1)).text()
 				const end = $($(elem).children().get(2)).text()
 
+				// Create activity object for each row (child element) of the table
 				const activity: Activity = {
 					date: $($(elem).children().get(0)).text().trimEnd(),
 					startTime: start,
@@ -73,6 +76,7 @@ export const scrapeSchedule = async () => {
 					duration: calculateDuration(start, end),
 				};
 
+				// Accumulate the scraped objects in an array
 				activities.push(activity);
 			}
 		});
