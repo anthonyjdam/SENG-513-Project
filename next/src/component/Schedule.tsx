@@ -47,27 +47,27 @@ const activityTheme = (simplifiedActivityName: string) => {
   switch (true) {
     case newActivityName.includes("badminton"):
       return {
-        bg: "bg-purple-500/10",
+        bg: "bg-purple-200/[60%]",
         hover: "bg-purple-300/75",
         border: "border-purple-400",
         text: "text-purple-600",
         emoji: "🏸 ",
-        dot: "bg-purple-500",
+        dot: "bg-purple-400",
       };
 
     case newActivityName.includes("basketball"):
       return {
-        bg: "bg-amber-400/10",
+        bg: "bg-amber-100/[60%]",
         hover: "bg-amber-300/75",
         border: "border-amber-400",
         text: "text-amber-600",
         emoji: "🏀 ",
-        dot: "bg-amber-500",
+        dot: "bg-amber-400",
       };
 
     case newActivityName.includes("ball hockey"):
       return {
-        bg: "bg-blue-500/10",
+        bg: "bg-blue-100/[60%]",
         hover: "bg-blue-300/75",
         border: "border-blue-400",
         text: "text-blue-600",
@@ -77,27 +77,27 @@ const activityTheme = (simplifiedActivityName: string) => {
 
     case newActivityName.includes("volleyball"):
       return {
-        bg: "bg-red-500/10",
+        bg: "bg-red-200/[60%]",
         hover: "bg-red-300/75",
         border: "border-red-400",
         text: "text-red-600",
         emoji: "🏐 ",
-        dot: "bg-red-500",
+        dot: "bg-red-400",
       };
 
     case newActivityName.includes("soccer"):
       return {
-        bg: "bg-emerlad-500/10",
+        bg: "bg-emerlad-200/[60%]",
         hover: "bg-emerlad-300/75",
         border: "border-emerlad-400",
         text: "text-emerlad-600",
         emoji: "⚽ ",
-        dot: "bg-emerlad-500",
+        dot: "bg-emerlad-400",
       };
 
     default:
       return {
-        bg: "bg-sky-400/10",
+        bg: "bg-sky-100/[60%]",
         hover: "bg-sky-300/75",
         border: "border-sky-400",
         text: "text-sky-600",
@@ -169,9 +169,9 @@ function mountCalendarEvent(
         renderedEvents.push(
           <div
             key={activityName + "-" + activityID}
-            className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75 duration-300 hover:duration-150 
-              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-sm 
-              active:z-20 active:-translate-x-1 active:scale-105 active:absolute active:min-w-fit active:backdrop-blur-md active:shadow-sm
+            className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75 duration-300 hover:duration-150 shadow-sm
+              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-md 
+              active:z-20 active:-translate-x-1 active:scale-105 active:absolute active:min-w-fit active:backdrop-blur-md active:shadow-md
               ${activityTheme(formattedActivityName).bg} 
               ${activityTheme(formattedActivityName).border}
               `}
@@ -435,7 +435,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
         <div key={day.dayOfTheWeek} className="flex-grow">
           <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2 ${todaysDay.getDate() === day.dayNumber ? 'border-[3px] border-l-0 border-t-0 border-b-red-500 ' : ''}`}>
             {/* <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2`}> */}
-            <p className={` text-xs font-semibold ${todaysDay.getDate() === day.dayNumber ? 'text-rose-600' : 'text-zinc-500'}`}>
+            <p className={` text-xs font-semibold ${todaysDay.getDate() === day.dayNumber ? 'text-red-600' : 'text-zinc-500'}`}>
               {day.dayOfTheWeek.toUpperCase()}
             </p>
             {/* <h1 className={`text-gray-900 text-xl relative ${todaysDay.getDate() === day.dayNumber ? 'font-medium' : 'font-semibold'}`}> */}
@@ -443,7 +443,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
               {todaysDay.getDate() === day.dayNumber ? (
                 <>
                   {/* <p className="z-10 absolute text-white"> */}
-                  <p className="z-10 text-rose-600">
+                  <p className="z-10 text-red-600">
                     {day.dayNumber}
                   </p>
                   {/* <div className="absolute w-8 h-8 bg-red-500 shadow-red-300/75 shadow-md rounded-full -left-1 -top-0.5"></div> */}
@@ -486,7 +486,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
                   )}
                   {/* {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
                     <div
-                      className={`bg-rose-500/10 border-l-4 border-rose-500 h-20 rounded-l-md p-1 flex-1 z-10`}
+                      className={`bg-red-500/10 border-l-4 border-red-500 h-20 rounded-l-md p-1 flex-1 z-10`}
                     >
                       <p className="break-all leading-4">volleyball</p>
                     </div>
