@@ -55,7 +55,7 @@ function Sidebar({ date, setDate, isDragDisabled, setIsDragDisabled }: SidebarPr
       <div className="flex flex-col mt-4 space-y-3">
         <div className="flex flex-row pb-2">
           <h1 className="text-2xl text-white pr-1">{monthName}</h1>
-          <h1 className="text-2xl font-light text-red-500">2023</h1>
+          <h1 className="text-2xl font-light text-rose-600">2023</h1>
         </div>
         <p className="text-blue-400">Choose Activity</p>
         <ActivityButton activity="Badminton" />

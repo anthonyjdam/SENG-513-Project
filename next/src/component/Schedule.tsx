@@ -57,22 +57,22 @@ const activityTheme = (simplifiedActivityName: string) => {
 
     case newActivityName.includes("basketball"):
       return {
-        bg: "bg-orange-500/10",
-        hover: "bg-orange-300/75",
-        border: "border-orange-400",
-        text: "text-orange-600",
+        bg: "bg-amber-400/10",
+        hover: "bg-amber-300/75",
+        border: "border-amber-400",
+        text: "text-amber-600",
         emoji: "🏀 ",
-        dot: "bg-orange-500",
+        dot: "bg-amber-500",
       };
 
     case newActivityName.includes("ball hockey"):
       return {
-        bg: "bg-yellow-500/10",
-        hover: "bg-yellow-300/75",
-        border: "border-yellow-400",
-        text: "text-yellow-600",
+        bg: "bg-blue-500/10",
+        hover: "bg-blue-300/75",
+        border: "border-blue-400",
+        text: "text-blue-600",
         emoji: "🏑 ",
-        dot: "bg-yellow-500",
+        dot: "bg-blue-400",
       };
 
     case newActivityName.includes("volleyball"):
@@ -87,22 +87,22 @@ const activityTheme = (simplifiedActivityName: string) => {
 
     case newActivityName.includes("soccer"):
       return {
-        bg: "bg-green-500/10",
-        hover: "bg-green-300/75",
-        border: "border-green-400",
-        text: "text-green-600",
+        bg: "bg-emerlad-500/10",
+        hover: "bg-emerlad-300/75",
+        border: "border-emerlad-400",
+        text: "text-emerlad-600",
         emoji: "⚽ ",
-        dot: "bg-green-500",
+        dot: "bg-emerlad-500",
       };
 
     default:
       return {
-        bg: "bg-blue-500/10",
-        hover: "bg-blue-300/75",
-        border: "border-blue-400",
-        text: "text-blue-600",
+        bg: "bg-sky-400/10",
+        hover: "bg-sky-300/75",
+        border: "border-sky-400",
+        text: "text-sky-600",
         emoji: "🏃 ",
-        dot: "bg-blue-500",
+        dot: "bg-sky-400",
       };
   }
 };
@@ -433,17 +433,20 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
       {days.map((day) => (
         //this day card goes here!!!
         <div key={day.dayOfTheWeek} className="flex-grow">
-          <div className="h-[75px] bg-zinc-50 border-r border-neutral-200 p-2">
-            <p className="text-zinc-500 text-xs font-semibold">
+          <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2 ${todaysDay.getDate() === day.dayNumber ? 'border-[3px] border-l-0 border-t-0 border-b-red-500 ' : ''}`}>
+            {/* <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2`}> */}
+            <p className={` text-xs font-semibold ${todaysDay.getDate() === day.dayNumber ? 'text-rose-600' : 'text-zinc-500'}`}>
               {day.dayOfTheWeek.toUpperCase()}
             </p>
-            <h1 className="text-gray-900 text-xl font-semibold relative">
+            {/* <h1 className={`text-gray-900 text-xl relative ${todaysDay.getDate() === day.dayNumber ? 'font-medium' : 'font-semibold'}`}> */}
+            <h1 className="text-gray-900 font-semibold text-xl relative">
               {todaysDay.getDate() === day.dayNumber ? (
                 <>
-                  <p className="z-10 absolute text-white">
+                  {/* <p className="z-10 absolute text-white"> */}
+                  <p className="z-10 text-rose-600">
                     {day.dayNumber}
                   </p>
-                  <div className="absolute w-7 h-7 bg-red-500 shadow-red-300/75 shadow-md rounded-full -left-0.5"></div>
+                  {/* <div className="absolute w-8 h-8 bg-red-500 shadow-red-300/75 shadow-md rounded-full -left-1 -top-0.5"></div> */}
                 </>
               ) : (
                 <p className="">
