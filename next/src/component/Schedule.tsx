@@ -87,12 +87,12 @@ const activityTheme = (simplifiedActivityName: string) => {
 
     case newActivityName.includes("soccer"):
       return {
-        bg: "bg-emerlad-200/[60%]",
-        hover: "bg-emerlad-300/75",
-        border: "border-emerlad-400",
-        text: "text-emerlad-600",
+        bg: "bg-emerald-100/[60%]",
+        hover: "bg-emerald-300/75",
+        border: "border-emerald-400",
+        text: "text-emerald-600",
         emoji: "⚽ ",
-        dot: "bg-emerlad-400",
+        dot: "bg-emerald-400",
       };
 
     default:
@@ -187,7 +187,7 @@ function mountCalendarEvent(
               `}
             ></div>
             <div
-              className={`font-medium h-full w-full break-all leading-4 text-xs rounded-md
+              className={`font-medium h-full w-full break-all leading-4 text-xs rounded-md overflow-hidden
                 hover:whitespace-nowrap hover:relative hover:min-w-fit
                 active:whitespace-nowrap active:relative active:min-w-fit
                 ${activityTheme(formattedActivityName).text}
