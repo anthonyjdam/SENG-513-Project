@@ -57,9 +57,10 @@ export const Topbar = ({
           <PopoverTrigger asChild>
             <button
               // variant="outline"
-              className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
+              // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
+              className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
               </svg>
             </button>
@@ -76,23 +77,25 @@ export const Topbar = ({
 
         <div className="flex space-x-2 items-center">
           <button
-            className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
+            // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
+            className="rounded-lg p-0.5 hover:bg-zinc-100 hover:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
             onClick={() => {
               handlePrevDay();
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-zinc-500 hover:text-zinc-400 active:text-zinc-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6 text-zinc-600 hover:text-zinc-500 active:text-zinc-700">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
           </button>
 
           <button
-            className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
+            className="rounded-lg p-0.5 hover:bg-zinc-100 hover:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
+            // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
             onClick={() => {
               handleNextDay();
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-zinc-500 hover:text-zinc-400 active:text-zinc-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6 text-zinc-600 hover:text-zinc-500 active:text-zinc-700">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
           </button>
@@ -101,7 +104,7 @@ export const Topbar = ({
 
       <div className="hidden md:flex space-x-0.5 text-zinc-600">
         <button
-          className={`py-0.5 px-2 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all duration-700 hover:duration-300 ${scheduleView === "d" ? "bg-red-500 text-white shadow-red-200 shadow-md border border-red-500" : "bg-zinc-100 border border-zinc-200/50"
+          className={`py-0.5 px-3 rounded-lg font-medium hover:bg-red-600 hover:text-white transition-all duration-700 hover:duration-300 ${scheduleView === "d" ? "bg-red-600 text-white shadow-red-200 shadow-md border border-zinc-200/50" : "bg-zinc-100 border border-zinc-200/50"
             }`}
           onClick={() => {
             setScheduleView("d");
@@ -111,7 +114,7 @@ export const Topbar = ({
         </button>
 
         <button
-          className={`py-0.5 px-2 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all duration-700 hover:duration-300 ${scheduleView === "w" ? "bg-red-500 text-white shadow-red-200 shadow-md border border-red-500" : "bg-zinc-100 border border-zinc-200/50"
+          className={`py-0.5 px-3 rounded-lg font-medium hover:bg-red-600 hover:text-white transition-all duration-700 hover:duration-300 ${scheduleView === "w" ? "bg-red-600 text-white shadow-red-200 shadow-md border border-zinc-200/50" : "bg-zinc-100 border border-zinc-200/50"
             }`}
           onClick={() => {
             setScheduleView("w");
@@ -128,7 +131,7 @@ export const Topbar = ({
         </div>
       ) : (
         <button className="py-0.5 px-2 rounded-lg font-medium text-zinc-600 bg-zinc-100  border border-zinc-200/50
-        hover:bg-red-500 hover:text-white active:bg-red-500/[90%] hover:shadow-red-200 hover:shadow-md transition-all duration-300
+        hover:bg-red-600 hover:text-white active:bg-red-500 hover:shadow-red-200 hover:shadow-md transition-all duration-300
         ">
           <SignInButton mode="modal" />
         </button>
