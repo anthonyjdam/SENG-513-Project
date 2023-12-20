@@ -19,19 +19,19 @@ const chooseActivityButtonColors = (activity: string) => {
       emoji = "🏸";
       break;
     case "Basketball":
-      hoverBackground = "hover:bg-orange-900";
-      border = "border-orange-500";
-      circle = "bg-orange-500";
-      background = "bg-orange-500/10";
-      selectedBackground = "bg-orange-500/75"
+      hoverBackground = "hover:bg-amber-900";
+      border = "border-amber-500";
+      circle = "bg-amber-500";
+      background = "bg-amber-500/10";
+      selectedBackground = "bg-amber-500/75"
       emoji = "🏀";
       break;
     case "Ball Hockey":
-      hoverBackground = "hover:bg-yellow-900";
-      border = "border-yellow-500";
-      circle = "bg-yellow-500";
-      background = "bg-yellow-500/10";
-      selectedBackground = "bg-yellow-500/75"
+      hoverBackground = "hover:bg-blue-900";
+      border = "border-blue-500";
+      circle = "bg-blue-500";
+      background = "bg-blue-500/10";
+      selectedBackground = "bg-blue-500/75"
       emoji = "🏑";
       break;
     case "Volleyball":
@@ -43,19 +43,19 @@ const chooseActivityButtonColors = (activity: string) => {
       emoji = "🏐";
       break;
     case "Soccer":
-      hoverBackground = "hover:bg-green-900";
-      border = "border-green-500";
-      circle = "bg-green-500";
-      background = "bg-green-500/10";
-      selectedBackground = "bg-green-500/75"
+      hoverBackground = "hover:bg-emerald-900";
+      border = "border-emerald-500";
+      circle = "bg-emerald-500";
+      background = "bg-emerald-500/10";
+      selectedBackground = "bg-emerald-500/75"
       emoji = "⚽";
       break;
     case "Open Gym":
-      hoverBackground = "hover:bg-blue-900";
-      border = "border-blue-500";
-      circle = "bg-blue-500";
-      background = "bg-blue-500/10";
-      selectedBackground = "bg-blue-500/75"
+      hoverBackground = "hover:bg-sky-900";
+      border = "border-sky-500";
+      circle = "bg-sky-500";
+      background = "bg-sky-500/10";
+      selectedBackground = "bg-sky-500/75"
       emoji = "🏃";
       break;
     default:
