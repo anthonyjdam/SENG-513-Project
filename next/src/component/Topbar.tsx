@@ -36,6 +36,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const { isSignedIn } = useAuth();
   const schedules = trpc.schedule.getSchedules.useQuery();
   const [schedulesList, setSchedulesList] = useState<SchedulesList[]>([]);
+  const [selectedDateRange, setSelectedDateRange] = useState("today");
+  const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
+  const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
+
 
   useEffect(() => {
     fetchData();
@@ -62,10 +66,80 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     }
   };
 
+  const activityTheme = (activityElement: string) => {
+    switch (true) {
+      case activityElement.includes("Basketball"):
+        return {
+          bg: "bg-amber-500/10",
+          emoji: "🏀",
+          dot: "bg-amber-400",
+          text: "text-amber-600"
+        }
+      case activityElement.includes("Volleyball"):
+        return {
+          bg: "bg-red-500/10",
+          emoji: "🏐",
+          dot: "bg-red-400",
+          text: "text-red-600"
+        }
+      case activityElement.includes("Badminton"):
+        return {
+          bg: "bg-purple-500/10",
+          emoji: "🏸",
+          dot: "bg-purple-400",
+          text: "text-purple-600"
+        }
+      case activityElement.includes("Ball Hockey"):
+        return {
+          bg: "bg-blue-500/10",
+          emoji: "🏑",
+          dot: "bg-blue-400",
+          text: "text-blue-600"
+        }
+      case activityElement.includes("Soccer"):
+        return {
+          bg: "bg-emerald-500/10",
+          emoji: "⚽",
+          dot: "bg-emerald-400",
+          text: "text-emerald-600"
+        }
+      default:
+        return {
+          bg: "bg-sky-500/10",
+          emoji: "🏃‍♂️",
+          dot: "bg-sky-400",
+          text: "text-sky-600"
+        }
+    }
+  }
+
+  /**
+   * fetches the schedule data
+   */
   function fetchData() {
     const schedulesData = schedules?.data || [];
     setSchedulesList(schedulesData);
   }
+
+  /**
+   * checks if the activity exists in the list, if it does, remove it, else add it to the list
+   * @param context the activity pressed by the user
+   */
+  function toggleSelectedActivity(context: string) {
+    if (selectedActivity.includes(context)) { //remove the activity if it already exists
+      setSelectedActivity((prev: string[]) =>
+        prev.filter((element) => element !== context)
+      );
+    }
+    else { //add the activity if it doesnt exist
+      setSelectedActivity((prev: string[]) => [...prev, context]);
+    }
+  }
+
+  // useEffect(() => {
+  //   console.log(selectedActivity);
+  // }, [selectedActivity])
+
 
   return (
     <div className="flex justify-between mx-3 py-4 ">
@@ -114,17 +188,62 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                     </svg>
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 bg-white/[80%] backdrop-blur-3xl">
-                  <p>
-                    {
-                      schedulesList.length > 0
-                        ? `${schedulesList[0].activityName} - ${schedulesList[0].location}`
-                        : "Loading..."
-                    }
-                  </p>
-                  <button>
-                    Press
-                  </button>
+                {/* <PopoverContent className="w-80 bg-white/[80%] backdrop-blur-2xl rounded-xl"> */}
+                <PopoverContent className="w-96 rounded-md">
+                  <>
+                    <div className="flex justify-center w-full flex-col">
+                      {/* Select Date */}
+                      <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-5 w-[290px] min-w-fit h-fit">
+                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-lg text-black" : "text-zinc-700 bg-none hover:text-black"}`}
+                          onClick={() => {
+                            setSelectedDateRange("today");
+                          }}
+                        >
+                          TODAY
+                        </button>
+                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "week" ? "bg-white rounded-full shadow-lg text-black" : "text-zinc-700 bg-none hover:text-black"}`}
+                          onClick={() => {
+                            setSelectedDateRange("week");
+                          }}
+                        >
+                          WEEK
+                        </button>
+                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "month" ? "bg-white rounded-full shadow-lg text-black" : "text-zinc-700 bg-none hover:text-black"}`}
+                          onClick={() => {
+                            setSelectedDateRange("month");
+                          }}
+                        >
+                          MONTH
+                        </button>
+                      </div>
+
+                      {/* Select Activity */}
+                      <div className="grid grid-cols-3 grid-rows-2 rounded-lg m-auto my-5 w-[280px] h-fit text-xs font-medium">
+                        {activityList.map((activityElement) => (
+                          <button
+                            className={`border border-zinc-200 rounded-md m-0.5 p-4 flex flex-col items-center transition duration-300
+                          ${selectedActivity.includes(activityElement) ? `${activityTheme(activityElement).bg} shadow-md filter-none` : "bg-none filter grayscale"}`
+                            }
+                            onClick={() => {
+                              toggleSelectedActivity(activityElement);
+                            }}
+                          >
+                            <span className={`${activityTheme(activityElement).dot} border-zinc-200 rounded-full text-lg p-0.5 px-1`}>
+                              {activityTheme(activityElement).emoji}
+                            </span>
+                            <span className={`text-xs ${activityTheme(activityElement).text} font-medium mt-0.5`}>
+                              {activityElement}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex justify-center w-[290px] m-auto">
+                        <button className="bg-zinc-100 px-2 font-medium text-zinc-600 hover:bg-zinc-200 active:bg-zinc-200 active:text-zinc-800 border border-zinc-200/50 p-1 rounded-md transition duration-300">
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                  </>
                 </PopoverContent>
               </Popover>
             )
