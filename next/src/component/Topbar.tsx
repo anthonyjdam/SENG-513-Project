@@ -13,6 +13,7 @@ import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import HamburgerMenu from "./HamburgerMenu";
 import { trpc } from "@/lib/trpc";
+// import ICAL from "ical.js";
 
 interface TopbarProps {
   date: Date | undefined;
@@ -41,10 +42,12 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
 
 
+
   useEffect(() => {
     fetchData();
     console.log("Schedule list", schedulesList);
   }, [schedulesList]);
+
 
   const handlePrevDay = () => {
     if (date && setDate) {
@@ -136,6 +139,49 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     }
   }
 
+  function createICalEvent() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.toLocaleString('default', { month: 'short' });
+    const formattedSchedulesList = schedulesList.map((schedule) => {
+      return {
+        ...schedule,
+        activityName: schedule.activityName.replace("Drop In ", "").replace(" Time", "")
+      };
+    });
+
+    const offset = currentDate.getDate() - 2;
+    console.log("Selected", selectedActivity);
+    
+
+    const filteredSchedules = formattedSchedulesList.filter((schedule) =>
+      schedule.date.includes(offset?.toString()) &&
+      schedule.date.includes(currentMonth?.toString()) &&
+      selectedActivity.some(activity => schedule.activityName.includes(activity))
+    );
+    console.log("Filtered", filteredSchedules, " with offset ", offset);
+
+
+    // if (date) {
+    //   const jcalData = {
+    //     method: "REQUEST",
+    //     uid: "some-unique-id",
+    //     start: new ICAL.Time({
+    //       year: date.getFullYear(),
+    //       month: date.getMonth() + 1,
+    //       day: date.getDate(),
+    //     }),
+    //     end: new ICAL.Time({
+    //       year: date.getFullYear(),
+    //       month: date.getMonth() + 1,
+    //       day: date.getDate(),
+    //     }),
+    //     summary: "Your Event Summary",
+    //     description: "Your Event Description",
+    //     location: "Event Location",
+    //   };
+    // }
+  }
+
   // useEffect(() => {
   //   console.log(selectedActivity);
   // }, [selectedActivity])
@@ -172,7 +218,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
           {/* Download popover */}
           {
-            schedulesList.length > 0 && (
+            // schedulesList.length > 0 && (
               <Popover>
                 <PopoverTrigger asChild>
                   <button
@@ -193,22 +239,22 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                   <>
                     <div className="flex justify-center w-full flex-col">
                       {/* Select Date */}
-                      <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-5 w-[290px] min-w-fit h-fit">
-                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-lg text-black" : "text-zinc-700 bg-none hover:text-black"}`}
+                      <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
+                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
                           onClick={() => {
                             setSelectedDateRange("today");
                           }}
                         >
                           TODAY
                         </button>
-                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "week" ? "bg-white rounded-full shadow-lg text-black" : "text-zinc-700 bg-none hover:text-black"}`}
+                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "week" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
                           onClick={() => {
                             setSelectedDateRange("week");
                           }}
                         >
                           WEEK
                         </button>
-                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "month" ? "bg-white rounded-full shadow-lg text-black" : "text-zinc-700 bg-none hover:text-black"}`}
+                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "month" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
                           onClick={() => {
                             setSelectedDateRange("month");
                           }}
@@ -228,7 +274,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                               toggleSelectedActivity(activityElement);
                             }}
                           >
-                            <span className={`${activityTheme(activityElement).dot} border-zinc-200 rounded-full text-lg p-0.5 px-1`}>
+                            <span className={`${activityTheme(activityElement).dot} border-zinc-200 rounded-full text-lg p-0.5 px-1 ${activityElement !== "Open Gym" ? "px-1" : "px-1.5"}`}>
                               {activityTheme(activityElement).emoji}
                             </span>
                             <span className={`text-xs ${activityTheme(activityElement).text} font-medium mt-0.5`}>
@@ -237,8 +283,13 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                           </button>
                         ))}
                       </div>
-                      <div className="flex justify-center w-[290px] m-auto">
-                        <button className="bg-zinc-100 px-2 font-medium text-zinc-600 hover:bg-zinc-200 active:bg-zinc-200 active:text-zinc-800 border border-zinc-200/50 p-1 rounded-md transition duration-300">
+                      <div className="flex justify-center w-[290px] m-auto mb-4">
+                        <button
+                          className="bg-zinc-50 px-2 font-medium text-zinc-600 hover:text-white hover:bg-red-600 active:bg-red-600/90 active:text-white border hover:shadow-red-200 hover:shadow-md border-zinc-200 p-1 rounded-lg transition duration-300"
+                          onClick={() => {
+                            createICalEvent();
+                          }}
+                        >
                           Download
                         </button>
                       </div>
@@ -246,7 +297,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                   </>
                 </PopoverContent>
               </Popover>
-            )
+            // )
           }
 
           <button

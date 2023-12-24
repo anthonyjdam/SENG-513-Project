@@ -119,6 +119,7 @@ function mountCalendarEvent(
     duration: string;
   }[] | undefined,
   currentDayOfTheWeek: string,
+  currentMonth: string | undefined,
   currentStartTime: string
 ) {
   let activityDate;
@@ -131,7 +132,7 @@ function mountCalendarEvent(
 
   let filteredList = schedulesList?.filter((activity) => {
     let [dayOfWeek, month, day] = activity.date.split(" ");
-    return day === currentDayOfTheWeek;
+    return day === currentDayOfTheWeek && month === currentMonth; //filter out the events that are not in the current month
   });
 
   const [isHovered, setIsHovered] = useState(false);
@@ -239,6 +240,7 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     return [];
   }
 
+  let month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   const dayOfTheWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const currentMonth = date.getMonth();
   const currentYear = date.getFullYear();
@@ -249,6 +251,7 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   let startDayIndex = dayOfTheWeek.indexOf("SUN"); // index of sunday is the start of the week
 
   const newDateArr = [];
+
 
   for (let i = 0; i < 7; i++) {
     startDayIndex = startDayIndex % 7; // iterate through days of the week
@@ -272,6 +275,8 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     startDayIndex++;
   }
 
+  console.log(newDateArr);
+  
   return newDateArr;
 };
 
@@ -294,6 +299,8 @@ interface DayViewProps {
 const DayView = ({ date, schedulesList }: DayViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
   let times: string[] = generateTimesArray();
+  const currentMonth = date?.toLocaleString('en-us', { month: 'short' });
+
 
   return (
     <div className="flex-grow">
@@ -316,6 +323,7 @@ const DayView = ({ date, schedulesList }: DayViewProps) => {
               {mountCalendarEvent(
                 schedulesList,
                 date!.getDate().toString(),
+                currentMonth,
                 time
               )}
             </div>
@@ -351,6 +359,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
   let todaysDay = new Date();
+  const currentMonth = date?.toLocaleString('en-us', { month: 'short' });
 
   // console.log("Times: ", times, "Days ", days);
 
@@ -460,6 +469,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
             {times.map((time, index) => (
               <div
                 key={`${day.dayOfTheWeek}-${day.dayNumber}-${time}`}
+                
                 data-day-of-week={day.dayOfTheWeek}
                 data-day-number={day.dayNumber}
                 data-time={time}
@@ -479,11 +489,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
                 onMouseUp={!isDragDisabled ? handleClickEnd : undefined}
               >
                 <div className="absolute w-full flex">
-                  {mountCalendarEvent(
-                    schedulesList,
-                    day.dayNumber.toString(),
-                    time
-                  )}
+                  {mountCalendarEvent(schedulesList, day.dayNumber.toString(), currentMonth, time)}
                   {/* {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
                     <div
                       className={`bg-red-500/10 border-l-4 border-red-500 h-20 rounded-l-md p-1 flex-1 z-10`}
