@@ -13,7 +13,7 @@ import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import HamburgerMenu from "./HamburgerMenu";
 import { trpc } from "@/lib/trpc";
-// import ICAL from "ical.js";
+import ICAL from "ical.js";
 
 interface TopbarProps {
   date: Date | undefined;
@@ -44,8 +44,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
 
   useEffect(() => {
-    fetchData();
-    console.log("Schedule list", schedulesList);
+    // if (schedulesList.length > 0) {
+      fetchData();
+      console.log("Schedule list", schedulesList);
+    // }
   }, [schedulesList]);
 
 
@@ -149,9 +151,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
       };
     });
 
-    const offset = currentDate.getDate() - 2;
-    console.log("Selected", selectedActivity);
+    // console.log(formattedSchedulesList);
     
+    const offset = currentDate.getDate() - 19;
+    console.log("Selected", selectedActivity);
 
     const filteredSchedules = formattedSchedulesList.filter((schedule) =>
       schedule.date.includes(offset?.toString()) &&
@@ -159,27 +162,65 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
       selectedActivity.some(activity => schedule.activityName.includes(activity))
     );
     console.log("Filtered", filteredSchedules, " with offset ", offset);
+    
+
+    if (date) {
+      const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
+      vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
 
 
-    // if (date) {
-    //   const jcalData = {
-    //     method: "REQUEST",
-    //     uid: "some-unique-id",
-    //     start: new ICAL.Time({
-    //       year: date.getFullYear(),
-    //       month: date.getMonth() + 1,
-    //       day: date.getDate(),
-    //     }),
-    //     end: new ICAL.Time({
-    //       year: date.getFullYear(),
-    //       month: date.getMonth() + 1,
-    //       day: date.getDate(),
-    //     }),
-    //     summary: "Your Event Summary",
-    //     description: "Your Event Description",
-    //     location: "Event Location",
-    //   };
-    // }
+      filteredSchedules.forEach((schedule) => {
+
+        // boilerplate event component
+        const vevent = new ICAL.Component('vevent');
+        const event = new ICAL.Event(vevent);
+        const eventData = {
+          summary: schedule.activityName,
+          start: new Date(date.getFullYear() + schedule.date + " " + schedule.startTime),
+          end: new Date(date.getFullYear() + schedule.date + " " + schedule.endTime)
+        }
+
+        console.log(eventData.end);
+        
+        event.summary = schedule.activityName + (schedule.location == "Red Gym" ? " 🔶 " : " ⭐ ") + schedule.location;
+        event.startDate = new ICAL.Time({
+          year: eventData.start.getFullYear(),
+          month: eventData.start.getMonth() + 1,
+          day: eventData.start.getDate(),
+          hour: eventData.start.getHours(),
+          minute: eventData.start.getMinutes()
+        });
+        event.endDate = new ICAL.Time({
+          year: eventData.start.getFullYear(),
+          month: eventData.start.getMonth() + 1,
+          day: eventData.start.getDate(),
+          hour: eventData.start.getHours(),
+          minute: eventData.start.getMinutes()
+        });
+        console.log(event.endDate);
+
+        vcalendar.addSubcomponent(vevent); // add event component to calendar component
+      })
+      
+      //  the resulting iCalendar string
+      const icalString = vcalendar.toString();
+      // console.log(icalString);
+      
+      // create a blob and download the file
+      const blob = new Blob([icalString], { type: 'text/calendar;charset=utf-8' });
+      const dataURI = URL.createObjectURL(blob);
+
+      // create a link element and trigger the download
+      const a = document.createElement('a');
+      a.href = dataURI;
+      a.download = 'event.ics';
+
+      document.body.appendChild(a); // append the link to the body
+      a.click(); // trigger a click on the link
+
+      document.body.removeChild(a); // remove the link from the DOM
+      URL.revokeObjectURL(dataURI); // release the object URL
+    }
   }
 
   // useEffect(() => {
@@ -219,84 +260,84 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
           {/* Download popover */}
           {
             // schedulesList.length > 0 && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    // variant="outline"
-                    // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
-                    className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
-                  // onClick={() => {
-                  //   fetchData();
-                  // }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" data-slot="icon" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                  </button>
-                </PopoverTrigger>
-                {/* <PopoverContent className="w-80 bg-white/[80%] backdrop-blur-2xl rounded-xl"> */}
-                <PopoverContent className="w-96 rounded-md">
-                  <>
-                    <div className="flex justify-center w-full flex-col">
-                      {/* Select Date */}
-                      <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
-                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
-                          onClick={() => {
-                            setSelectedDateRange("today");
-                          }}
-                        >
-                          TODAY
-                        </button>
-                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "week" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
-                          onClick={() => {
-                            setSelectedDateRange("week");
-                          }}
-                        >
-                          WEEK
-                        </button>
-                        <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "month" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
-                          onClick={() => {
-                            setSelectedDateRange("month");
-                          }}
-                        >
-                          MONTH
-                        </button>
-                      </div>
-
-                      {/* Select Activity */}
-                      <div className="grid grid-cols-3 grid-rows-2 rounded-lg m-auto my-5 w-[280px] h-fit text-xs font-medium">
-                        {activityList.map((activityElement) => (
-                          <button
-                            className={`border border-zinc-200 rounded-md m-0.5 p-4 flex flex-col items-center transition duration-300
-                          ${selectedActivity.includes(activityElement) ? `${activityTheme(activityElement).bg} shadow-md filter-none` : "bg-none filter grayscale"}`
-                            }
-                            onClick={() => {
-                              toggleSelectedActivity(activityElement);
-                            }}
-                          >
-                            <span className={`${activityTheme(activityElement).dot} border-zinc-200 rounded-full text-lg p-0.5 px-1 ${activityElement !== "Open Gym" ? "px-1" : "px-1.5"}`}>
-                              {activityTheme(activityElement).emoji}
-                            </span>
-                            <span className={`text-xs ${activityTheme(activityElement).text} font-medium mt-0.5`}>
-                              {activityElement}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                      <div className="flex justify-center w-[290px] m-auto mb-4">
-                        <button
-                          className="bg-zinc-50 px-2 font-medium text-zinc-600 hover:text-white hover:bg-red-600 active:bg-red-600/90 active:text-white border hover:shadow-red-200 hover:shadow-md border-zinc-200 p-1 rounded-lg transition duration-300"
-                          onClick={() => {
-                            createICalEvent();
-                          }}
-                        >
-                          Download
-                        </button>
-                      </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  // variant="outline"
+                  // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
+                  className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
+                // onClick={() => {
+                //   fetchData();
+                // }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" data-slot="icon" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+                </button>
+              </PopoverTrigger>
+              {/* <PopoverContent className="w-80 bg-white/[80%] backdrop-blur-2xl rounded-xl"> */}
+              <PopoverContent className="w-96 rounded-md">
+                <>
+                  <div className="flex justify-center w-full flex-col">
+                    {/* Select Date */}
+                    <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
+                      <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
+                        onClick={() => {
+                          setSelectedDateRange("today");
+                        }}
+                      >
+                        TODAY
+                      </button>
+                      <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "week" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
+                        onClick={() => {
+                          setSelectedDateRange("week");
+                        }}
+                      >
+                        WEEK
+                      </button>
+                      <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "month" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
+                        onClick={() => {
+                          setSelectedDateRange("month");
+                        }}
+                      >
+                        MONTH
+                      </button>
                     </div>
-                  </>
-                </PopoverContent>
-              </Popover>
+
+                    {/* Select Activity */}
+                    <div className="grid grid-cols-3 grid-rows-2 rounded-lg m-auto my-5 w-[280px] h-fit text-xs font-medium">
+                      {activityList.map((activityElement) => (
+                        <button
+                          className={`border border-zinc-200 rounded-md m-0.5 p-4 flex flex-col items-center transition duration-300
+                          ${selectedActivity.includes(activityElement) ? `${activityTheme(activityElement).bg} shadow-md filter-none` : "bg-none filter grayscale"}`
+                          }
+                          onClick={() => {
+                            toggleSelectedActivity(activityElement);
+                          }}
+                        >
+                          <span className={`${activityTheme(activityElement).dot} border-zinc-200 rounded-full text-lg p-0.5 px-1 ${activityElement !== "Open Gym" ? "px-1" : "px-1.5"}`}>
+                            {activityTheme(activityElement).emoji}
+                          </span>
+                          <span className={`text-xs ${activityTheme(activityElement).text} font-medium mt-0.5`}>
+                            {activityElement}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex justify-center w-[290px] m-auto mb-4">
+                      <button
+                        className="bg-zinc-50 px-2 font-medium text-zinc-600 hover:text-white hover:bg-red-600 active:bg-red-600/90 active:text-white border hover:shadow-red-200 hover:shadow-md border-zinc-200 p-1 rounded-lg transition duration-300"
+                        onClick={() => {
+                          createICalEvent();
+                        }}
+                      >
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </>
+              </PopoverContent>
+            </Popover>
             // )
           }
 
