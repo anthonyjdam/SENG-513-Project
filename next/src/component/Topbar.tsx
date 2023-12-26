@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import HamburgerMenu from "./HamburgerMenu";
 import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
+import ErrorMessage from "./ErrorMessage";
 
 interface TopbarProps {
   date: Date | undefined;
@@ -40,7 +41,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const [selectedDateRange, setSelectedDateRange] = useState("today");
   const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
-
+  const [isError, setIsError] = useState(false);
 
 
   useEffect(() => {
@@ -156,12 +157,6 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     const offset = currentDate.getDate() - 19;
     console.log("Selected", selectedActivity);
 
-    // const filteredSchedules = formattedSchedulesList.filter((schedule) => 
-    //   // schedule.date.includes(offset?.toString()) &&
-    //   schedule.date.includes(currentMonth?.toString()) &&
-    //     selectedActivity.some(activity => schedule.activityName.includes(activity))
-    // );
-
     const filteredSchedules = formattedSchedulesList.filter((schedule) => {
       if (selectedDateRange === "today") {
         console.log("today");
@@ -180,11 +175,12 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
       }
     });
 
-
     console.log("Filtered", filteredSchedules, " with offset ", offset);
 
 
     if (filteredSchedules.length > 0) {
+      setIsError(false);
+
       const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
       vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
 
@@ -244,12 +240,14 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
       document.body.removeChild(a); // remove the link from the DOM
       URL.revokeObjectURL(dataURI); // release the object URL
     }
+    else {
+      setIsError(true);
+    }
   }
 
   // useEffect(() => {
   //   console.log(selectedActivity);
   // }, [selectedActivity])
-
 
   return (
     <div className="flex justify-between mx-3 py-4 ">
@@ -302,6 +300,9 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
               <PopoverContent className="w-96 rounded-md">
                 <>
                   <div className="flex justify-center w-full flex-col">
+                    {isError == true &&
+                      <ErrorMessage errorMessage="Please select at least one activity" />
+                    }
                     {/* Select Date */}
                     <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
                       <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
