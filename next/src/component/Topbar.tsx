@@ -157,14 +157,14 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     console.log("Selected", selectedActivity);
 
     const filteredSchedules = formattedSchedulesList.filter((schedule) =>
-      schedule.date.includes(offset?.toString()) &&
+      // schedule.date.includes(offset?.toString()) &&
       schedule.date.includes(currentMonth?.toString()) &&
       selectedActivity.some(activity => schedule.activityName.includes(activity))
     );
     console.log("Filtered", filteredSchedules, " with offset ", offset);
     
 
-    if (date) {
+    if (filteredSchedules.length > 0) {
       const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
       vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
 
@@ -176,12 +176,12 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
         const event = new ICAL.Event(vevent);
         const eventData = {
           summary: schedule.activityName,
-          start: new Date(date.getFullYear() + schedule.date + " " + schedule.startTime),
-          end: new Date(date.getFullYear() + schedule.date + " " + schedule.endTime)
+          start: new Date(date?.getFullYear() + schedule.date + " " + schedule.startTime),
+          end: new Date(date?.getFullYear() + schedule.date + " " + schedule.endTime)
         }
 
         console.log(eventData.end);
-        
+        //TODO
         event.summary = schedule.activityName + (schedule.location == "Red Gym" ? " 🔶 " : " ⭐ ") + schedule.location;
         event.startDate = new ICAL.Time({
           year: eventData.start.getFullYear(),
@@ -191,20 +191,20 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
           minute: eventData.start.getMinutes()
         });
         event.endDate = new ICAL.Time({
-          year: eventData.start.getFullYear(),
-          month: eventData.start.getMonth() + 1,
-          day: eventData.start.getDate(),
-          hour: eventData.start.getHours(),
-          minute: eventData.start.getMinutes()
+          year: eventData.end.getFullYear(),
+          month: eventData.end.getMonth() + 1,
+          day: eventData.end.getDate(),
+          hour: eventData.end.getHours(),
+          minute: eventData.end.getMinutes()
         });
-        console.log(event.endDate);
+        // console.log(event.endDate);
 
         vcalendar.addSubcomponent(vevent); // add event component to calendar component
       })
       
       //  the resulting iCalendar string
       const icalString = vcalendar.toString();
-      // console.log(icalString);
+      console.log(icalString);
       
       // create a blob and download the file
       const blob = new Blob([icalString], { type: 'text/calendar;charset=utf-8' });
