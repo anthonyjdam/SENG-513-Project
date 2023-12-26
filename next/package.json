@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
+    "ical.js": "^1.5.0",
     "lucide-react": "^0.292.0",
     "next": "14.0.3",
     "react": "^18",
