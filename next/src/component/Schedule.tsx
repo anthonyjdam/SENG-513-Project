@@ -119,6 +119,7 @@ function mountCalendarEvent(
     duration: string;
   }[] | undefined,
   currentDayOfTheWeek: string,
+  currentMonth: string | undefined,
   currentStartTime: string
 ) {
   let activityDate;
@@ -128,11 +129,12 @@ function mountCalendarEvent(
   let activityName;
   let activityDuration;
   let activityLocation;
+  
 
   let filteredList = schedulesList?.filter((activity) => {
     let [dayOfWeek, month, day] = activity.date.split(" ");
-    return day === currentDayOfTheWeek;
-  });
+    return day === currentDayOfTheWeek && month === currentMonth; //filter the events that are in the current day and month
+  });  
 
   const [isHovered, setIsHovered] = useState(false);
   let renderedEvents = []; // stores the events in this array if they have a start time for this mapping
@@ -226,6 +228,7 @@ function mountCalendarEvent(
 
 // Interface for a date in the days of the week
 interface MyDate {
+  currentMonth: string;
   dayOfTheWeek: string;
   dayNumber: number;
 }
@@ -239,17 +242,18 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     return [];
   }
 
+  let listOfMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   const dayOfTheWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-  const currentMonth = date.getMonth();
+  let currentMonth = date.getMonth() + 1;
   const currentYear = date.getFullYear();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
 
   let currentDayOfMonth = date.getDate(); // get the current day of the month
   let offset = date.getDay(); // get the current day of the week starting w/ sunday at 0
   let startDayIndex = dayOfTheWeek.indexOf("SUN"); // index of sunday is the start of the week
-
   const newDateArr = [];
 
+  let isNewMonth = false;
   for (let i = 0; i < 7; i++) {
     startDayIndex = startDayIndex % 7; // iterate through days of the week
 
@@ -261,12 +265,17 @@ const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     } else if (dayNumber > daysInMonth) {
       // Adjust if the dayNumber exceeds the number of days in the month
       dayNumber -= daysInMonth;
-    }
+
+      if (!isNewMonth) {
+        currentMonth = (currentMonth + 1) % 13;
+        isNewMonth = true;
+      }
+    }    
 
     newDateArr.push({
-      // start on sunday
+      currentMonth: listOfMonths[currentMonth - 1],
       dayOfTheWeek: dayOfTheWeek[startDayIndex],
-      dayNumber,
+      dayNumber
     });
 
     startDayIndex++;
@@ -294,6 +303,8 @@ interface DayViewProps {
 const DayView = ({ date, schedulesList }: DayViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
   let times: string[] = generateTimesArray();
+  const currentMonth = date?.toLocaleString('en-us', { month: 'short' });
+
 
   return (
     <div className="flex-grow">
@@ -316,6 +327,7 @@ const DayView = ({ date, schedulesList }: DayViewProps) => {
               {mountCalendarEvent(
                 schedulesList,
                 date!.getDate().toString(),
+                currentMonth,
                 time
               )}
             </div>
@@ -351,8 +363,9 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
   let todaysDay = new Date();
+  // const currentMonth = date?.toLocaleString('en-us', { month: 'short' });
 
-  // console.log("Times: ", times, "Days ", days);
+  // console.log(days);
 
   // const [dragging, setDragging] = useState(false); // tracks if the user is currently dragging or not
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // items that have been selected during the drag; of type array of strings
@@ -479,11 +492,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
                 onMouseUp={!isDragDisabled ? handleClickEnd : undefined}
               >
                 <div className="absolute w-full flex">
-                  {mountCalendarEvent(
-                    schedulesList,
-                    day.dayNumber.toString(),
-                    time
-                  )}
+                  {mountCalendarEvent(schedulesList, day.dayNumber.toString(), day.currentMonth, time)}
                   {/* {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
                     <div
                       className={`bg-red-500/10 border-l-4 border-red-500 h-20 rounded-l-md p-1 flex-1 z-10`}
