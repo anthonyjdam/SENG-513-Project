@@ -41,7 +41,8 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const [selectedDateRange, setSelectedDateRange] = useState("today");
   const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
-  const [isError, setIsError] = useState(false);
+  const [selectedError, setSelectedError] = useState(false);
+  const [noScheduleError, setNoScheduleError] = useState(false);
 
 
   useEffect(() => {
@@ -177,71 +178,79 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
     console.log("Filtered", filteredSchedules, " with offset ", offset);
 
+    // selectedActivity.length > 0
+    if (selectedActivity.length > 0) {
+      setSelectedError(false);
 
-    if (filteredSchedules.length > 0) {
-      setIsError(false);
+      if (filteredSchedules.length > 0) {
+        setNoScheduleError(false);
 
-      const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
-      vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
+        const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
+        vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
 
+        filteredSchedules.forEach((schedule) => {
 
-      filteredSchedules.forEach((schedule) => {
+          // boilerplate event component
+          const vevent = new ICAL.Component('vevent');
+          const event = new ICAL.Event(vevent);
+          const eventData = {
+            summary: schedule.activityName,
+            start: new Date(date?.getFullYear() + schedule.date + " " + schedule.startTime),
+            end: new Date(date?.getFullYear() + schedule.date + " " + schedule.endTime)
+          }
 
-        // boilerplate event component
-        const vevent = new ICAL.Component('vevent');
-        const event = new ICAL.Event(vevent);
-        const eventData = {
-          summary: schedule.activityName,
-          start: new Date(date?.getFullYear() + schedule.date + " " + schedule.startTime),
-          end: new Date(date?.getFullYear() + schedule.date + " " + schedule.endTime)
-        }
+          console.log(eventData.end);
+          //TODO
+          event.location = (schedule.location == "Red Gym" ? " 🔶 " : schedule.location == "Gold Gym" ? " ⭐ " : " ⚪ ") + schedule.location;
+          event.summary =
+            (activityTheme(schedule.activityName).emoji + schedule.activityName) +
+            schedule.location;
+          event.startDate = new ICAL.Time({
+            year: eventData.start.getFullYear(),
+            month: eventData.start.getMonth() + 1,
+            day: eventData.start.getDate(),
+            hour: eventData.start.getHours(),
+            minute: eventData.start.getMinutes()
+          });
+          event.endDate = new ICAL.Time({
+            year: eventData.end.getFullYear(),
+            month: eventData.end.getMonth() + 1,
+            day: eventData.end.getDate(),
+            hour: eventData.end.getHours(),
+            minute: eventData.end.getMinutes()
+          });
+          // console.log(event.endDate);
 
-        console.log(eventData.end);
-        //TODO
-        event.location = (schedule.location == "Red Gym" ? " 🔶 " : schedule.location == "Gold Gym" ? " ⭐ " : " ⚪ ") + schedule.location;
-        event.summary =
-          (activityTheme(schedule.activityName).emoji + schedule.activityName) +
-          schedule.location;
-        event.startDate = new ICAL.Time({
-          year: eventData.start.getFullYear(),
-          month: eventData.start.getMonth() + 1,
-          day: eventData.start.getDate(),
-          hour: eventData.start.getHours(),
-          minute: eventData.start.getMinutes()
-        });
-        event.endDate = new ICAL.Time({
-          year: eventData.end.getFullYear(),
-          month: eventData.end.getMonth() + 1,
-          day: eventData.end.getDate(),
-          hour: eventData.end.getHours(),
-          minute: eventData.end.getMinutes()
-        });
-        // console.log(event.endDate);
+          vcalendar.addSubcomponent(vevent); // add event component to calendar component
+        })
 
-        vcalendar.addSubcomponent(vevent); // add event component to calendar component
-      })
+        //  the resulting iCalendar string
+        const icalString = vcalendar.toString();
+        console.log(icalString);
 
-      //  the resulting iCalendar string
-      const icalString = vcalendar.toString();
-      console.log(icalString);
+        // create a blob and download the file
+        const blob = new Blob([icalString], { type: 'text/calendar;charset=utf-8' });
+        const dataURI = URL.createObjectURL(blob);
 
-      // create a blob and download the file
-      const blob = new Blob([icalString], { type: 'text/calendar;charset=utf-8' });
-      const dataURI = URL.createObjectURL(blob);
+        // create a link element and trigger the download
+        const a = document.createElement('a');
+        a.href = dataURI;
+        a.download = 'event.ics';
 
-      // create a link element and trigger the download
-      const a = document.createElement('a');
-      a.href = dataURI;
-      a.download = 'event.ics';
+        document.body.appendChild(a); // append the link to the body
+        a.click(); // trigger a click on the link
 
-      document.body.appendChild(a); // append the link to the body
-      a.click(); // trigger a click on the link
-
-      document.body.removeChild(a); // remove the link from the DOM
-      URL.revokeObjectURL(dataURI); // release the object URL
+        document.body.removeChild(a); // remove the link from the DOM
+        URL.revokeObjectURL(dataURI); // release the object URL
+      }
+      else {
+        setSelectedError(false); // remove the previous error message
+        setNoScheduleError(true); // show new error message
+      }
     }
     else {
-      setIsError(true);
+      setNoScheduleError(false);
+      setSelectedError(true);
     }
   }
 
@@ -300,8 +309,11 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
               <PopoverContent className="w-96 rounded-md">
                 <>
                   <div className="flex justify-center w-full flex-col">
-                    {isError == true &&
+                    {selectedError == true &&
                       <ErrorMessage errorMessage="Please select at least one activity" />
+                    }
+                    {noScheduleError == true &&
+                      <ErrorMessage errorMessage="This activity has no scheduled times" />
                     }
                     {/* Select Date */}
                     <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
