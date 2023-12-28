@@ -236,7 +236,7 @@ interface MyDate {
 /**
  * Creates the daysOfTheWeek component attributes
  */
-const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
+export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   if (!date) {
     // Handle the case where date is undefined
     return [];
@@ -363,6 +363,7 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
   let days: MyDate[] = generateDaysOfWeek({ date });
   let times: string[] = generateTimesArray();
   let todaysDay = new Date();
+  const currentMonthShort = todaysDay.toLocaleString('default', {month: 'short'});
   // const currentMonth = date?.toLocaleString('en-us', { month: 'short' });
 
   // console.log(days);
@@ -446,14 +447,14 @@ const WeekView = ({ date, schedulesList, dragging, setDragging, isDragDisabled, 
       {days.map((day) => (
         //this day card goes here!!!
         <div key={day.dayOfTheWeek} className="flex-grow">
-          <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2 ${todaysDay.getDate() === day.dayNumber ? 'border-[3px] border-l-0 border-t-0 border-b-red-500 ' : ''}`}>
+          <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2 ${todaysDay.getDate() === day.dayNumber && currentMonthShort === day.currentMonth ? 'border-[3px] border-l-0 border-t-0 border-b-red-500 ' : ''}`}>
             {/* <div className={`h-[75px] bg-zinc-50 border-r border-neutral-200 p-2`}> */}
-            <p className={` text-xs font-semibold ${todaysDay.getDate() === day.dayNumber ? 'text-red-600' : 'text-zinc-500'}`}>
+            <p className={` text-xs font-semibold ${todaysDay.getDate() === day.dayNumber && currentMonthShort === day.currentMonth ? 'text-red-600' : 'text-zinc-500'}`}>
               {day.dayOfTheWeek.toUpperCase()}
             </p>
             {/* <h1 className={`text-gray-900 text-xl relative ${todaysDay.getDate() === day.dayNumber ? 'font-medium' : 'font-semibold'}`}> */}
             <h1 className="text-gray-900 font-semibold text-xl relative">
-              {todaysDay.getDate() === day.dayNumber ? (
+              {todaysDay.getDate() === day.dayNumber && currentMonthShort === day.currentMonth ? (
                 <>
                   {/* <p className="z-10 absolute text-white"> */}
                   <p className="z-10 text-red-600">
