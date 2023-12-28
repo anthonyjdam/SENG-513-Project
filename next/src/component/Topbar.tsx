@@ -15,6 +15,7 @@ import HamburgerMenu from "./HamburgerMenu";
 import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
 import ErrorMessage from "./ErrorMessage";
+import { generateDaysOfWeek } from "./Schedule";
 
 interface TopbarProps {
   date: Date | undefined;
@@ -44,6 +45,13 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const [selectedError, setSelectedError] = useState(false);
   const [noScheduleError, setNoScheduleError] = useState(false);
 
+  interface MyDate {
+    currentMonth: string;
+    dayOfTheWeek: string;
+    dayNumber: number;
+  }
+
+  let weekSchedule: MyDate[] = generateDaysOfWeek({ date });
 
   useEffect(() => {
     // if (schedulesList.length > 0) {
@@ -155,22 +163,37 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
     // console.log(formattedSchedulesList);
 
-    const offset = currentDate.getDate() - 19;
+    const offset = currentDate.getDate() - 21;
     console.log("Selected", selectedActivity);
 
+
     const filteredSchedules = formattedSchedulesList.filter((schedule) => {
+      let [dayOfWeek, month, day] = schedule.date.split(" ");
+
       if (selectedDateRange === "today") {
         console.log("today");
+        console.log("Day ", day, " Offset ", offset);
+        
+        //checks that it belongs to same day, month and contains the same activity name
         return (
-          schedule.date.includes(offset?.toString()) &&
-          schedule.date.includes(currentMonth?.toString()) &&
+          day === offset.toString() &&
+          month === currentMonth.toString() &&
+          selectedActivity.some(activity => schedule.activityName.includes(activity))
+        );
+      }
+      else if (selectedDateRange === "week") {
+        console.log(weekSchedule);
+        //checks that it belongs to same week on the basis of the weekSchedule object and same activity name
+        return (
+          weekSchedule.some((activity) => day === activity.dayNumber.toString() && month === activity.currentMonth) &&
           selectedActivity.some(activity => schedule.activityName.includes(activity))
         );
       }
       else {
         console.log("month");
+        //checks that it belongs to same month and contains the same activity name
         return (
-          schedule.date.includes(currentMonth?.toString()) &&
+          month === currentMonth.toString() &&
           selectedActivity.some(activity => schedule.activityName.includes(activity))
         );
       }

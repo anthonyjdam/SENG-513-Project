@@ -236,7 +236,7 @@ interface MyDate {
 /**
  * Creates the daysOfTheWeek component attributes
  */
-const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
+export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   if (!date) {
     // Handle the case where date is undefined
     return [];
