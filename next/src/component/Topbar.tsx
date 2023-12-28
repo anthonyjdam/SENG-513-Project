@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import HamburgerMenu from "./HamburgerMenu";
 import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
+import ErrorMessage from "./ErrorMessage";
+import { generateDaysOfWeek } from "./Schedule";
 
 interface TopbarProps {
   date: Date | undefined;
@@ -40,8 +42,22 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const [selectedDateRange, setSelectedDateRange] = useState("today");
   const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
+  const [selectedError, setSelectedError] = useState(false);
+  const [noScheduleError, setNoScheduleError] = useState(false);
+  
+  const currentDate = new Date();
+  const currentDayObject = { 
+    date: currentDate 
+  };
 
+  interface MyDate {
+    currentMonth: string;
+    dayOfTheWeek: string;
+    dayNumber: number;
+  }
 
+  let weekSchedule: MyDate[] = generateDaysOfWeek( currentDayObject );
+  // let weekSchedule: MyDate[] = generateDaysOfWeek( {date} );
 
   useEffect(() => {
     // if (schedulesList.length > 0) {
@@ -142,7 +158,6 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   }
 
   function createICalEvent() {
-    const currentDate = new Date();
     const currentMonth = currentDate.toLocaleString('default', { month: 'short' });
     const formattedSchedulesList = schedulesList.map((schedule) => {
       return {
@@ -153,96 +168,116 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
     // console.log(formattedSchedulesList);
 
-    const offset = currentDate.getDate() - 19;
-    console.log("Selected", selectedActivity);
+    // const offset = currentDate.getDate() - 21;
+    // console.log("Selected", selectedActivity);
 
-    // const filteredSchedules = formattedSchedulesList.filter((schedule) => 
-    //   // schedule.date.includes(offset?.toString()) &&
-    //   schedule.date.includes(currentMonth?.toString()) &&
-    //     selectedActivity.some(activity => schedule.activityName.includes(activity))
-    // );
 
     const filteredSchedules = formattedSchedulesList.filter((schedule) => {
+      let [dayOfWeek, month, day] = schedule.date.split(" ");
+
       if (selectedDateRange === "today") {
         console.log("today");
+        
+        //checks that it belongs to same day, month and contains the same activity name
         return (
-          schedule.date.includes(offset?.toString()) &&
-          schedule.date.includes(currentMonth?.toString()) &&
+          day === currentDate.getDate().toString() &&
+          month === currentMonth.toString() &&
+          selectedActivity.some(activity => schedule.activityName.includes(activity))
+        );
+      }
+      else if (selectedDateRange === "week") {
+        console.log(weekSchedule);
+        //checks that it belongs to same week on the basis of the weekSchedule object and same activity name
+        return (
+          weekSchedule.some((activity) => day === activity.dayNumber.toString() && month === activity.currentMonth) &&
           selectedActivity.some(activity => schedule.activityName.includes(activity))
         );
       }
       else {
         console.log("month");
+        //checks that it belongs to same month and contains the same activity name
         return (
-          schedule.date.includes(currentMonth?.toString()) &&
+          month === currentMonth.toString() &&
           selectedActivity.some(activity => schedule.activityName.includes(activity))
         );
       }
     });
 
+    console.log("Filtered", filteredSchedules);
 
-    console.log("Filtered", filteredSchedules, " with offset ", offset);
+    // selectedActivity.length > 0
+    if (selectedActivity.length > 0) {
+      setSelectedError(false);
 
+      if (filteredSchedules.length > 0) {
+        setNoScheduleError(false);
 
-    if (filteredSchedules.length > 0) {
-      const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
-      vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
+        const vcalendar = new ICAL.Component('vcalendar'); // create a calendar component
+        vcalendar.updatePropertyWithValue('prodid', '-//UofC Open Gym//');
 
+        filteredSchedules.forEach((schedule) => {
 
-      filteredSchedules.forEach((schedule) => {
+          // boilerplate event component
+          const vevent = new ICAL.Component('vevent');
+          const event = new ICAL.Event(vevent);
+          const eventData = {
+            summary: schedule.activityName,
+            start: new Date(date?.getFullYear() + schedule.date + " " + schedule.startTime),
+            end: new Date(date?.getFullYear() + schedule.date + " " + schedule.endTime)
+          }
 
-        // boilerplate event component
-        const vevent = new ICAL.Component('vevent');
-        const event = new ICAL.Event(vevent);
-        const eventData = {
-          summary: schedule.activityName,
-          start: new Date(date?.getFullYear() + schedule.date + " " + schedule.startTime),
-          end: new Date(date?.getFullYear() + schedule.date + " " + schedule.endTime)
-        }
+          console.log(eventData.end);
+          //TODO
+          event.location = (schedule.location == "Red Gym" ? " 🔶 " : schedule.location == "Gold Gym" ? " ⭐ " : " ⚪ ") + schedule.location;
+          event.summary =
+            (activityTheme(schedule.activityName).emoji + schedule.activityName) +
+            schedule.location;
+          event.startDate = new ICAL.Time({
+            year: eventData.start.getFullYear(),
+            month: eventData.start.getMonth() + 1,
+            day: eventData.start.getDate(),
+            hour: eventData.start.getHours(),
+            minute: eventData.start.getMinutes()
+          });
+          event.endDate = new ICAL.Time({
+            year: eventData.end.getFullYear(),
+            month: eventData.end.getMonth() + 1,
+            day: eventData.end.getDate(),
+            hour: eventData.end.getHours(),
+            minute: eventData.end.getMinutes()
+          });
+          // console.log(event.endDate);
 
-        console.log(eventData.end);
-        //TODO
-        event.location = (schedule.location == "Red Gym" ? " 🔶 " : schedule.location == "Gold Gym" ? " ⭐ " : " ⚪ ") + schedule.location;
-        event.summary =
-          (activityTheme(schedule.activityName).emoji + schedule.activityName) +
-          schedule.location;
-        event.startDate = new ICAL.Time({
-          year: eventData.start.getFullYear(),
-          month: eventData.start.getMonth() + 1,
-          day: eventData.start.getDate(),
-          hour: eventData.start.getHours(),
-          minute: eventData.start.getMinutes()
-        });
-        event.endDate = new ICAL.Time({
-          year: eventData.end.getFullYear(),
-          month: eventData.end.getMonth() + 1,
-          day: eventData.end.getDate(),
-          hour: eventData.end.getHours(),
-          minute: eventData.end.getMinutes()
-        });
-        // console.log(event.endDate);
+          vcalendar.addSubcomponent(vevent); // add event component to calendar component
+        })
 
-        vcalendar.addSubcomponent(vevent); // add event component to calendar component
-      })
+        //  the resulting iCalendar string
+        const icalString = vcalendar.toString();
+        console.log(icalString);
 
-      //  the resulting iCalendar string
-      const icalString = vcalendar.toString();
-      console.log(icalString);
+        // create a blob and download the file
+        const blob = new Blob([icalString], { type: 'text/calendar;charset=utf-8' });
+        const dataURI = URL.createObjectURL(blob);
 
-      // create a blob and download the file
-      const blob = new Blob([icalString], { type: 'text/calendar;charset=utf-8' });
-      const dataURI = URL.createObjectURL(blob);
+        // create a link element and trigger the download
+        const a = document.createElement('a');
+        a.href = dataURI;
+        a.download = 'event.ics';
 
-      // create a link element and trigger the download
-      const a = document.createElement('a');
-      a.href = dataURI;
-      a.download = 'event.ics';
+        document.body.appendChild(a); // append the link to the body
+        a.click(); // trigger a click on the link
 
-      document.body.appendChild(a); // append the link to the body
-      a.click(); // trigger a click on the link
-
-      document.body.removeChild(a); // remove the link from the DOM
-      URL.revokeObjectURL(dataURI); // release the object URL
+        document.body.removeChild(a); // remove the link from the DOM
+        URL.revokeObjectURL(dataURI); // release the object URL
+      }
+      else {
+        setSelectedError(false); // remove the previous error message
+        setNoScheduleError(true); // show new error message
+      }
+    }
+    else {
+      setNoScheduleError(false);
+      setSelectedError(true);
     }
   }
 
@@ -250,13 +285,14 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   //   console.log(selectedActivity);
   // }, [selectedActivity])
 
-
   return (
     <div className="flex justify-between mx-3 py-4 ">
       <div className="flex gap-5 pl-10">
 
         <div className="flex space-x-2 items-center">
+          {/* Sidebar for mobile view */}
           <HamburgerMenu />
+
           {/* Calendar Popover */}
           <Popover>
             <PopoverTrigger asChild>
@@ -302,6 +338,12 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
               <PopoverContent className="w-96 rounded-md">
                 <>
                   <div className="flex justify-center w-full flex-col">
+                    {selectedError == true &&
+                      <ErrorMessage errorMessage="Please select at least one activity" />
+                    }
+                    {noScheduleError == true &&
+                      <ErrorMessage errorMessage="Activity has no scheduled times" />
+                    }
                     {/* Select Date */}
                     <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
                       <button className={`m-1 mx-1 w-fit text-xs font-medium py-2 px-6 transition-all duration-300 ${selectedDateRange == "today" ? "bg-white rounded-full shadow-md text-red-600" : "text-zinc-700 bg-none hover:text-black"}`}
@@ -364,9 +406,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
             // )
           }
 
-          <button
+          {/* <button
             // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
-            className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-200/50 transition-all duration-300"
+            // className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-200/50 transition-all duration-300"
+            className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:shadow-sm hover:border-zinc-50 hover:border-b-zinc-200/50 transition-all duration-300"
             onClick={() => {
               handlePrevDay();
             }}
@@ -377,7 +420,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
           </button>
 
           <button
-            className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-200/50 transition-all duration-300"
+          className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:shadow-sm hover:border-zinc-50 hover:border-b-zinc-200/50 transition-all duration-300"
             // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
             onClick={() => {
               handleNextDay();
@@ -386,14 +429,14 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
-          </button>
+          </button> */}
 
         </div>
       </div>
 
       <div className="hidden md:flex space-x-0.5 text-zinc-600">
         <button
-          className={`py-0.5 px-3 rounded-lg font-medium hover:bg-red-600 hover:text-white transition-all duration-700 hover:duration-300 ${scheduleView === "d" ? "bg-red-600 text-white shadow-red-200 shadow-md border border-zinc-200/50" : "bg-zinc-100 border border-zinc-200/50"
+          className={`py-0.5 px-3 rounded-lg font-medium hover:shadow-md transition-all duration-700 hover:duration-300 ${scheduleView === "d" ? "bg-red-600 text-white shadow-red-200 shadow-md border border-zinc-200/50" : "text-zinc-500 bg-zinc-50 border border-zinc-200/50"
             }`}
           onClick={() => {
             setScheduleView("d");
@@ -403,7 +446,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
         </button>
 
         <button
-          className={`py-0.5 px-3 rounded-lg font-medium hover:bg-red-600 hover:text-white transition-all duration-700 hover:duration-300 ${scheduleView === "w" ? "bg-red-600 text-white shadow-red-200 shadow-md border border-zinc-200/50" : "bg-zinc-100 border border-zinc-200/50"
+          className={`py-0.5 px-4 rounded-lg font-medium hover:shadow-md transition-all duration-700 hover:duration-300 ${scheduleView === "w" ? "bg-red-600 text-white shadow-red-200 shadow-md border border-zinc-200/50" : "text-zinc-500 bg-zinc-50 border border-zinc-200/50"
             }`}
           onClick={() => {
             setScheduleView("w");
@@ -413,7 +456,43 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
         </button>
       </div>
 
-      {
+      <div className="flex flex-row rounded-md hover:bg-zinc-50 hover:shadow-sm">
+        <button
+          // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
+          // className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-200/50 transition-all duration-300"
+          className="rounded-md rounded-r-none p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-50 transition-all duration-300"
+          onClick={() => {
+            handlePrevDay();
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <button
+          className="p-0.5 px-1 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-50 transition-all duration-300"
+          onClick={() => {
+            if (date && setDate) {
+              const today = new Date();
+              setDate(today); // set the date to todays date
+            }
+          }}
+        >
+          Today
+        </button>
+        <button
+          className="rounded-md rounded-l-none p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-50 transition-all duration-300"
+          // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
+          onClick={() => {
+            handleNextDay();
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+      {/* {
         isSignedIn ? (
           <div className="flex space-x-2 items-center">
             <Image src="/setting.svg" width={30} height={30} alt="" />
@@ -426,7 +505,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
             <SignInButton mode="modal" />
           </button>
         )
-      }
+      } */}
     </div >
   );
 };
