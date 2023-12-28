@@ -44,6 +44,11 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
   const [selectedError, setSelectedError] = useState(false);
   const [noScheduleError, setNoScheduleError] = useState(false);
+  
+  const currentDate = new Date();
+  const currentDayObject = { 
+    date: currentDate 
+  };
 
   interface MyDate {
     currentMonth: string;
@@ -51,7 +56,8 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     dayNumber: number;
   }
 
-  let weekSchedule: MyDate[] = generateDaysOfWeek({ date });
+  let weekSchedule: MyDate[] = generateDaysOfWeek( currentDayObject );
+  // let weekSchedule: MyDate[] = generateDaysOfWeek( {date} );
 
   useEffect(() => {
     // if (schedulesList.length > 0) {
@@ -152,7 +158,6 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   }
 
   function createICalEvent() {
-    const currentDate = new Date();
     const currentMonth = currentDate.toLocaleString('default', { month: 'short' });
     const formattedSchedulesList = schedulesList.map((schedule) => {
       return {
@@ -163,8 +168,8 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
     // console.log(formattedSchedulesList);
 
-    const offset = currentDate.getDate() - 21;
-    console.log("Selected", selectedActivity);
+    // const offset = currentDate.getDate() - 21;
+    // console.log("Selected", selectedActivity);
 
 
     const filteredSchedules = formattedSchedulesList.filter((schedule) => {
@@ -172,11 +177,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
       if (selectedDateRange === "today") {
         console.log("today");
-        console.log("Day ", day, " Offset ", offset);
         
         //checks that it belongs to same day, month and contains the same activity name
         return (
-          day === offset.toString() &&
+          day === currentDate.getDate().toString() &&
           month === currentMonth.toString() &&
           selectedActivity.some(activity => schedule.activityName.includes(activity))
         );
@@ -199,7 +203,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
       }
     });
 
-    console.log("Filtered", filteredSchedules, " with offset ", offset);
+    console.log("Filtered", filteredSchedules);
 
     // selectedActivity.length > 0
     if (selectedActivity.length > 0) {
@@ -338,7 +342,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                       <ErrorMessage errorMessage="Please select at least one activity" />
                     }
                     {noScheduleError == true &&
-                      <ErrorMessage errorMessage="This activity has no scheduled times" />
+                      <ErrorMessage errorMessage="Activity has no scheduled times" />
                     }
                     {/* Select Date */}
                     <div className="flex justify-evenly bg-zinc-100 rounded-full m-auto mt-4 w-[290px] min-w-fit h-fit">
