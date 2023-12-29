@@ -19,19 +19,19 @@ export default function Nav() {
         className="z-40 flex flex-col items-center justify-center"
       >
         <span
-          className={`block h-1 w-6 rounded-sm bg-red-500 
+          className={`block h-1 w-6 rounded-sm bg-red-600 
                     transition-all duration-300 ease-out ${
                       isOpen ? "translate-y-2 rotate-45" : "-translate-y-0.5"
                     }`}
         ></span>
         <span
           className={`my-0.5 block h-1 w-6 rounded-sm 
-                    bg-red-500 transition-all duration-300 ease-out ${
+                    bg-red-600 transition-all duration-300 ease-out ${
                       isOpen ? "opacity-0" : "opacity-100"
                     }`}
         ></span>
         <span
-          className={`block h-1 w-6 rounded-sm bg-red-500 
+          className={`block h-1 w-6 rounded-sm bg-red-600 
                     transition-all duration-300 ease-out ${
                       isOpen ? "-translate-y-1 -rotate-45" : "translate-y-0.5"
                     }`}
@@ -47,7 +47,7 @@ export default function Nav() {
               height={75}
               alt=""
             />
-            <p className="text-xl mt-10 text-white">Active Living</p>
+            <p className="text-xl font-semibold mt-10 text-white">Active Living</p>
           </div>
 
           <div className="flex flex-col mt-4 space-y-3 w-2/3 text-white">

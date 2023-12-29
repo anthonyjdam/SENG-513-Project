@@ -44,10 +44,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
   const [selectedError, setSelectedError] = useState(false);
   const [noScheduleError, setNoScheduleError] = useState(false);
-  
+
   const currentDate = new Date();
-  const currentDayObject = { 
-    date: currentDate 
+  const currentDayObject = {
+    date: currentDate
   };
 
   interface MyDate {
@@ -56,7 +56,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     dayNumber: number;
   }
 
-  let weekSchedule: MyDate[] = generateDaysOfWeek( currentDayObject );
+  let weekSchedule: MyDate[] = generateDaysOfWeek(currentDayObject);
   // let weekSchedule: MyDate[] = generateDaysOfWeek( {date} );
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
       if (selectedDateRange === "today") {
         console.log("today");
-        
+
         //checks that it belongs to same day, month and contains the same activity name
         return (
           day === currentDate.getDate().toString() &&
@@ -228,9 +228,9 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
           console.log(eventData.end);
           //TODO
-          event.location = (schedule.location == "Red Gym" ? " 🔶 " : schedule.location == "Gold Gym" ? " ⭐ " : " ⚪ ") + schedule.location;
+          event.location = (schedule.location == "Red Gym" ? " ♦️ " : schedule.location == "Gold Gym" ? " ⭐ " : " ⚪ ") + schedule.location;
           event.summary =
-            (activityTheme(schedule.activityName).emoji + schedule.activityName) +
+            (activityTheme(schedule.activityName).emoji + schedule.activityName + " ") +
             schedule.location;
           event.startDate = new ICAL.Time({
             year: eventData.start.getFullYear(),
@@ -287,7 +287,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
 
   return (
     <div className="flex justify-between mx-3 py-4 ">
-      <div className="flex gap-5 pl-10">
+      <div className="flex gap-5 sm:pl-10">
 
         <div className="flex space-x-2 items-center">
           {/* Sidebar for mobile view */}
@@ -406,32 +406,14 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
             // )
           }
 
-          {/* <button
-            // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
-            // className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:border-zinc-200/50 transition-all duration-300"
-            className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:shadow-sm hover:border-zinc-50 hover:border-b-zinc-200/50 transition-all duration-300"
-            onClick={() => {
-              handlePrevDay();
-            }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-          </button>
 
-          <button
-          className="rounded-lg p-0.5 hover:bg-zinc-50 text-zinc-600 hover:text-red-600 border border-white hover:shadow-sm hover:border-zinc-50 hover:border-b-zinc-200/50 transition-all duration-300"
-            // className="rounded-lg bg-zinc-100 py-0.5 px-0.5 hover:bg-zinc-200 hover:text-white transition-all duration-300 border border-zinc-200/50"
-            onClick={() => {
-              handleNextDay();
-            }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button> */}
+          {/* Old Button Position*/}
 
         </div>
+      </div>
+
+      <div className="md:hidden">
+        <img src="/active-living-logo.png" alt="" className="w-10 h-10" />
       </div>
 
       <div className="hidden md:flex space-x-0.5 text-zinc-600">

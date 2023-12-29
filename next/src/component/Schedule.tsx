@@ -206,7 +206,7 @@ function mountCalendarEvent(
                 }
                 {activityLocation}
               </p>
-              <p>
+              <p className="transition-all duration-0">
                 {(isHovered
                   ? `Time: ${activityStartTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, "$1:$2$3")}
                     -${activityEndTime.replace(/^0?(\d+):(\d+)\s*(AM|PM)/i, "$1:$2$3"

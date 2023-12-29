@@ -115,7 +115,9 @@ function Sidebar({ date, setDate, isDragDisabled, setIsDragDisabled }: SidebarPr
         </div>
       </div>
       <div className="flex gap-x-2 pb-2">
-        <Image src="/active-living-logo.png" width={50} height={50} alt="" />
+        <a href="https://active-living.ucalgary.ca/memberships-drop/gymnasium-drop" target="_blank" rel="noopener noreferrer">
+          <Image src="/active-living-logo.png" width={50} height={50} alt="" />
+        </a>
         <p className="flex items-end text-xl font-semibold">Active Living</p>
       </div>
     </aside>
