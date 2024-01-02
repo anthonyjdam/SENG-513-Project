@@ -334,7 +334,7 @@ try {
 }
 
 // import cron from 'node-cron';
-// cron.schedule("*/1 * * * *", () => {
+// cron.schedule("*/10 * * * *", () => {
 // 	console.log("running a task every 10 minutes");
 
 // 	scrapeSchedule().then(async (schedules) => {
