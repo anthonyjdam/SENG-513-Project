@@ -16,13 +16,7 @@ import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
 import ErrorMessage from "./ErrorMessage";
 import { generateDaysOfWeek } from "./Schedule";
-
-interface TopbarProps {
-  date: Date | undefined;
-  setDate: Dispatch<SetStateAction<Date | undefined>> | undefined;
-  scheduleView: string;
-  setScheduleView: Dispatch<SetStateAction<string>>;
-}
+import { useDateStore, useScheduleViewStore } from "@/store";
 
 interface SchedulesList {
   date: string;
@@ -35,13 +29,10 @@ interface SchedulesList {
   duration: string;
 }
 
-export const Topbar = ({
-  date,
-  setDate,
-  scheduleView,
-  setScheduleView,
-}: TopbarProps) => {
+export const Topbar = () => {
   const { isSignedIn } = useAuth();
+  const { date, setDate } = useDateStore();
+  const { scheduleView, setScheduleView } = useScheduleViewStore();
   const schedules = trpc.schedule.getSchedules.useQuery();
   const [schedulesList, setSchedulesList] = useState<SchedulesList[]>([]);
   const [selectedDateRange, setSelectedDateRange] = useState("today");
@@ -497,7 +488,12 @@ export const Topbar = ({
       </div>
 
       <div className="md:hidden">
-        <img src="/active-living-logo.png" alt="" className="w-10 h-10" />
+        <Image
+          src="/active-living-logo.png"
+          alt="Active Living Logo"
+          width={40} // equivalent to w-10 in TailwindCSS (assuming 1rem = 16px)
+          height={40} // equivalent to h-10 in TailwindCSS
+        />
       </div>
 
       <div className="hidden md:flex space-x-0.5 text-zinc-600">
@@ -508,7 +504,7 @@ export const Topbar = ({
               : "text-zinc-500 bg-zinc-50 border border-zinc-200/50"
           }`}
           onClick={() => {
-            setScheduleView("d");
+            setScheduleView();
           }}
         >
           Day
@@ -521,7 +517,7 @@ export const Topbar = ({
               : "text-zinc-500 bg-zinc-50 border border-zinc-200/50"
           }`}
           onClick={() => {
-            setScheduleView("w");
+            setScheduleView();
           }}
         >
           Week

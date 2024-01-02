@@ -1,10 +1,11 @@
 import { ToggleContext } from "@/app/page";
 import { trpc } from "@/lib/trpc";
+import { useDateStore, useScheduleViewStore } from "@/store";
 
 import { useState, useEffect, useRef } from "react";
 import React, { Dispatch, SetStateAction, useContext } from "react";
 
-/**
+/*
  * Creates an array of times corresponding to each cell in that daysOfTheWeek column
  */
 function generateTimesArray(): string[] {
@@ -353,29 +354,6 @@ const DayView = ({ date, schedulesList }: DayViewProps) => {
                 currentMonth={currentMonth}
                 currentStartTime={time}
               />
-              {/*
-              schedulesList:
-    | {
-        date: string;
-        startTime: string;
-        endTime: string;
-        location: string;
-        _id: string;
-        __v: number;
-        activityName: string;
-        duration: string;
-      }[]
-    | undefined,
-  currentDayOfTheWeek: string,
-  currentMonth: string | undefined,
-  currentStartTime: string
-              
-              mountCalendarEvent(
-                schedulesList,
-                date?.getDate().toString() || "",
-                currentMonth,
-                time
-              )*/}
             </div>
           </div>
         ))}
@@ -579,21 +557,6 @@ const WeekView = ({
                     currentMonth={day.currentMonth}
                     currentStartTime={time}
                   />
-
-                  {/* {time === "8:00 AM" && day.dayOfTheWeek === "SUN" ? (
-                    <div
-                      className={`bg-red-500/10 border-l-4 border-red-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null}
-                  {time === "8:30 AM" && day.dayOfTheWeek === "SUN" ? (
-                    <div
-                      className={`bg-blue-500/10 border-l-4 border-blue-500 h-20 rounded-l-md p-1 flex-1 z-10`}
-                    >
-                      <p className="break-all leading-4">volleyball</p>
-                    </div>
-                  ) : null} */}
                 </div>
               </div>
             ))}
@@ -605,8 +568,6 @@ const WeekView = ({
 };
 
 interface ScheduleProps {
-  date: Date | undefined;
-  scheduleView: string;
   dragging: boolean;
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
   isDragDisabled: boolean;
@@ -614,13 +575,13 @@ interface ScheduleProps {
 }
 
 export const Schedule = ({
-  date,
-  scheduleView,
   dragging,
   setDragging,
   isDragDisabled,
   setIsDragDisabled,
 }: ScheduleProps) => {
+  const { date } = useDateStore();
+  const { scheduleView } = useScheduleViewStore();
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { activityToggles } = useContext(ToggleContext);

@@ -48,8 +48,6 @@ export default function Home() {
   });
 
   //option states
-  const [scheduleView, setScheduleView] = useState("d");
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const [activityToggles, setActivityToggles] = useState({
     Badminton: false,
     Basketball: false,
@@ -109,20 +107,13 @@ export default function Home() {
           <main className="flex flex-row min-h-screen">
             <div className="relative">
               <Sidebar
-                date={date}
-                setDate={setDate}
                 isDragDisabled={isDragDisabled}
                 setIsDragDisabled={setIsDragDisabled}
               />
             </div>
 
             <div className="flex flex-grow flex-col">
-              <Topbar
-                date={date}
-                setDate={setDate}
-                scheduleView={scheduleView}
-                setScheduleView={setScheduleView}
-              />
+              <Topbar />
 
               <div className="flex flex-row h-full">
                 <div className="flex flex-col w-full">
@@ -137,8 +128,6 @@ export default function Home() {
 
                     <div className="w-full h-full flex flex-col">
                       <Schedule
-                        date={date}
-                        scheduleView={scheduleView}
                         dragging={dragging}
                         setDragging={setDragging}
                         isDragDisabled={isDragDisabled}
