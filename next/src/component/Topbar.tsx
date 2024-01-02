@@ -44,6 +44,7 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
   const activityList = ["Basketball", "Volleyball", "Badminton", "Ball Hockey", "Soccer", "Open Gym"];
   const [selectedError, setSelectedError] = useState(false);
   const [noScheduleError, setNoScheduleError] = useState(false);
+  
 
   const currentDate = new Date();
   const currentDayObject = {
@@ -56,12 +57,14 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
     dayNumber: number;
   }
 
+  
+
   let weekSchedule: MyDate[] = generateDaysOfWeek(currentDayObject);
   // let weekSchedule: MyDate[] = generateDaysOfWeek( {date} );
 
   useEffect(() => {
     // if (schedulesList.length > 0) {
-    fetchData();
+    // fetchData();
     console.log("Schedule list", schedulesList);
     // }
   }, [schedulesList]);
@@ -325,9 +328,10 @@ export const Topbar = ({ date, setDate, scheduleView, setScheduleView, }: Topbar
                   // variant="outline"
                   // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
                   className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
-                // onClick={() => {
-                //   fetchData();
-                // }}
+                  onClick={() => {
+                    if(schedulesList.length <= 0)
+                      fetchData();
+                  }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" data-slot="icon" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
