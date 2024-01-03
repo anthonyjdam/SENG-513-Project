@@ -1,20 +1,6 @@
 // /store/store.ts
 import { create } from "zustand";
 
-/* boilerplate example */
-interface CounterState {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
-}
-
-//boilerplate example
-export const useCounterStore = create<CounterState>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
-}));
-
 interface ScheduleViewState {
   scheduleView: string;
   setScheduleView: () => void;
@@ -35,6 +21,29 @@ export const useDateStore = create<DateState>((set) => ({
   date: new Date(),
   setDate: (newDate) => {
     set({ date: newDate });
+  },
+}));
+
+interface Schedule {
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  _id: string;
+  __v: number;
+  activityName: string;
+  duration: string;
+}
+
+interface ScheduleState {
+  scheduleList: Schedule[] | undefined;
+  setScheduleList: (newSchedule: Schedule[] | undefined) => void;
+}
+
+export const useScheduleStore = create<ScheduleState>((set) => ({
+  scheduleList: [],
+  setScheduleList: (newSchedule) => {
+    set({ scheduleList: newSchedule });
   },
 }));
 
