@@ -2,6 +2,16 @@ import { useState, useContext } from "react";
 import { ActivityButton } from "./ActivityButton";
 import Image from "next/image";
 import { ToggleContext } from "@/app/page"; // Adjust the path accordingly
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog"
+import { DialogClose, DialogOverlay } from "@radix-ui/react-dialog";
+
 
 interface SidebarProps {
   date: Date | undefined;
@@ -17,6 +27,8 @@ function Sidebar({ date, setDate, isDragDisabled, setIsDragDisabled }: SidebarPr
   const [selectTimeText, setSelectTimeText] = useState("Select Time");
   const monthName = date ? date.toLocaleString('en-US', { month: 'long' }) : '';
   const year = date?.getFullYear().toString();
+  const [isDialogOpen, setDialogOpen] = useState(true);
+
 
   const { activityToggles, setActivityToggles } = useContext(ToggleContext);
 
@@ -59,7 +71,28 @@ function Sidebar({ date, setDate, isDragDisabled, setIsDragDisabled }: SidebarPr
           <h1 className="text-2xl text-white pr-1">{monthName}</h1>
           <h1 className="text-2xl font-light text-red-600">{year}</h1>
         </div>
-        <p className="text-blue-400">Choose Activity</p>
+        <div className="flex flex-row">
+          <p className="text-blue-400 pr-1">Choose Activity</p>
+          <Dialog>
+            <DialogTrigger className="w-4 h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="w-4 h-4 hover:text-blue-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+              </svg>
+            </DialogTrigger>
+            <DialogOverlay onClick={() => setDialogOpen(false)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Help</DialogTitle>
+                  <DialogDescription>
+                    
+                    This action cannot be undone. This will permanently delete your account
+                    and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </DialogOverlay>
+          </Dialog>
+        </div>
         <ActivityButton activity="Basketball" />
         <ActivityButton activity="Volleyball" />
         <ActivityButton activity="Badminton" />
