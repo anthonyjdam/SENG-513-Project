@@ -1,8 +1,7 @@
 import { useState, useContext } from "react";
 import { ActivityButton } from "./ActivityButton";
 import Image from "next/image";
-import { ToggleContext } from "@/app/page"; // Adjust the path accordingly
-import { useDateStore } from "@/store";
+import { useActivityToggleStore, useDateStore } from "@/store";
 
 interface SidebarProps {
   isDragDisabled: boolean;
@@ -20,27 +19,11 @@ function Sidebar({ isDragDisabled, setIsDragDisabled }: SidebarProps) {
   const monthName = date ? date.toLocaleString("en-US", { month: "long" }) : "";
   const year = date?.getFullYear().toString();
 
-  const { activityToggles, setActivityToggles } = useContext(ToggleContext);
-
-  const resetAllTogglesToFalse = () => {
-    setActivityToggles((prevState) => {
-      // Create a new object with all toggles set to false
-      const updatedToggles = {
-        Badminton: false,
-        Basketball: false,
-        "Ball Hockey": false,
-        Volleyball: false,
-        Soccer: false,
-        "Open Gym": false,
-      };
-      // Return the updated object to set the state
-      return updatedToggles;
-    });
-  };
+  const { setAllTogglesToFalse } = useActivityToggleStore();
 
   function handleSelectTime() {
     setIsDragDisabled(false);
-    resetAllTogglesToFalse();
+    setAllTogglesToFalse();
     setSelectTimeText("");
     setShowAdditionalButtons(true);
     setSelectTimeStyle("bg-zinc-800 rounded-lg rounded-r-none");

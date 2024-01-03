@@ -37,3 +37,50 @@ export const useDateStore = create<DateState>((set) => ({
     set({ date: newDate });
   },
 }));
+
+export interface ActivityTogglesState {
+  Toggles: {
+    Badminton: boolean;
+    Basketball: boolean;
+    BallHockey: boolean;
+    Volleyball: boolean;
+    Soccer: boolean;
+    OpenGym: boolean;
+  };
+  setActivityToggles: (
+    newToggle: keyof ActivityTogglesState["Toggles"]
+  ) => void;
+  setAllTogglesToFalse: () => void;
+}
+
+export const useActivityToggleStore = create<ActivityTogglesState>((set) => ({
+  Toggles: {
+    Badminton: false,
+    Basketball: false,
+    BallHockey: false,
+    Volleyball: false,
+    Soccer: false,
+    OpenGym: true,
+  },
+  setActivityToggles: (newToggle) => {
+    set((state) => ({
+      ...state,
+      Toggles: {
+        ...state.Toggles,
+        [newToggle]: !state.Toggles[newToggle],
+      },
+    }));
+  },
+  setAllTogglesToFalse: () => {
+    set(() => ({
+      Toggles: {
+        Badminton: false,
+        Basketball: false,
+        BallHockey: false,
+        Volleyball: false,
+        Soccer: false,
+        OpenGym: false,
+      },
+    }));
+  },
+}));
