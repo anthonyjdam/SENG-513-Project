@@ -3,6 +3,7 @@ import {
   ActivityTogglesState,
   useActivityToggleStore,
   useDateStore,
+  useScheduleStore,
   useScheduleViewStore,
 } from "@/store";
 
@@ -34,17 +35,6 @@ function generateTimesArray(): string[] {
   }
   return times;
 }
-
-type Schedule = {
-  date: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  _id: string;
-  __v: number;
-  activityName: string;
-  duration: string;
-};
 
 const activityTheme = (simplifiedActivityName: string) => {
   const newActivityName = simplifiedActivityName.toLowerCase();
@@ -114,7 +104,7 @@ const activityTheme = (simplifiedActivityName: string) => {
 
 // Define the props type
 type MountCalendarEventProps = {
-  schedulesList:
+  scheduleList:
     | {
         date: string;
         startTime: string;
@@ -132,7 +122,7 @@ type MountCalendarEventProps = {
 };
 
 const MountCalendarEvent = ({
-  schedulesList,
+  scheduleList,
   currentDayOfTheWeek,
   currentMonth,
   currentStartTime,
@@ -145,7 +135,7 @@ const MountCalendarEvent = ({
   let activityDuration;
   let activityLocation;
 
-  let filteredList = schedulesList?.filter((activity) => {
+  let filteredList = scheduleList?.filter((activity) => {
     let [dayOfWeek, month, day] = activity.date.split(" ");
     return day === currentDayOfTheWeek && month === currentMonth; //filter the events that are in the current day and month
   });
@@ -314,7 +304,7 @@ export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
 
 interface DayViewProps {
   date: Date | undefined;
-  schedulesList:
+  scheduleList:
     | {
         date: string;
         startTime: string;
@@ -328,7 +318,7 @@ interface DayViewProps {
     | undefined;
 }
 
-const DayView = ({ date, schedulesList }: DayViewProps) => {
+const DayView = ({ date, scheduleList }: DayViewProps) => {
   // Make function call to server side procedure to get the schedules from the database
   let times: string[] = generateTimesArray();
   const currentMonth = date?.toLocaleString("en-us", { month: "short" });
@@ -353,7 +343,7 @@ const DayView = ({ date, schedulesList }: DayViewProps) => {
           >
             <div className="absolute w-full flex">
               <MountCalendarEvent
-                schedulesList={schedulesList}
+                scheduleList={scheduleList}
                 currentDayOfTheWeek={date?.getDate().toString() || ""}
                 currentMonth={currentMonth}
                 currentStartTime={time}
@@ -368,7 +358,7 @@ const DayView = ({ date, schedulesList }: DayViewProps) => {
 
 interface WeekViewProps {
   date: Date | undefined;
-  schedulesList:
+  scheduleList:
     | {
         date: string;
         startTime: string;
@@ -388,7 +378,7 @@ interface WeekViewProps {
 
 const WeekView = ({
   date,
-  schedulesList,
+  scheduleList,
   dragging,
   setDragging,
   isDragDisabled,
@@ -556,7 +546,7 @@ const WeekView = ({
               >
                 <div className="absolute w-full flex">
                   <MountCalendarEvent
-                    schedulesList={schedulesList}
+                    scheduleList={scheduleList}
                     currentDayOfTheWeek={day.dayNumber.toString()}
                     currentMonth={day.currentMonth}
                     currentStartTime={time}
@@ -591,7 +581,7 @@ export const Schedule = ({
   const { Toggles } = useActivityToggleStore();
 
   const schedules = trpc.schedule.getSchedules.useQuery();
-  const [schedulesList, setSchedulesList] = useState(schedules.data);
+  const { scheduleList, setScheduleList } = useScheduleStore();
 
   const prevDateRef = useRef(date);
 
@@ -619,11 +609,19 @@ export const Schedule = ({
       });
 
       // Check if the filtered schedule has changed before updating state
-      if (!arraysEqual(filteredSchedule, schedulesList)) {
-        setSchedulesList(filteredSchedule);
+      if (!arraysEqual(filteredSchedule, scheduleList)) {
+        setScheduleList(filteredSchedule);
       }
     }
-  }, [scheduleView, activeView, date, schedules.data, Toggles, schedulesList]);
+  }, [
+    scheduleView,
+    activeView,
+    date,
+    schedules.data,
+    Toggles,
+    scheduleList,
+    setScheduleList,
+  ]);
 
   // Function to compare arrays for equality
   function arraysEqual(arr1: string | any[], arr2: string | any[] | undefined) {
@@ -640,12 +638,12 @@ export const Schedule = ({
     : "view-enter-active";
 
   if (activeView === "d") {
-    viewComponent = <DayView date={date} schedulesList={schedulesList} />;
+    viewComponent = <DayView date={date} scheduleList={scheduleList} />;
   } else {
     viewComponent = (
       <WeekView
         date={date}
-        schedulesList={schedulesList}
+        scheduleList={scheduleList}
         dragging={dragging}
         setDragging={setDragging}
         isDragDisabled={isDragDisabled}

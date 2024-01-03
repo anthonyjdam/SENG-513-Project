@@ -16,25 +16,13 @@ import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
 import ErrorMessage from "./ErrorMessage";
 import { generateDaysOfWeek } from "./Schedule";
-import { useDateStore, useScheduleViewStore } from "@/store";
-
-interface SchedulesList {
-  date: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  _id: string;
-  __v: number;
-  activityName: string;
-  duration: string;
-}
+import { useDateStore, useScheduleStore, useScheduleViewStore } from "@/store";
 
 export const Topbar = () => {
   const { isSignedIn } = useAuth();
   const { date, setDate } = useDateStore();
   const { scheduleView, setScheduleView } = useScheduleViewStore();
-  const schedules = trpc.schedule.getSchedules.useQuery();
-  const [schedulesList, setSchedulesList] = useState<SchedulesList[]>([]);
+  const { scheduleList, setScheduleList } = useScheduleStore();
   const [selectedDateRange, setSelectedDateRange] = useState("today");
   const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
   const activityList = [
@@ -65,9 +53,9 @@ export const Topbar = () => {
   useEffect(() => {
     // if (schedulesList.length > 0) {
     // fetchData();
-    console.log("Schedule list", schedulesList);
+    //console.log("Schedule list", scheduleList);
     // }
-  }, [schedulesList]);
+  }, [scheduleList]);
 
   const handlePrevDay = () => {
     if (date && setDate) {
@@ -136,12 +124,46 @@ export const Topbar = () => {
     }
   };
 
-  /**
-   * fetches the schedule data
-   */
-  function fetchData() {
-    const schedulesData = schedules?.data || [];
-    setSchedulesList(schedulesData);
+  function parseDateString(
+    year: string | undefined,
+    dateString: string,
+    timeString: string
+  ): Date {
+    // Try to match the date string with the regular expression
+    const match = dateString.match(/(\w{3}) (\d{1,2})/);
+
+    // Check if the match was successful
+    if (match) {
+      const [, month, day] = match;
+
+      // Convert month abbreviation to month number
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const monthNumber = monthNames.indexOf(month) + 1;
+
+      // Construct a standard date string
+      const standardDateString = `${year}-${monthNumber
+        .toString()
+        .padStart(2, "0")}-${day.padStart(2, "0")} ${timeString}`;
+
+      return new Date(standardDateString);
+    } else {
+      // If the match was not successful, log an error and return null
+      console.error("Invalid date string:", dateString);
+      return new Date();
+    }
   }
 
   /**
@@ -164,7 +186,7 @@ export const Topbar = () => {
     const currentMonth = currentDate.toLocaleString("default", {
       month: "short",
     });
-    const formattedSchedulesList = schedulesList.map((schedule) => {
+    const formattedSchedulesList = scheduleList?.map((schedule) => {
       return {
         ...schedule,
         activityName: schedule.activityName
@@ -178,7 +200,7 @@ export const Topbar = () => {
     // const offset = currentDate.getDate() - 21;
     // console.log("Selected", selectedActivity);
 
-    const filteredSchedules = formattedSchedulesList.filter((schedule) => {
+    const filteredSchedules = formattedSchedulesList?.filter((schedule) => {
       let [dayOfWeek, month, day] = schedule.date.split(" ");
 
       if (selectedDateRange === "today") {
@@ -217,29 +239,30 @@ export const Topbar = () => {
       }
     });
 
-    console.log("Filtered", filteredSchedules);
-
-    // selectedActivity.length > 0
     if (selectedActivity.length > 0) {
       setSelectedError(false);
 
-      if (filteredSchedules.length > 0) {
+      if (filteredSchedules!.length > 0) {
         setNoScheduleError(false);
 
         const vcalendar = new ICAL.Component("vcalendar"); // create a calendar component
         vcalendar.updatePropertyWithValue("prodid", "-//UofC Open Gym//");
 
-        filteredSchedules.forEach((schedule) => {
+        filteredSchedules?.forEach((schedule) => {
           // boilerplate event component
           const vevent = new ICAL.Component("vevent");
           const event = new ICAL.Event(vevent);
           const eventData = {
             summary: schedule.activityName,
-            start: new Date(
-              date?.getFullYear() + schedule.date + " " + schedule.startTime
+            start: parseDateString(
+              date?.getFullYear().toString(),
+              schedule.date,
+              schedule.startTime
             ),
-            end: new Date(
-              date?.getFullYear() + schedule.date + " " + schedule.endTime
+            end: parseDateString(
+              date?.getFullYear().toString(),
+              schedule.date,
+              schedule.endTime
             ),
           };
 
@@ -319,11 +342,7 @@ export const Topbar = () => {
           {/* Calendar Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <button
-                // variant="outline"
-                // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
-                className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
-              >
+              <button className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -355,14 +374,7 @@ export const Topbar = () => {
             // schedulesList.length > 0 && (
             <Popover>
               <PopoverTrigger asChild>
-                <button
-                  // variant="outline"
-                  // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
-                  className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
-                  onClick={() => {
-                    if (schedulesList.length <= 0) fetchData();
-                  }}
-                >
+                <button className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
