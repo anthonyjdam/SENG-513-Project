@@ -7,7 +7,7 @@ import Sidebar from "@/component/Sidebar";
 import TimesColumn from "@/component/TimesColumn";
 import { Topbar } from "@/component/Topbar";
 import { Schedule } from "@/component/Schedule";
-import { createContext } from "react";
+import { generateTimes } from "@/lib/utilityFunctions";
 
 export default function Home() {
   const [queryClient] = useState(() => new QueryClient());
@@ -21,53 +21,12 @@ export default function Home() {
     });
   });
 
-  const [dragging, setDragging] = useState(false);
-  const [isDragDisabled, setIsDragDisabled] = useState(true);
-
-  const handleStartDragging = () => {
-    setDragging(true);
-  };
-
-  const handleStopDragging = () => {
-    setDragging(false);
-  };
-
-  /**
-   * TODO have time range param
-   *
-   * @returns timeArr: the array of times
-   */
-  function generateTimes() {
-    let timesArr = [];
-
-    for (let i = 6; i < 24; i++) {
-      let time;
-
-      if (i > 11) {
-        time = i % 12; // for times PM
-        time = time === 0 ? 12 : time; // fro 12 PM
-        time = time.toString() + " PM";
-      } else {
-        time = i; // for times AM
-        time = time === 0 ? 12 : time; // for 12 AM
-        time = time.toString() + " AM";
-      }
-
-      timesArr.push(time);
-    }
-
-    return timesArr;
-  }
-
   return (
     <trpc.Provider queryClient={queryClient} client={trpcClient}>
       <QueryClientProvider client={queryClient}>
         <main className="flex flex-row min-h-screen">
           <div className="relative">
-            <Sidebar
-              isDragDisabled={isDragDisabled}
-              setIsDragDisabled={setIsDragDisabled}
-            />
+            <Sidebar />
           </div>
 
           <div className="flex flex-grow flex-col">
@@ -85,13 +44,7 @@ export default function Home() {
                   </div>
 
                   <div className="w-full h-full flex flex-col">
-                    <Schedule
-                      dragging={dragging}
-                      setDragging={setDragging}
-                      isDragDisabled={isDragDisabled}
-                      setIsDragDisabled={setIsDragDisabled}
-                      // onStopDragging={handleStopDragging}
-                    />
+                    <Schedule />
                   </div>
                 </div>
               </div>
