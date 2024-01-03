@@ -27,6 +27,7 @@ export function generateTimesArray(): string[] {
 /**
  * Creates the daysOfTheWeek component attributes
  */
+/*
 export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
   if (!date) {
     // Handle the case where date is undefined
@@ -84,6 +85,71 @@ export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
 
     startDayIndex++;
   }
+
+  return newDateArr;
+};
+*/
+
+/**
+ * Creates the daysOfTheWeek component attributes
+ */
+export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
+  if (!date) {
+    // Handle the case where date is undefined
+    return [];
+  }
+
+  let listOfMonths = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const dayOfTheWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  let currentMonth = date.getMonth();
+  const currentYear = date.getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  let currentDayOfMonth = date.getDate(); // get the current day of the month
+  let offset = date.getDay(); // get the current day of the week starting w/ sunday at 0
+  let startDayIndex = dayOfTheWeek.indexOf("SUN"); // index of sunday is the start of the week
+  const newDateArr = [];
+
+  for (let i = 0; i < 7; i++) {
+    startDayIndex = startDayIndex % 7; // iterate through days of the week
+
+    // Calculate dayNumber by considering the offset and ensuring it's within the current month
+    let dayNumber = currentDayOfMonth - offset + i;
+    let newMonth = currentMonth;
+
+    if (dayNumber <= 0) {
+      // Adjust if the dayNumber is less than or equal to zero
+      newMonth = (currentMonth - 1 + 12) % 12;
+      dayNumber += new Date(currentYear, newMonth + 1, 0).getDate();
+    } else if (dayNumber > daysInMonth) {
+      // Adjust if the dayNumber exceeds the number of days in the month
+      newMonth = (currentMonth + 1) % 12;
+      dayNumber -= daysInMonth;
+    }
+
+    newDateArr.push({
+      currentMonth: listOfMonths[newMonth],
+      dayOfTheWeek: dayOfTheWeek[startDayIndex],
+      dayNumber,
+    });
+
+    startDayIndex++;
+  }
+
+  // console.log(newDateArr);
 
   return newDateArr;
 };

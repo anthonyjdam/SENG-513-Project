@@ -128,7 +128,7 @@ export const MountCalendarEvent = ({
           <div
             key={activityName + "-" + activityID}
             className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75 duration-300 hover:duration-150 shadow-sm
-                hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-md 
+            hover:z-20 hover:-translate-x-1 hover:scale-[102%] hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-md
                 active:z-20 active:-translate-x-1 active:scale-105 active:absolute active:min-w-fit active:backdrop-blur-md active:shadow-md
                 ${activityTheme(formattedActivityName).bg} 
                 ${activityTheme(formattedActivityName).border}
