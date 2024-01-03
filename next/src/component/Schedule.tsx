@@ -1,6 +1,10 @@
-import { ToggleContext } from "@/app/page";
 import { trpc } from "@/lib/trpc";
-import { useDateStore, useScheduleViewStore } from "@/store";
+import {
+  ActivityTogglesState,
+  useActivityToggleStore,
+  useDateStore,
+  useScheduleViewStore,
+} from "@/store";
 
 import { useState, useEffect, useRef } from "react";
 import React, { Dispatch, SetStateAction, useContext } from "react";
@@ -66,7 +70,7 @@ const activityTheme = (simplifiedActivityName: string) => {
         dot: "bg-amber-400",
       };
 
-    case newActivityName.includes("ball hockey"):
+    case newActivityName.includes("ballhockey"):
       return {
         bg: "bg-blue-100/[60%]",
         hover: "bg-blue-300/75",
@@ -469,7 +473,7 @@ const WeekView = ({
         prevSelectedItems.filter((item) => item !== currentItem)
       ); //remove the item if it is already in the selectedItems list
     }
-    console.log(selectedItems);
+    //console.log(selectedItems);
   }
 
   function clearItemSelection() {
@@ -584,7 +588,7 @@ export const Schedule = ({
   const { scheduleView } = useScheduleViewStore();
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const { activityToggles } = useContext(ToggleContext);
+  const { Toggles } = useActivityToggleStore();
 
   const schedules = trpc.schedule.getSchedules.useQuery();
   const [schedulesList, setSchedulesList] = useState(schedules.data);
@@ -606,8 +610,11 @@ export const Schedule = ({
 
     if (schedules.data) {
       let filteredSchedule = schedules.data.filter((activity) => {
-        return activityToggles[
-          activity.activityName.replace("Drop In ", "").replace(" Time", "")
+        return Toggles[
+          activity.activityName
+            .replace("Drop In ", "")
+            .replace(" Time", "")
+            .replace(" ", "") as keyof ActivityTogglesState["Toggles"]
         ];
       });
 
@@ -616,14 +623,7 @@ export const Schedule = ({
         setSchedulesList(filteredSchedule);
       }
     }
-  }, [
-    scheduleView,
-    activeView,
-    date,
-    schedules.data,
-    activityToggles,
-    schedulesList,
-  ]);
+  }, [scheduleView, activeView, date, schedules.data, Toggles, schedulesList]);
 
   // Function to compare arrays for equality
   function arraysEqual(arr1: string | any[], arr2: string | any[] | undefined) {
