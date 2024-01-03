@@ -172,7 +172,7 @@ function mountCalendarEvent(
           <div
             key={activityName + "-" + activityID}
             className={`w-full border-l-4 rounded-md p-1 pt-1 flex-1 z-10 transition ease-in-out delay-75 duration-300 hover:duration-150 shadow-sm
-              hover:z-20 hover:-translate-x-1 hover:scale-105 hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-md 
+              hover:z-20 hover:-translate-x-1 hover:scale-[102%] hover:absolute hover:min-w-fit hover:backdrop-blur-md hover:shadow-md 
               active:z-20 active:-translate-x-1 active:scale-105 active:absolute active:min-w-fit active:backdrop-blur-md active:shadow-md
               ${activityTheme(formattedActivityName).bg} 
               ${activityTheme(formattedActivityName).border}
@@ -242,38 +242,36 @@ export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     return [];
   }
 
-  let listOfMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  let listOfMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const dayOfTheWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-  let currentMonth = date.getMonth() + 1;
+  let currentMonth = date.getMonth();
   const currentYear = date.getFullYear();
-  const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
   let currentDayOfMonth = date.getDate(); // get the current day of the month
   let offset = date.getDay(); // get the current day of the week starting w/ sunday at 0
   let startDayIndex = dayOfTheWeek.indexOf("SUN"); // index of sunday is the start of the week
   const newDateArr = [];
 
-  let isNewMonth = false;
   for (let i = 0; i < 7; i++) {
     startDayIndex = startDayIndex % 7; // iterate through days of the week
 
     // Calculate dayNumber by considering the offset and ensuring it's within the current month
     let dayNumber = currentDayOfMonth - offset + i;
+    let newMonth = currentMonth;
+
     if (dayNumber <= 0) {
       // Adjust if the dayNumber is less than or equal to zero
-      dayNumber += daysInMonth;
+      newMonth = (currentMonth - 1 + 12) % 12;
+      dayNumber += new Date(currentYear, newMonth + 1, 0).getDate();
     } else if (dayNumber > daysInMonth) {
       // Adjust if the dayNumber exceeds the number of days in the month
+      newMonth = (currentMonth + 1) % 12;
       dayNumber -= daysInMonth;
-
-      if (!isNewMonth) {
-        currentMonth = (currentMonth + 1) % 13;
-        isNewMonth = true;
-      }
-    }    
+    }
 
     newDateArr.push({
-      currentMonth: listOfMonths[currentMonth - 1],
+      currentMonth: listOfMonths[newMonth],
       dayOfTheWeek: dayOfTheWeek[startDayIndex],
       dayNumber
     });
@@ -281,8 +279,12 @@ export const generateDaysOfWeek = ({ date }: { date: Date | undefined }) => {
     startDayIndex++;
   }
 
+  // console.log(newDateArr);
+  
+
   return newDateArr;
 };
+
 
 interface DayViewProps {
   date: Date | undefined;
