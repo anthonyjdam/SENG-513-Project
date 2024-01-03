@@ -68,15 +68,29 @@ export default function Home() {
   const [isDragDisabled, setIsDragDisabled] = useState(true);
   const { toast } = useToast()
 
+  const [isPopupVisible, setPopupVisible] = useState(true);
+
+  const dismissPopupForever = () => {
+    // set a flag in local storage to remember that the user dismissed the popup
+    localStorage.setItem('popupDismissed', 'true');
+    setPopupVisible(false);
+  };
+
   useEffect(() => {
-    // if(isDialogOpen == true) {
+    const dismissed = localStorage.getItem('popupDismissed');
+
+    if (dismissed) {
+      setPopupVisible(false);
+    } 
+    else { //display popup if local storage isnt false
       toast({
-        title: "⚠ Attention",
-        description: "Please note that this website is experimental. If you experience issues please report to user@gmail.com",
-        action: <ToastAction altText="Dismiss forever">Dismiss Forever</ToastAction>,
-      })
-    //   setDialogOpen(false);
-    // }
+        title: '👋 Welcome',
+        description:
+          'Please be aware that this website is experimental and may not present information accurately or as intended. Thank you for your understanding as we work to improve it.',
+        action: <ToastAction onClick={dismissPopupForever} altText="Dismiss forever">Dismiss Forever</ToastAction>,
+      });
+    }
+
   }, []);
 
 
@@ -127,21 +141,6 @@ export default function Home() {
           }}
         >
           <main className="flex flex-row min-h-screen">
-
-
-            {/* <Dialog open={isDialogOpen}>
-              <DialogOverlay onClick={() => setDialogOpen(false)}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Are you sure absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                      This action cannot be undone. This will permanently delete your account
-                      and remove your data from our servers.
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </DialogOverlay>
-            </Dialog> */}
 
             <Toaster></Toaster>
 
