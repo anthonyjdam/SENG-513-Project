@@ -18,14 +18,14 @@ function CalendarCell({ cellKey }: CalendarCellProps) {
             <div className="h-[25%] max-h-[25%] border-t border-neutral-100"></div>
             <div className="h-[25%] max-h-[25%] border-t border-neutral-100"></div>
 
-            {cellKey === 54 ? (
+            {/* {cellKey === 54 ? (
                 //TODO FIND WAY TO PLACE ELEMENTS RELATIVE TO PARENT BUT ABSOLUTE AS A CHILD
                 <div className="bg-red-600 border-2 border-red-300 rounded-md bg-opacity-30 w-[160px] h-[75px] z-10 absolute">
                     <p className=''>
                         🏐 Volleyball
                     </p>
                 </div>
-            ) : null}
+            ) : null} */}
         </div>
     );
 }

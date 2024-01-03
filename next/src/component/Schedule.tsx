@@ -17,7 +17,6 @@ export const Schedule = () => {
   const { date } = useDateStore();
   const { scheduleView } = useScheduleViewStore();
   const { Toggles } = useActivityToggleStore();
-
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { trpc } from "@/lib/trpc";
@@ -7,9 +7,13 @@ import Sidebar from "@/component/Sidebar";
 import TimesColumn from "@/component/TimesColumn";
 import { Topbar } from "@/component/Topbar";
 import { Schedule } from "@/component/Schedule";
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 import { generateTimes } from "@/lib/utilityFunctions";
 
 export default function Home() {
+
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() => {
     return trpc.createClient({
@@ -21,10 +25,37 @@ export default function Home() {
     });
   });
 
+  const { toast } = useToast()
+  const [isPopupVisible, setPopupVisible] = useState(true);
+
+  const dismissPopupForever = () => {
+    // set a flag in local storage to remember that the user dismissed the popup
+    localStorage.setItem('popupDismissed', 'true');
+    setPopupVisible(false);
+  };
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('popupDismissed');
+
+    if (dismissed) {
+      setPopupVisible(false);
+    } 
+    else { //display popup if local storage isnt false
+      toast({
+        title: '👋 Welcome',
+        description:
+          'Please be aware that this website is experimental and may not present information accurately or as intended. Thank you for your understanding as we work to improve it.',
+        action: <ToastAction onClick={dismissPopupForever} altText="Dismiss forever">Dismiss Forever</ToastAction>,
+      });
+    }
+
+  }, []);
+
   return (
     <trpc.Provider queryClient={queryClient} client={trpcClient}>
       <QueryClientProvider client={queryClient}>
         <main className="flex flex-row min-h-screen">
+                      <Toaster></Toaster>
           <div className="relative">
             <Sidebar />
           </div>
