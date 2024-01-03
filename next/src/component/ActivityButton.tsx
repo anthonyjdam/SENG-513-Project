@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { ToggleContext } from "@/app/page";
+import { ActivityTogglesState, useActivityToggleStore } from "@/store";
 
 const chooseActivityButtonColors = (activity: string) => {
   let background = "";
@@ -15,7 +14,7 @@ const chooseActivityButtonColors = (activity: string) => {
       border = "border-purple-500";
       circle = "bg-purple-500";
       background = "bg-purple-500/10";
-      selectedBackground = "bg-purple-500/75"
+      selectedBackground = "bg-purple-500/75";
       emoji = "🏸";
       break;
     case "Basketball":
@@ -23,7 +22,7 @@ const chooseActivityButtonColors = (activity: string) => {
       border = "border-amber-500";
       circle = "bg-amber-500";
       background = "bg-amber-500/10";
-      selectedBackground = "bg-amber-500/75"
+      selectedBackground = "bg-amber-500/75";
       emoji = "🏀";
       break;
     case "Ball Hockey":
@@ -31,7 +30,7 @@ const chooseActivityButtonColors = (activity: string) => {
       border = "border-blue-500";
       circle = "bg-blue-500";
       background = "bg-blue-500/10";
-      selectedBackground = "bg-blue-500/75"
+      selectedBackground = "bg-blue-500/75";
       emoji = "🏑";
       break;
     case "Volleyball":
@@ -39,7 +38,7 @@ const chooseActivityButtonColors = (activity: string) => {
       border = "border-red-500";
       circle = "bg-red-500";
       background = "bg-red-500/10";
-      selectedBackground = "bg-red-500/75"
+      selectedBackground = "bg-red-500/75";
       emoji = "🏐";
       break;
     case "Soccer":
@@ -47,7 +46,7 @@ const chooseActivityButtonColors = (activity: string) => {
       border = "border-emerald-500";
       circle = "bg-emerald-500";
       background = "bg-emerald-500/10";
-      selectedBackground = "bg-emerald-500/75"
+      selectedBackground = "bg-emerald-500/75";
       emoji = "⚽";
       break;
     case "Open Gym":
@@ -55,42 +54,66 @@ const chooseActivityButtonColors = (activity: string) => {
       border = "border-sky-500";
       circle = "bg-sky-500";
       background = "bg-sky-500/10";
-      selectedBackground = "bg-sky-500/75"
+      selectedBackground = "bg-sky-500/75";
       emoji = "🏃";
       break;
     default:
       break;
   }
 
-  return { background, border, circle, hoverBackground, selectedBackground, emoji };
+  return {
+    background,
+    border,
+    circle,
+    hoverBackground,
+    selectedBackground,
+    emoji,
+  };
 };
 
 export const ActivityButton = ({ activity }: { activity: string }) => {
-  //will probably need to lift state or use context at some point to render updates but that will be a later problem
-  const { activityToggles, setActivityToggles } = useContext(ToggleContext);
-  const isSelected = activityToggles[activity];
+  const { Toggles, setActivityToggles } = useActivityToggleStore();
 
-  let { background, border, circle, hoverBackground, selectedBackground, emoji } = chooseActivityButtonColors(activity);
+  function isKeyOfToggles(
+    key: string | number | symbol
+  ): key is keyof ActivityTogglesState["Toggles"] {
+    return key in Toggles;
+  }
 
-  const buttonClasses = `${background} rounded-lg py-2 transition-colors duration-150 relative overflow-hidden ${isSelected ? selectedBackground : `bg-none ${hoverBackground}`
-    } emoji-hover-animate`;
+  const parsedActivity = activity.replace(
+    " ",
+    ""
+  ) as keyof ActivityTogglesState["Toggles"];
+  let isSelected;
+  if (isKeyOfToggles(parsedActivity)) {
+    isSelected = Toggles[parsedActivity];
+  }
 
+  let { background, circle, hoverBackground, selectedBackground, emoji } =
+    chooseActivityButtonColors(activity);
+
+  const buttonClasses = `${background} rounded-lg py-2 transition-colors duration-150 relative overflow-hidden ${
+    isSelected ? selectedBackground : `bg-none ${hoverBackground}`
+  } emoji-hover-animate`;
 
   return (
     <button
       type="button"
       className={buttonClasses}
       onClick={() => {
-        setActivityToggles((prevState) => ({
-          ...prevState,
-          [activity]: !prevState[activity],
-        }));
+        setActivityToggles(
+          activity.replace(" ", "") as keyof ActivityTogglesState["Toggles"]
+        );
       }}
     >
       <div className="flex flex-row items-center space-x-4 ml-4">
         <div className={`w-4 h-4 ${circle} rounded-full`}></div>
         <p className="text-sm">{activity}</p>
-        <span className={`absolute emoji ${isSelected ? 'emoji-selected' : ''}`}>{emoji}</span>
+        <span
+          className={`absolute emoji ${isSelected ? "emoji-selected" : ""}`}
+        >
+          {emoji}
+        </span>
       </div>
     </button>
   );
