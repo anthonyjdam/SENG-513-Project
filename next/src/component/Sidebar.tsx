@@ -84,9 +84,43 @@ function Sidebar({ date, setDate, isDragDisabled, setIsDragDisabled }: SidebarPr
                 <DialogHeader>
                   <DialogTitle>Help</DialogTitle>
                   <DialogDescription>
-                    
-                    This action cannot be undone. This will permanently delete your account
-                    and remove your data from our servers.
+                    <div className="flex flex-col">
+                      <div className="w-full h-full rounded-lg space-y-3 pt-2">
+                        <h1>
+                          📅 Downloading calendar events
+                        </h1>
+                        <video autoPlay loop muted playsInline
+                          className='h-full w-full flex justify-center items-center'
+                        >
+                          <source src="/IcalVideo.mp4" type="video/mp4" />
+                        </video>
+                        <div className="pt-2">
+                          <h1>🐛 Bugs report: </h1>
+                          <p className="text-blue-300 pl-6">user@gmail.com || github.link</p>
+                        </div>
+                        <div className="pt-2">
+                          <p className="italic">
+                            Please be aware that this experimental website may not present information accurately or as intended.
+                            Thank you for your understanding as we work to improve it.
+
+                          </p>
+                          <div className="pt-2 pb-4 flex flex-row">
+                            <p className="">
+                              Looking for the original&nbsp;
+                            </p>
+                            <a href="https://schedules.oval.ucalgary.ca/MobileOpenGymTimes.aspx" target="_blank" rel="noopener noreferrer" className="text-blue-300 italic">
+                              site?
+                            </a>
+                          </div>
+                          <hr />
+                          <div className="pt-2 flex justify-center">
+                            <p className="text-red-300">
+                              Made with ❤ by your fellow pack of 🦖
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>
