@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { trpc } from "@/lib/trpc";
@@ -8,6 +8,9 @@ import TimesColumn from "@/component/TimesColumn";
 import { Topbar } from "@/component/Topbar";
 import { Schedule } from "@/component/Schedule";
 import { createContext } from "react";
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 interface ActivityToggles {
   Badminton: boolean;
@@ -23,6 +26,7 @@ interface ToggleContextProps {
   setActivityToggles: React.Dispatch<React.SetStateAction<ActivityToggles>>;
 }
 
+
 export const ToggleContext = createContext<ToggleContextProps>({
   activityToggles: {
     Badminton: false,
@@ -32,10 +36,11 @@ export const ToggleContext = createContext<ToggleContextProps>({
     Soccer: false,
     "Open Gym": true,
   },
-  setActivityToggles: () => {},
+  setActivityToggles: () => { },
 });
 
 export default function Home() {
+
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() => {
     return trpc.createClient({
@@ -61,6 +66,20 @@ export default function Home() {
 
   const [dragging, setDragging] = useState(false);
   const [isDragDisabled, setIsDragDisabled] = useState(true);
+  const { toast } = useToast()
+
+  useEffect(() => {
+    // if(isDialogOpen == true) {
+      toast({
+        title: "⚠ Attention",
+        description: "Please note that this website is experimental. If you experience issues please report to user@gmail.com",
+        action: <ToastAction altText="Dismiss forever">Dismiss Forever</ToastAction>,
+      })
+    //   setDialogOpen(false);
+    // }
+  }, []);
+
+
 
   const handleStartDragging = () => {
     setDragging(true);
@@ -97,6 +116,7 @@ export default function Home() {
     return timesArr;
   }
 
+
   return (
     <trpc.Provider queryClient={queryClient} client={trpcClient}>
       <QueryClientProvider client={queryClient}>
@@ -107,6 +127,24 @@ export default function Home() {
           }}
         >
           <main className="flex flex-row min-h-screen">
+
+
+            {/* <Dialog open={isDialogOpen}>
+              <DialogOverlay onClick={() => setDialogOpen(false)}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you sure absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete your account
+                      and remove your data from our servers.
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </DialogOverlay>
+            </Dialog> */}
+
+            <Toaster></Toaster>
+
             <div className="relative">
               <Sidebar
                 date={date}
@@ -143,7 +181,7 @@ export default function Home() {
                         setDragging={setDragging}
                         isDragDisabled={isDragDisabled}
                         setIsDragDisabled={setIsDragDisabled}
-                        // onStopDragging={handleStopDragging}
+                      // onStopDragging={handleStopDragging}
                       />
                     </div>
                   </div>
