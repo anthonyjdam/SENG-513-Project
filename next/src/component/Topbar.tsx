@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
@@ -9,41 +9,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import HamburgerMenu from "./HamburgerMenu";
-import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
 import ErrorMessage from "./ErrorMessage";
-import { generateDaysOfWeek } from "./Schedule";
+import { useDateStore, useScheduleStore, useScheduleViewStore } from "@/store";
+import { generateDaysOfWeek } from "@/lib/utilityFunctions";
 
-interface TopbarProps {
-  date: Date | undefined;
-  setDate: Dispatch<SetStateAction<Date | undefined>> | undefined;
-  scheduleView: string;
-  setScheduleView: Dispatch<SetStateAction<string>>;
-}
-
-interface SchedulesList {
-  date: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  _id: string;
-  __v: number;
-  activityName: string;
-  duration: string;
-}
-
-export const Topbar = ({
-  date,
-  setDate,
-  scheduleView,
-  setScheduleView,
-}: TopbarProps) => {
+export const Topbar = () => {
   const { isSignedIn } = useAuth();
-  const schedules = trpc.schedule.getSchedules.useQuery();
-  const [schedulesList, setSchedulesList] = useState<SchedulesList[]>([]);
+  const { date, setDate } = useDateStore();
+  const { scheduleView, setScheduleView } = useScheduleViewStore();
+  const { scheduleList } = useScheduleStore();
   const [selectedDateRange, setSelectedDateRange] = useState("today");
   const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
   const activityList = [
@@ -74,9 +50,9 @@ export const Topbar = ({
   useEffect(() => {
     // if (schedulesList.length > 0) {
     // fetchData();
-    console.log("Schedule list", schedulesList);
+    //console.log("Schedule list", scheduleList);
     // }
-  }, [schedulesList]);
+  }, [scheduleList]);
 
   const handlePrevDay = () => {
     if (date && setDate) {
@@ -145,12 +121,46 @@ export const Topbar = ({
     }
   };
 
-  /**
-   * fetches the schedule data
-   */
-  function fetchData() {
-    const schedulesData = schedules?.data || [];
-    setSchedulesList(schedulesData);
+  function parseDateString(
+    year: string | undefined,
+    dateString: string,
+    timeString: string
+  ): Date {
+    // Try to match the date string with the regular expression
+    const match = dateString.match(/(\w{3}) (\d{1,2})/);
+
+    // Check if the match was successful
+    if (match) {
+      const [, month, day] = match;
+
+      // Convert month abbreviation to month number
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const monthNumber = monthNames.indexOf(month) + 1;
+
+      // Construct a standard date string
+      const standardDateString = `${year}-${monthNumber
+        .toString()
+        .padStart(2, "0")}-${day.padStart(2, "0")} ${timeString}`;
+
+      return new Date(standardDateString);
+    } else {
+      // If the match was not successful, log an error and return null
+      console.error("Invalid date string:", dateString);
+      return new Date();
+    }
   }
 
   /**
@@ -173,7 +183,7 @@ export const Topbar = ({
     const currentMonth = currentDate.toLocaleString("default", {
       month: "short",
     });
-    const formattedSchedulesList = schedulesList.map((schedule) => {
+    const formattedSchedulesList = scheduleList?.map((schedule) => {
       return {
         ...schedule,
         activityName: schedule.activityName
@@ -187,7 +197,7 @@ export const Topbar = ({
     // const offset = currentDate.getDate() - 21;
     // console.log("Selected", selectedActivity);
 
-    const filteredSchedules = formattedSchedulesList.filter((schedule) => {
+    const filteredSchedules = formattedSchedulesList?.filter((schedule) => {
       let [dayOfWeek, month, day] = schedule.date.split(" ");
 
       if (selectedDateRange === "today") {
@@ -226,29 +236,30 @@ export const Topbar = ({
       }
     });
 
-    console.log("Filtered", filteredSchedules);
-
-    // selectedActivity.length > 0
     if (selectedActivity.length > 0) {
       setSelectedError(false);
 
-      if (filteredSchedules.length > 0) {
+      if (filteredSchedules!.length > 0) {
         setNoScheduleError(false);
 
         const vcalendar = new ICAL.Component("vcalendar"); // create a calendar component
         vcalendar.updatePropertyWithValue("prodid", "-//UofC Open Gym//");
 
-        filteredSchedules.forEach((schedule) => {
+        filteredSchedules?.forEach((schedule) => {
           // boilerplate event component
           const vevent = new ICAL.Component("vevent");
           const event = new ICAL.Event(vevent);
           const eventData = {
             summary: schedule.activityName,
-            start: new Date(
-              date?.getFullYear() + schedule.date + " " + schedule.startTime
+            start: parseDateString(
+              date?.getFullYear().toString(),
+              schedule.date,
+              schedule.startTime
             ),
-            end: new Date(
-              date?.getFullYear() + schedule.date + " " + schedule.endTime
+            end: parseDateString(
+              date?.getFullYear().toString(),
+              schedule.date,
+              schedule.endTime
             ),
           };
 
@@ -328,11 +339,7 @@ export const Topbar = ({
           {/* Calendar Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <button
-                // variant="outline"
-                // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
-                className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
-              >
+              <button className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -364,14 +371,7 @@ export const Topbar = ({
             // schedulesList.length > 0 && (
             <Popover>
               <PopoverTrigger asChild>
-                <button
-                  // variant="outline"
-                  // className="bg-red-500 hover:bg-zinc-100 shadow-red-200 shadow-md hover:shadow-none active:bg-zinc-200 hover:text-zinc-500 rounded-lg p-1 text-white transition-all duration-300 border border-zinc-200/50"
-                  className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300"
-                  onClick={() => {
-                    if (schedulesList.length <= 0) fetchData();
-                  }}
-                >
+                <button className="hover:bg-red-600 active:bg-red-500 hover:shadow-red-200 active:shadow-red-200 hover:shadow-md active:shadow-md rounded-lg p-0.5 text-zinc-600 hover:text-white active:text-white border border-white hover:border-zinc-200/50 transition-all duration-300">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -497,7 +497,12 @@ export const Topbar = ({
       </div>
 
       <div className="md:hidden">
-        <img src="/active-living-logo.png" alt="" className="w-10 h-10" />
+        <Image
+          src="/active-living-logo.png"
+          alt="Active Living Logo"
+          width={40} // equivalent to w-10 in TailwindCSS (assuming 1rem = 16px)
+          height={40} // equivalent to h-10 in TailwindCSS
+        />
       </div>
 
       <div className="hidden md:flex space-x-0.5 text-zinc-600">
@@ -508,7 +513,7 @@ export const Topbar = ({
               : "text-zinc-500 bg-zinc-50 border border-zinc-200/50"
           }`}
           onClick={() => {
-            setScheduleView("d");
+            setScheduleView();
           }}
         >
           Day
@@ -521,7 +526,7 @@ export const Topbar = ({
               : "text-zinc-500 bg-zinc-50 border border-zinc-200/50"
           }`}
           onClick={() => {
-            setScheduleView("w");
+            setScheduleView();
           }}
         >
           Week
