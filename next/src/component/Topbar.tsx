@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
@@ -9,20 +9,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import HamburgerMenu from "./HamburgerMenu";
-import { trpc } from "@/lib/trpc";
 import ICAL from "ical.js";
 import ErrorMessage from "./ErrorMessage";
-import { generateDaysOfWeek } from "./Schedule";
 import { useDateStore, useScheduleStore, useScheduleViewStore } from "@/store";
+import { generateDaysOfWeek } from "@/lib/utilityFunctions";
 
 export const Topbar = () => {
   const { isSignedIn } = useAuth();
   const { date, setDate } = useDateStore();
   const { scheduleView, setScheduleView } = useScheduleViewStore();
-  const { scheduleList, setScheduleList } = useScheduleStore();
+  const { scheduleList } = useScheduleStore();
   const [selectedDateRange, setSelectedDateRange] = useState("today");
   const [selectedActivity, setSelectedActivity] = useState<string[]>([]);
   const activityList = [

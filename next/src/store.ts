@@ -93,3 +93,21 @@ export const useActivityToggleStore = create<ActivityTogglesState>((set) => ({
     }));
   },
 }));
+
+interface DragState {
+  dragging: boolean;
+  setDragging: () => void;
+  isDragDisabled: boolean;
+  setIsDragDisabled: () => void;
+}
+
+export const useDragStore = create<DragState>((set) => ({
+  dragging: false,
+  setDragging: () => {
+    set((state) => ({ dragging: !state.dragging }));
+  },
+  isDragDisabled: true,
+  setIsDragDisabled: () => {
+    set((state) => ({ isDragDisabled: !state.isDragDisabled }));
+  },
+}));

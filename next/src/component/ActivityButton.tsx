@@ -101,7 +101,9 @@ export const ActivityButton = ({ activity }: { activity: string }) => {
       type="button"
       className={buttonClasses}
       onClick={() => {
-        setActivityToggles(activity as keyof ActivityTogglesState["Toggles"]);
+        setActivityToggles(
+          activity.replace(" ", "") as keyof ActivityTogglesState["Toggles"]
+        );
       }}
     >
       <div className="flex flex-row items-center space-x-4 ml-4">

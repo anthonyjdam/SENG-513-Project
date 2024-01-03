@@ -1,15 +1,11 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { ActivityButton } from "./ActivityButton";
 import Image from "next/image";
-import { useActivityToggleStore, useDateStore } from "@/store";
+import { useActivityToggleStore, useDateStore, useDragStore } from "@/store";
 
-interface SidebarProps {
-  isDragDisabled: boolean;
-  setIsDragDisabled: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-function Sidebar({ isDragDisabled, setIsDragDisabled }: SidebarProps) {
-  const { date, setDate } = useDateStore();
+function Sidebar() {
+  const { date } = useDateStore();
+  const { setIsDragDisabled } = useDragStore();
 
   const [selectTimeStyle, setSelectTimeStyle] = useState(
     "bg-zinc-800 w-full rounded-lg"
@@ -22,7 +18,7 @@ function Sidebar({ isDragDisabled, setIsDragDisabled }: SidebarProps) {
   const { setAllTogglesToFalse } = useActivityToggleStore();
 
   function handleSelectTime() {
-    setIsDragDisabled(false);
+    setIsDragDisabled();
     setAllTogglesToFalse();
     setSelectTimeText("");
     setShowAdditionalButtons(true);
@@ -30,7 +26,7 @@ function Sidebar({ isDragDisabled, setIsDragDisabled }: SidebarProps) {
   }
 
   function handleCancelSelectTime() {
-    setIsDragDisabled(true);
+    setIsDragDisabled();
     setSelectTimeText("Select Time");
     setShowAdditionalButtons(!showAdditionalButtons);
     setSelectTimeStyle("bg-zinc-800 rounded-lg");
