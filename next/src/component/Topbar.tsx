@@ -16,7 +16,7 @@ import { useDateStore, useScheduleStore, useScheduleViewStore } from "@/store";
 import { generateDaysOfWeek } from "@/lib/utilityFunctions";
 
 export const Topbar = () => {
-  const { isSignedIn } = useAuth();
+  //const { isSignedIn } = useAuth();
   const { date, setDate } = useDateStore();
   const { scheduleView, setScheduleView } = useScheduleViewStore();
   const { scheduleList } = useScheduleStore();
@@ -47,12 +47,12 @@ export const Topbar = () => {
   let weekSchedule: MyDate[] = generateDaysOfWeek(currentDayObject);
   // let weekSchedule: MyDate[] = generateDaysOfWeek( {date} );
 
-  useEffect(() => {
-    // if (schedulesList.length > 0) {
-    // fetchData();
-    //console.log("Schedule list", scheduleList);
-    // }
-  }, [scheduleList]);
+  //useEffect(() => {
+  // if (schedulesList.length > 0) {
+  // fetchData();
+  //console.log("Schedule list", scheduleList);
+  // }
+  //}, [scheduleList]);
 
   const handlePrevDay = () => {
     if (date && setDate) {

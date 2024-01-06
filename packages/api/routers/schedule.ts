@@ -1,3 +1,4 @@
+/*
 import { publicProcedure, router } from "../index";
 import { GymScheduleModel } from "../models/GymSchedule";
 import { validateSchedule, validateScheduleOutput } from "../procedures";
@@ -24,3 +25,4 @@ export const scheduleRouter = router({
     return schedules;
   }),
 });
+*/

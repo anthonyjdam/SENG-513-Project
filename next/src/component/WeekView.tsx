@@ -27,19 +27,19 @@ export const WeekView = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // items that have been selected during the drag; of type array of strings
 
   // remove selected items on ctrl + z
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "z") {
-        clearItemSelection();
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (e.ctrlKey && e.key === "z") {
+  //       clearItemSelection();
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
+  //   window.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [clearItemSelection]);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, [clearItemSelection]);
 
   /**
    * handles when the user presses the mouse down

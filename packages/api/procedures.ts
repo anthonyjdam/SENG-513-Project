@@ -1,3 +1,4 @@
+/*
 import { TRPCError } from "@trpc/server"; // error handler
 import { publicProcedure } from "./index"; // trpc instance
 import { z } from "zod"; // input validator
@@ -56,3 +57,4 @@ export const validateScheduleOutput = publicProcedure
     //input validation
     return opts.next();
   });
+*/
