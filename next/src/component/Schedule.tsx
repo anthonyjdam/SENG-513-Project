@@ -27,7 +27,9 @@ export const Schedule = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:5001/schedule");
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_HTTP_SERVER_LINK as string
+        );
         setInitialList(response.data);
         setScheduleList(response.data);
       } catch (error) {

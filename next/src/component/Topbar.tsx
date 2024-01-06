@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import HamburgerMenu from "./HamburgerMenu";
-import ICAL from "ical.js";
+//import ICAL from "ical.js";
+const ICAL = require("ical.js");
 import ErrorMessage from "./ErrorMessage";
 import { useDateStore, useScheduleStore, useScheduleViewStore } from "@/store";
 import { generateDaysOfWeek } from "@/lib/utilityFunctions";
