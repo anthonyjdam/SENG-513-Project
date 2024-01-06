@@ -1,8 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink } from "@trpc/client";
-import { trpc } from "@/lib/trpc";
 import Sidebar from "@/component/Sidebar";
 import TimesColumn from "@/component/TimesColumn";
 import { Topbar } from "@/component/Topbar";
@@ -14,17 +11,6 @@ import { generateTimes } from "@/lib/utilityFunctions";
 require("dotenv").config();
 
 export default function Home() {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() => {
-    return trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: process.env.NEXT_PUBLIC_HTTP_BATCH_LINK as string,
-        }),
-      ],
-    });
-  });
-
   const { toast } = useToast();
   const [isPopupVisible, setPopupVisible] = useState(true);
 
@@ -52,40 +38,36 @@ export default function Home() {
         ),
       });
     }
-  }, []);
+  }, [toast]);
 
   return (
-    <trpc.Provider queryClient={queryClient} client={trpcClient}>
-      <QueryClientProvider client={queryClient}>
-        <main className="flex flex-row min-h-screen">
-          <Toaster></Toaster>
-          <div className="relative">
-            <Sidebar />
-          </div>
+    <main className="flex flex-row min-h-screen">
+      <Toaster></Toaster>
+      <div className="relative">
+        <Sidebar />
+      </div>
 
-          <div className="flex flex-grow flex-col">
-            <Topbar />
+      <div className="flex flex-grow flex-col">
+        <Topbar />
 
+        <div className="flex flex-row h-full">
+          <div className="flex flex-col w-full">
             <div className="flex flex-row h-full">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-row h-full">
-                  <div className="bg-white text-zinc-500 w-[60px]">
-                    <div className="bg-white h-[75px] min-h-[75px]"></div>
+              <div className="bg-white text-zinc-500 w-[60px]">
+                <div className="bg-white h-[75px] min-h-[75px]"></div>
 
-                    {generateTimes().map((time) => (
-                      <TimesColumn key={time} time={time} />
-                    ))}
-                  </div>
+                {generateTimes().map((time) => (
+                  <TimesColumn key={time} time={time} />
+                ))}
+              </div>
 
-                  <div className="w-full h-full flex flex-col">
-                    <Schedule />
-                  </div>
-                </div>
+              <div className="w-full h-full flex flex-col">
+                <Schedule />
               </div>
             </div>
           </div>
-        </main>
-      </QueryClientProvider>
-    </trpc.Provider>
+        </div>
+      </div>
+    </main>
   );
 }

@@ -1,3 +1,4 @@
+/*
 import { publicProcedure, router } from "../index"
 import { usersRouter } from "./users";
 import { scheduleRouter } from "./schedule";
@@ -14,3 +15,4 @@ export const appRouter = router({
 
 
 })
+*/

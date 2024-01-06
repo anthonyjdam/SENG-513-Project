@@ -2,7 +2,7 @@ import { useScheduleStore } from "@/store";
 import { useState } from "react";
 
 const activityTheme = (simplifiedActivityName: string) => {
-  const newActivityName = simplifiedActivityName.toLowerCase();
+  const newActivityName = simplifiedActivityName.toLowerCase().replace(" ", "");
 
   switch (true) {
     case newActivityName.includes("badminton"):

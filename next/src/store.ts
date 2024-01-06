@@ -36,11 +36,17 @@ interface Schedule {
 }
 
 interface ScheduleState {
+  initialList: Schedule[] | undefined;
+  setInitialList: (newSchedule: Schedule[] | undefined) => void;
   scheduleList: Schedule[] | undefined;
   setScheduleList: (newSchedule: Schedule[] | undefined) => void;
 }
 
 export const useScheduleStore = create<ScheduleState>((set) => ({
+  initialList: [],
+  setInitialList: (newSchedule) => {
+    set({ initialList: newSchedule });
+  },
   scheduleList: [],
   setScheduleList: (newSchedule) => {
     set({ scheduleList: newSchedule });

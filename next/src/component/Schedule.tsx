@@ -1,4 +1,3 @@
-import { trpc } from "@/lib/trpc";
 import {
   ActivityTogglesState,
   useActivityToggleStore,
@@ -7,7 +6,7 @@ import {
   useScheduleStore,
   useScheduleViewStore,
 } from "@/store";
-
+import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { DayView } from "./DayView";
@@ -20,10 +19,40 @@ export const Schedule = () => {
   const [activeView, setActiveView] = useState(scheduleView);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const schedules = trpc.schedule.getSchedules.useQuery();
-  const { scheduleList, setScheduleList } = useScheduleStore();
+  const { scheduleList, setScheduleList, initialList, setInitialList } =
+    useScheduleStore();
 
   const prevDateRef = useRef(date);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("http://localhost:5001/schedule");
+        setInitialList(response.data);
+        setScheduleList(response.data);
+      } catch (error) {
+        console.error("Error fetching schedules:", error);
+      }
+    }
+
+    fetchData();
+  }, [setInitialList, setScheduleList]);
+
+  useEffect(() => {
+    let filteredSchedule = initialList!.filter((activity) => {
+      return Toggles[
+        activity.activityName
+          .replace("Drop In ", "")
+          .replace(" Time", "")
+          .replace(" ", "") as keyof ActivityTogglesState["Toggles"]
+      ];
+    });
+
+    // Check if the filtered schedule has changed before updating state
+    if (!arraysEqual(filteredSchedule, scheduleList)) {
+      setScheduleList(filteredSchedule);
+    }
+  }, [Toggles, initialList, scheduleList, setScheduleList]);
 
   useEffect(() => {
     if (scheduleView !== activeView || date !== prevDateRef.current) {
@@ -37,31 +66,7 @@ export const Schedule = () => {
 
       return () => clearTimeout(timer);
     }
-
-    if (schedules.data) {
-      let filteredSchedule = schedules.data.filter((activity) => {
-        return Toggles[
-          activity.activityName
-            .replace("Drop In ", "")
-            .replace(" Time", "")
-            .replace(" ", "") as keyof ActivityTogglesState["Toggles"]
-        ];
-      });
-
-      // Check if the filtered schedule has changed before updating state
-      if (!arraysEqual(filteredSchedule, scheduleList)) {
-        setScheduleList(filteredSchedule);
-      }
-    }
-  }, [
-    scheduleView,
-    activeView,
-    date,
-    schedules.data,
-    Toggles,
-    scheduleList,
-    setScheduleList,
-  ]);
+  }, [scheduleView, activeView, date]);
 
   // Function to compare arrays for equality
   function arraysEqual(arr1: string | any[], arr2: string | any[] | undefined) {
